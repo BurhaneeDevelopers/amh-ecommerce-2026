@@ -12,7 +12,6 @@ export interface Product {
     id: string;
     title: string;
     model?: string;
-    price: number;
     image: string;
     badge?: BadgeVariant;
 }
@@ -42,14 +41,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onShopNow,
 }) => {
     return (
-        <div className="flex flex-col justify-center items-center relative border border-gray-300 rounded-2xl py-1">
-            <Image
-                width={500}
-                height={500}
-                src={image}
-                alt={title}
-                className="w-64 h-full object-cover !rounded-lg"
-            />
+        <div className="flex flex-col justify-center items-center relative border border-gray-300 rounded-2xl p-1.5">
+            <div className="relative w-fit h-fit overflow-hidden !rounded-lg shadow-lg mb-2 border-b">
+                <Image
+                    width={500}
+                    height={500}
+                    src={image}
+                    alt={title}
+                    className="w-fit h-full object-cover"
+                />
+
+                <div className="bg-black/30 absolute inset-0 w-full h-full" />
+            </div>
 
             {/* Badge */}
             {badge && (
@@ -79,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     className={`bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] font-bold text-[#272727]/80 w-full ${badge === "out_of_stock" ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                 >
-                    <P>{badge === "out_of_stock" ? "Unavailable" : "Shop Now"}</P>
+                    <P>{badge === "out_of_stock" ? "Unavailable" : "Get Quote"}</P>
                 </Button>
             </div>
         </div>

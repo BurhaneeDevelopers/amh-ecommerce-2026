@@ -8,7 +8,7 @@ import { Container } from "../layout/container"
 import { Li, } from "../typography/typography"
 import ToggleCategories from "../blocks/toggle-categories"
 
-const navLinks = ["Home", "Specials", "Contact", "Site Map", "Brands", "Blogs"]
+const navLinks = ["Home", , "Contact", "Brands", "Blogs"]
 
 export default function Navbar() {
     return (

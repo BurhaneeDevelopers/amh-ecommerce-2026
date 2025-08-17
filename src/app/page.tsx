@@ -1,10 +1,13 @@
 import { Container } from "@/components/layout/container";
-import ThreeColumnLayout from "@/components/layout/home/body-wrapper";
+import MainColumn from "@/components/layout/home/main-column";
+import { Wrapper } from "@/components/layout/wrapper";
 
 export default function Home() {
   return (
     <Container>
-      <ThreeColumnLayout />
+      <Wrapper>
+        <MainColumn />
+      </Wrapper>
     </Container>
   );
 }
