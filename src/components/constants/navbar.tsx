@@ -12,7 +12,7 @@ const navLinks = ["Home", , "Contact", "Brands", "Blogs"]
 
 export default function Navbar() {
     return (
-        <Container className="bg-[#272727] text-white">
+        <Container className="bg-[#272727] text-white !py-4">
             <div className="mx-auto flex flex-wrap lg:flex-nowrap items-center justify-between gap-4">
                 {/* Left: Category Button */}
                 <ToggleCategories />

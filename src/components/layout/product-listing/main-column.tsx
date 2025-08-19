@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Product } from "@/supabase/schema/schema.type";
 import ProductCard from "@/components/blocks/product-card";
+import { Search } from "lucide-react";
 
 const mockProducts: Product[] = [
     {
@@ -21,7 +22,6 @@ const mockProducts: Product[] = [
         tag: "featured",
         isFeatured: true,
         on_hand_qty: 12,
-        stock_status: true,
     },
     {
         id: "2",
@@ -36,9 +36,7 @@ const mockProducts: Product[] = [
         tag: "on sale",
         isFeatured: false,
         on_hand_qty: 0,
-        stock_status: false,
     },
-    // ...more mock items
 ];
 
 const ITEMS_PER_PAGE = 6;
@@ -66,15 +64,22 @@ const MainColumn = () => {
         <div className="">
             {/* Filters */}
             <div className="flex flex-wrap gap-7 items-center mb-8">
-                <Input
-                    placeholder="Search products..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-64"
-                />
+                <div className="flex items-center w-full lg:w-auto">
+                    <Input
+                        type="text"
+                        placeholder="Search products by details..."
+                        className="bg-white rounded-e-none w-full flex-grow lg:!w-80 !text-base !py-7 outline-none"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+
+                    <Button className="rounded-s-none bg-gradient-to-tl from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-7 !px-4">
+                        <Search className="!w-7 !h-7" />
+                    </Button>
+                </div>
 
                 <Select onValueChange={(val) => setCapacity(val)}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-40 !py-7">
                         <SelectValue placeholder="Capacity" />
                     </SelectTrigger>
                     <SelectContent>
@@ -85,7 +90,7 @@ const MainColumn = () => {
                 </Select>
 
                 <Select onValueChange={(val) => setTag(val)}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-40 !py-7">
                         <SelectValue placeholder="Tag" />
                     </SelectTrigger>
                     <SelectContent>
