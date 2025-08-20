@@ -17,18 +17,18 @@ export default function CreateAccount() {
                     </a>
                 </div>
                 <div className="flex flex-1 items-center justify-center">
-                    <div className="w-full max-w-xs">
+                    <div className="w-full max-w-lg">
                         <CreateAccountForm />
                     </div>
                 </div>
             </div>
             <div className="bg-muted relative hidden lg:block">
                 <Image
-                    src="/placeholder.svg"
+                    src="/banner.png"
                     alt="Image"
                     width={500}
                     height={500}
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    className="absolute inset-0 h-full w-full object-cover"
                 />
             </div>
         </div>

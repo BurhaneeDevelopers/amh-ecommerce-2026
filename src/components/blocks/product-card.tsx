@@ -41,17 +41,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onShopNow,
 }) => {
     return (
-        <div className="flex flex-col justify-center items-center relative border border-gray-300 rounded-2xl p-1.5">
-            <div className="relative w-fit h-fit overflow-hidden !rounded-lg shadow-lg mb-2 border-b">
+        <div className="flex flex-col justify-center items-center relative border border-gray-300 rounded-2xl p-1.5 divide-y divide-y-black">
+            <div className="relative w-full h-fit overflow-hidden !rounded-lg mb-2">
                 <Image
                     width={500}
                     height={500}
                     src={image}
                     alt={title}
-                    className="w-fit h-full object-cover"
+                    className="w-full h-52 object-cover"
                 />
 
-                <div className="bg-black/30 absolute inset-0 w-full h-full" />
+                {/* <div className="bg-black/30 absolute inset-0 w-full h-full" /> */}
             </div>
 
             {/* Badge */}
