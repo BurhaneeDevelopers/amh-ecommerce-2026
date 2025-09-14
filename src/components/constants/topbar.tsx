@@ -1,11 +1,20 @@
+"use client";
+
 import { Phone, ShoppingCart } from "lucide-react"
 import { Container } from "../layout/container"
 import { H4, P } from "../typography/typography"
 import Image from "next/image"
 import Link from "next/link"
 import AccountMenu from "../layout/blocks/account-menu"
+import { Badge } from "@/components/ui/badge"
+import { useAtomValue } from "jotai"
+import { current_user_auth_atom } from "@/jotai/store"
+import { useGetWishlistByUser } from "@/api/wishlist.service"
 
 export default function Topbar() {
+    const user = useAtomValue(current_user_auth_atom);
+    const { data: wishlistData } = useGetWishlistByUser(user?.id ?? "");
+    const wishlistCount = wishlistData?.length || 0;
 
     return (
         <Container className="bg-[#272727] text-white text-sm border-b border-gray-600 !py-4">
@@ -37,15 +46,23 @@ export default function Topbar() {
                     {/* User/Profile */}
                     <AccountMenu />
 
-                    {/* Cart */}
+                    {/* Wishlist */}
                     <Link href={"/wishlist"}>
-                        <div className="flex items-center gap-2">
-                            <div className="bg-[var(--color-primary)] p-4 rounded-full">
+                        <div className="flex items-center gap-2 relative">
+                            <div className="bg-[var(--color-primary)] p-4 rounded-full relative">
                                 <ShoppingCart className="w-6 h-6 fill-white" />
+                                {wishlistCount > 0 && (
+                                    <Badge 
+                                        variant="destructive"
+                                        className="absolute -top-2 -right-2 min-w-[20px] h-5 text-xs font-bold bg-red-500 hover:bg-red-600 flex items-center justify-center rounded-full px-1"
+                                    >
+                                        {wishlistCount > 99 ? "99+" : wishlistCount}
+                                    </Badge>
+                                )}
                             </div>
                             <div>
                                 <H4 className="font-semibold">My Wishlist</H4>
-                                <P>Empty</P>
+                                <P>{wishlistCount === 0 ? "Empty" : `${wishlistCount} item${wishlistCount > 1 ? 's' : ''}`}</P>
                             </div>
                         </div>
                     </Link>

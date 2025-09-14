@@ -52,6 +52,30 @@ export interface Wishlist {
   modified_at?: string;
 }
 
+// Wishlist with Product Details (for joined queries)
+export interface WishlistWithProduct {
+  id?: string;
+  user_id: string;
+  wishlist_id?: string;
+  product_id: string;
+  created_at?: string;
+  modified_at?: string;
+  products: {
+    id?: string;
+    product_name: string;
+    model_number: string;
+    model_tally_name: string;
+    specifications: string;
+    photos: string[];
+    brand_id: string | null;
+    category_id: string | null;
+    is_on_sale: boolean;
+    is_featured: boolean;
+    on_hand_qty: number;
+    stock_status?: boolean;
+  };
+}
+
 // User Accounts (Portal)
 export interface User_Profile {
   id?: string; // matches Supabase Auth user_id
