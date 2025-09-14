@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { users_service } from "@/supabase/services/user-service";
 // import { ThemeProvider } from "next-themes";
 import Topbar from "../constants/topbar";
-import Navbar from "../constants/navbar";
 import Footer from "../constants/footer";
+import Navbar from "../constants/navbar";
 import { Providers } from "@/api/providers";
 
 const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {

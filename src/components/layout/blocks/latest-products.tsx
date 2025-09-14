@@ -7,8 +7,17 @@ import { H2 } from '@/components/typography/typography'
 import { Container } from '../container'
 import ProductCard from '@/components/blocks/product-card'
 import { sampleProducts } from '@/components/constants/globals'
+import { toast } from 'sonner'
+import { useGetAllProducts } from '@/api/products.service'
 
 const LatestProducts = () => {
+    const {
+        data: products = [],
+        // isLoading: products_loading,
+        error: products_error,
+    } = useGetAllProducts();
+
+    if (products_error) toast.error("Error fetching products");
     const [startIndex, setStartIndex] = useState(0)
     const itemsPerRow = 4
     const totalVisible = itemsPerRow * 2 // two rows
@@ -26,11 +35,11 @@ const LatestProducts = () => {
     }
 
     // Slice products for current view
-    const visibleProducts = sampleProducts.slice(startIndex, startIndex + totalVisible)
+    // const visibleProducts = sampleProducts.slice(startIndex, startIndex + totalVisible)
 
     // Split into two rows
-    const firstRow = visibleProducts.slice(0, itemsPerRow)
-    const secondRow = visibleProducts.slice(itemsPerRow, totalVisible)
+    const firstRow = products.slice(0, itemsPerRow)
+    const secondRow = products.slice(itemsPerRow, totalVisible)
 
     return (
         <Container className='!px-0'>
