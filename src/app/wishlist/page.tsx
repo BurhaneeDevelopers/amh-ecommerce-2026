@@ -15,6 +15,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { Trash2, MessageSquare, ListChecks, ArrowLeft } from "lucide-react";
 import { H2, H3, H6 } from "@/components/typography/typography";
+import { useAtomValue } from "jotai";
+import { current_user_auth_atom } from "@/jotai/store";
+import { useGetWishlistByUser } from "@/api/wishlist.service";
 
 // Example type for wishlist item
 type WishListItem = {
@@ -49,6 +52,9 @@ const WishList = () => {
   const start = (page - 1) * ITEMS_PER_PAGE;
   const paginatedItems = items.slice(start, start + ITEMS_PER_PAGE);
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+
+  const user = useAtomValue(current_user_auth_atom);
+  const { data: wishlist } = useGetWishlistByUser(user?.id ?? "");
 
   const toggleSelect = (id: string) => {
     setSelected((prev) =>
