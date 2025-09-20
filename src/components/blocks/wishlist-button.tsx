@@ -13,7 +13,13 @@ import {
 import { toast } from "sonner";
 import RemoveWishlistModal from "./modal/remove-wishlist";
 
-const WishlistButton = ({ product_id }: { product_id: string }) => {
+const WishlistButton = ({
+  product_id,
+  className,
+}: {
+  product_id: string;
+  className?: string;
+}) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const user = useAtomValue(current_user_auth_atom);
@@ -21,7 +27,6 @@ const WishlistButton = ({ product_id }: { product_id: string }) => {
 
   const { mutate: createWishlist, isPending: creating } =
     useCreateNewWishlist();
-
 
   const isAdded = useMemo(
     () => wishlist?.some((item) => item.product_id === product_id) ?? false,
@@ -59,7 +64,7 @@ const WishlistButton = ({ product_id }: { product_id: string }) => {
           isAdded
             ? "bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)]"
             : "bg-white border border-amber-600 hover:text-white"
-        } text-[#272727] absolute top-3 left-3`}
+        } text-[#272727] absolute top-3 left-3 ${className}`}
         onClick={handleClick}
       >
         {creating ? (

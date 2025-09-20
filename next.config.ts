@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "opencart.mahardhi.com",
       },
+      {
+        protocol: "https",
+        hostname: "ujfnvcsnaeadenlwhqid.supabase.co",
+      },
     ],
   }
 };

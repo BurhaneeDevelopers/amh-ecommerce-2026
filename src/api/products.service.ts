@@ -1,4 +1,4 @@
-import { Product } from '@/supabase/schema/schema.type';
+import { Product, Accessories, Spares } from '@/supabase/schema/schema.type';
 import { products_service } from '@/supabase/services/products-service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -53,5 +53,27 @@ export const useDeleteProduct = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['product_list_all'] });
         },
+    });
+};
+
+export const useGetProductAccessories = (accessoryIds: string[]) => {
+    return useQuery<Accessories[], Error>({
+        queryKey: ['product_accessories', accessoryIds],
+        queryFn: async () => (await products_service.getProductAccessories(accessoryIds)) ?? [],
+        enabled: accessoryIds && accessoryIds.length > 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
+export const useGetProductSpares = (spareIds: string[]) => {
+    return useQuery<Spares[], Error>({
+        queryKey: ['product_spares', spareIds],
+        queryFn: async () => (await products_service.getProductSpares(spareIds)) ?? [],
+        enabled: spareIds && spareIds.length > 0,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 5,
     });
 };

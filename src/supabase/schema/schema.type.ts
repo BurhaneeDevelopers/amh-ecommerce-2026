@@ -40,13 +40,30 @@ export interface Product {
   stock_status?: boolean;
   created_at?: Date | string;
   updated_at?: Date | string;
+  
+  // Joined data from related tables
+  brand?: {
+    id: string;
+    brand_name: string;
+    brand_logo: string;
+  };
+  category?: {
+    id: string;
+    category_name: string;
+    type: string;
+  };
+  capacity_data?: {
+    id: string;
+    capacity_name: string;
+    slug: string;
+  };
 }
 
 // Wishlist Table
 export interface Wishlist {
-  id: string;
+  id?: string;
   user_id: string; // FK to Users table
-  products: string[]; // FK to Products table
+  product_id: string; // FK to Products table
   created_at?: string;
 }
 
