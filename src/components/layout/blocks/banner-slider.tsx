@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 const images = [
-  'https://images.pexels.com/photos/459728/pexels-photo-459728.jpeg',
-  'https://images.pexels.com/photos/247763/pexels-photo-247763.jpeg',
+  '/banners/cordless-tool.jpg',
+  '/banners/tool-box.jpg',
 ];
 
 const swipeConfidenceThreshold = 8000; // smaller for more responsive swipes
