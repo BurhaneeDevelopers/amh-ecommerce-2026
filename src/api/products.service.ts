@@ -23,6 +23,17 @@ export const useGetProductsById = (id: string) => {
     });
 };
 
+export const useGetSingleProduct = (id: string) => {
+    return useQuery<Product | null, Error>({
+        queryKey: ['single_product', id],
+        queryFn: async () => (await products_service.getSingleProductById(id)),
+        enabled: !!id,
+        refetchOnWindowFocus: false,  // Don't refetch on tab/window switch
+        refetchOnMount: false,        // Don't refetch when component mounts again
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
 export const useCreateNewProduct = () => {
     const queryClient = useQueryClient();
 

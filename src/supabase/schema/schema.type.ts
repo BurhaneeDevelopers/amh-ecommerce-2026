@@ -44,36 +44,10 @@ export interface Product {
 
 // Wishlist Table
 export interface Wishlist {
-  id?: string;
+  id: string;
   user_id: string; // FK to Users table
-  wishlist_id?: string;
-  product_id: string;
+  products: string[]; // FK to Products table
   created_at?: string;
-  modified_at?: string;
-}
-
-// Wishlist with Product Details (for joined queries)
-export interface WishlistWithProduct {
-  id?: string;
-  user_id: string;
-  wishlist_id?: string;
-  product_id: string;
-  created_at?: string;
-  modified_at?: string;
-  products: {
-    id?: string;
-    product_name: string;
-    model_number: string;
-    model_tally_name: string;
-    specifications: string;
-    photos: string[];
-    brand_id: string | null;
-    category_id: string | null;
-    is_on_sale: boolean;
-    is_featured: boolean;
-    on_hand_qty: number;
-    stock_status?: boolean;
-  };
 }
 
 // User Accounts (Portal)
@@ -109,6 +83,7 @@ export interface Accessories {
   id?: string | null;
   accessory_name: string;
   category_id: string;
+  accessory_image: string[];
   category?: {
     id: string;
     category_name: string;
@@ -120,6 +95,7 @@ export interface Accessories {
 export interface Spares {
   id?: string | null;
   spare_name: string;
+  spare_image: string[];
   category_id: string;
   category?: {
     id: string;

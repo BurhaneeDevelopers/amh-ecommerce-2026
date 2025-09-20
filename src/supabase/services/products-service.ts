@@ -21,6 +21,16 @@ class Products_Service {
         return data;
     }
 
+    async getSingleProductById(id: string): Promise<Product | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .eq("id", id)
+            .single()
+
+        if (error) throw error;
+        return data;
+    }
+
     async deleteProductById(id: string): Promise<Product[] | null> {
         const { data, error } = await supabase.from(this.table)
             .delete()
