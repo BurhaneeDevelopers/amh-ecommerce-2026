@@ -1,10 +1,14 @@
 "use client";
 
-import { Quote, Package, Truck, Shield } from "lucide-react";
+import { Quote, Minus, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { H1, H3, P } from "@/components/typography/typography";
 import WishlistButton from "@/components/blocks/wishlist-button";
-import { Product } from "@/supabase/schema/schema.type";
+import { Product, Accessories, Spares } from "@/supabase/schema/schema.type";
+import { useState } from "react";
+import { Input } from "../ui/input";
+import { useAtom } from "jotai";
+import { productQuantityAtom } from "@/jotai/store";
 
 interface ProductInfoProps {
   product: Product;
@@ -15,6 +19,8 @@ interface ProductInfoProps {
   } | null;
   onGetQuote: () => void;
   isOutOfStock: boolean;
+  accessories?: Accessories[];
+  spares?: Spares[];
 }
 
 export default function ProductInfo({
@@ -22,16 +28,42 @@ export default function ProductInfo({
   capacityInfo,
   onGetQuote,
   isOutOfStock,
+  accessories = [],
+  spares = [],
 }: ProductInfoProps) {
+  const [quantity, setQuantity] = useAtom(productQuantityAtom);
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 1;
+    handleQuantityChange(value);
+  };
   return (
     <div className="space-y-8 w-full flex-grow">
       {/* Header */}
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <H1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-              {product.product_name}
-            </H1>
+            <div className="flex items-center gap-3 mb-2">
+              <H1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight !font-montserrat">
+                {product.product_name}
+              </H1>
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium  !font-poppins ${
+                  product.on_hand_qty > 0
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {product.on_hand_qty > 0 ? "In Stock" : "Out of Stock"}
+              </span>
+            </div>
             {product.model_number && (
               <P className="text-lg text-gray-600 mt-2 font-medium">
                 Model: {product.model_number}
@@ -42,6 +74,13 @@ export default function ProductInfo({
                 by {product.brand.brand_name}
               </P>
             )}
+            {product.pcs_per_crtn && (
+              <div className="mt-4">
+                <P className="font-bold text-zinc-900">
+                  {product.pcs_per_crtn} pieces per carton
+                </P>
+              </div>
+            )}
           </div>
           <WishlistButton
             product_id={product.id || ""}
@@ -50,70 +89,148 @@ export default function ProductInfo({
         </div>
       </div>
 
-      {/* Key Features */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="text-center p-4 bg-gray-50 rounded-xl">
-          <Package className="w-6 h-6 mx-auto text-blue-600 mb-2" />
-          <P className="text-sm font-medium text-gray-900">Quality Product</P>
-        </div>
-        <div className="text-center p-4 bg-gray-50 rounded-xl">
-          <Truck className="w-6 h-6 mx-auto text-green-600 mb-2" />
-          <P className="text-sm font-medium text-gray-900">Fast Delivery</P>
-        </div>
-        <div className="text-center p-4 bg-gray-50 rounded-xl">
-          <Shield className="w-6 h-6 mx-auto text-purple-600 mb-2" />
-          <P className="text-sm font-medium text-gray-900">Warranty</P>
-        </div>
-      </div>
-
-      {/* Specifications */}
-      {product.specifications && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
-          <H3 className="text-xl font-semibold mb-4 text-gray-900">
-            Specifications
-          </H3>
-          <div className="prose prose-sm max-w-none">
-            <P className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {product.specifications}
+      {/* Compact Specifications and Capacity */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {product.specifications && product.specifications.length > 0 && (
+          <div className="bg-gray-50 rounded-lg p-4">
+            <H3 className="text-sm font-semibold mb-2 text-gray-900">
+              Specifications
+            </H3>
+            <div className="space-y-1">
+              {product.specifications.slice(0, 3).map((spec, index) => (
+                <P key={index} className="text-xs text-gray-700">
+                  • {spec}
+                </P>
+              ))}
+              {product.specifications.length > 3 && (
+                <P className="text-xs text-gray-500 italic">
+                  +{product.specifications.length - 3} more...
+                </P>
+              )}
+            </div>
+          </div>
+        )}
+        {capacityInfo && (
+          <div className="bg-blue-50 rounded-lg p-4">
+            <H3 className="text-sm font-semibold mb-2 text-blue-900">
+              Capacity
+            </H3>
+            <P className="text-xs text-blue-800">
+              {capacityInfo.capacity_name}
             </P>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Capacity Info */}
-      {capacityInfo && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
-          <H3 className="text-xl font-semibold mb-3 text-blue-900">Capacity</H3>
-          <P className="text-lg font-medium text-blue-800">
-            {capacityInfo.capacity_name}
+      {/* Quantity Selector */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <H3 className="text-lg font-semibold text-gray-900 mb-4">Quantity</H3>
+        <div className="flex items-center gap-4 mb-3">
+          <div className="flex items-center border border-gray-300 rounded-lg">
+            <button
+              onClick={() => handleQuantityChange(quantity - 1)}
+              disabled={quantity <= 1}
+              className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <Input
+              type="number"
+              value={quantity}
+              onChange={handleInputChange}
+              min="1"
+              className="w-20 text-center py-2 focus:!outline-none focus:!ring-0 border border-zinc-300"
+            />
+            <button
+              onClick={() => handleQuantityChange(quantity + 1)}
+              className="p-2 hover:bg-gray-100"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+          <P className="text-sm text-gray-600">
+            &ldquo;1&rdquo; quantity is equivalent to one carton
           </P>
         </div>
-      )}
-
-      {/* Stock Status */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <H3 className="text-lg font-semibold text-gray-900 mb-1">
-              Availability
-            </H3>
-            <P
-              className={`text-sm font-medium ${
-                product.on_hand_qty > 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {product.on_hand_qty > 0
-                ? `${product.on_hand_qty} units available`
-                : "Currently out of stock"}
-            </P>
-          </div>
-          <div
-            className={`w-3 h-3 rounded-full ${
-              product.on_hand_qty > 0 ? "bg-green-500" : "bg-red-500"
-            }`}
-          />
-        </div>
+        {product.on_hand_qty > 0 && (
+          <P className="text-sm text-green-600">
+            {product.on_hand_qty} units available
+          </P>
+        )}
       </div>
+
+      {/* Additional Information */}
+      {(accessories.length > 0 || spares.length > 0) && (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <button
+            onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
+            className="flex items-center justify-between w-full text-left"
+          >
+            <H3 className="text-lg font-semibold text-gray-900">
+              Additional Information
+            </H3>
+            {showAdditionalInfo ? (
+              <ChevronUp className="w-5 h-5 text-gray-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-500" />
+            )}
+          </button>
+          {showAdditionalInfo && (
+            <div className="mt-4">
+              <div className="space-y-6">
+                {accessories.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                      Accessories
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {accessories.slice(0, 6).map((accessory) => (
+                        <div
+                          key={accessory.id}
+                          className="text-xs p-2 bg-blue-50 rounded-lg"
+                        >
+                          <p className="font-medium text-blue-900 truncate">
+                            {accessory.accessory_name}
+                          </p>
+                          {accessory.category && (
+                            <p className="text-blue-700 truncate">
+                              {accessory.category.category_name}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {spares.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">
+                      Spare Parts
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {spares.slice(0, 6).map((spare) => (
+                        <div
+                          key={spare.id}
+                          className="text-xs p-2 bg-green-50 rounded-lg"
+                        >
+                          <p className="font-medium text-green-900 truncate">
+                            {spare.spare_name}
+                          </p>
+                          {spare.category && (
+                            <p className="text-green-700 truncate">
+                              {spare.category.category_name}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Action Button */}
       <div className="sticky bottom-0 bg-white pt-6 border-t border-gray-100">
@@ -127,8 +244,10 @@ export default function ProductInfo({
               : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           }`}
         >
-          <Quote className="w-5 h-5 mr-3" />
-          {isOutOfStock ? "Out of Stock" : "Get Quote"}
+          <Quote className="w-5 h-5" />
+          {isOutOfStock
+            ? "Out of Stock"
+            : `Get Quote (${quantity} carton${quantity > 1 ? "s" : ""})`}
         </Button>
         {!isOutOfStock && (
           <P className="text-center text-sm text-gray-500 mt-3">

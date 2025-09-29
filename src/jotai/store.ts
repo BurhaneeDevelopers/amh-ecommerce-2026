@@ -5,3 +5,6 @@ import { atom } from 'jotai'
 export const toggleAllCategoriesAtom = atom<boolean>(true)
 
 export const current_user_auth_atom = atom<User & User_Profile | null>()
+
+// Quantity atom for synchronizing quantity between ProductInfo and GetQuoteModal
+export const productQuantityAtom = atom<number>(1)

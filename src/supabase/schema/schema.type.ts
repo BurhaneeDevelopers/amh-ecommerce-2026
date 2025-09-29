@@ -26,7 +26,8 @@ export interface Product {
   model_tally_name: string; // unique internal identifier linking to warehouse stock
   product_name: string;
   model_number: string;
-  specifications: string;
+  specifications: string[]; // array of specification strings
+  pcs_per_crtn: number; // pieces per carton
   accessories?: string[]; // optional for future multi-tag linking
   spares?: string[]; // optional for future multi-tag linking
   photos: string[]; // array of URLs
@@ -80,12 +81,16 @@ export interface User_Profile {
 
 // Enquiry History (if implemented later)
 export interface Enquiry {
-  id: string;
+  id?: string;
   user_id: string; // FK to Users
   products: string[]; // FK to Product
-  order_date: string;
-  status: "pending" | "completed" | "cancelled";
-  created_at?: string;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  quantity: string;
+  city: string;
+  company_name: string;
+  message: string;
 }
 
 // Capacity

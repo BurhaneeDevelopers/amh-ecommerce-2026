@@ -6,6 +6,7 @@ import { useGetSingleProduct, useGetProductAccessories, useGetProductSpares } fr
 import { useGetSingleCapacity } from '@/api/capacity.service'
 import { Container } from '@/components/layout/container'
 import GetQuoteModal from '@/components/blocks/modal/get-quote-modal'
+import EnquirySuccessModal from '@/components/blocks/modal/enquiry-success-modal'
 import ProductImageGallery from '@/components/product/product-image-gallery'
 import ProductInfo from '@/components/product/product-info'
 import RelatedItemsSection from '@/components/product/related-items-section'
@@ -15,6 +16,7 @@ export default function ProductDetailsPage() {
   const params = useParams()
   const productId = params.id as string
   const [showQuoteModal, setShowQuoteModal] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Fetch product data
   const { data: product, isLoading: productLoading, error: productError } = useGetSingleProduct(productId)
@@ -134,6 +136,17 @@ export default function ProductDetailsPage() {
         open={showQuoteModal}
         onOpenChange={setShowQuoteModal}
         product={product}
+        onSuccess={() => setShowSuccessModal(true)}
+      />
+      
+      {/* Success Modal */}
+      <EnquirySuccessModal
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        onContinueShopping={() => {
+          // You can add navigation logic here if needed
+          // For now, just close the modal
+        }}
       />
     </Container>
   )

@@ -74,7 +74,7 @@ export const H6: React.FC<Props> = ({ className, children }) => (
 );
 
 export const P: React.FC<Props> = ({ className, children }) => (
-  <p className={cn("text-base", className)}>{children}</p>
+  <p className={cn("text-base font-poppins", className)}>{children}</p>
 );
 
 export const Li: React.FC<Props> = ({ className, children }) => (

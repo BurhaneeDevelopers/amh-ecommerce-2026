@@ -9,7 +9,7 @@ const poppins = Poppins({
   weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900']
 });
 const montserrat = Montserrat({
-  variable: "--font-poppins",
+  variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900']
 });

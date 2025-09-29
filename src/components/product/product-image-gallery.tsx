@@ -34,7 +34,7 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
     <div className="space-y-4 w-full flex-grow">
       {/* Main Image */}
       <div className="relative group">
-        <div className="relative aspect-square overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-300 shadow max-h-[36rem] w-full">
           <Image
             src={productImages[selectedImageIndex]}
             alt={productName}
