@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import RemoveWishlistModal from "./modal/remove-wishlist";
 
 const WishlistButton = ({
-  product_id,
+  product_id = "",
   className,
 }: {
   product_id: string;

@@ -1,6 +1,6 @@
 'use client'
 
-import WishlistButton from '@/components/blocks/wishlist-button'
+// import WishlistButton from '@/components/blocks/wishlist-button'
 import { H3, H5, P } from '@/components/typography/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -24,7 +24,7 @@ const DealOfTheDay: React.FC = () => {
                 <Badge className='bg-[var(--color-primary)] absolute top-3 right-3'>
                     SALE
                 </Badge>
-                <WishlistButton />
+                {/* <WishlistButton /> */}
                 <div className='flex flex-col gap-1'>
                     <H3 className="font-medium text-center">Drilling Machine</H3>
                     <P className="text-sm text-gray-500 text-center">Model: N1857</P>
