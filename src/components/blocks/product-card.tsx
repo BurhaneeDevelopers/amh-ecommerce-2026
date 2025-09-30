@@ -1,11 +1,13 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "../ui/badge";
 import WishlistButton from "./wishlist-button";
-import { H4, P } from "../typography/typography";
 import { Button } from "../ui/button";
+import { Eye } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
+import GetQuoteModal from "../modals/get-quote-modal";
+import { Card, CardContent } from "../ui/card";
 
 // Define badge variants based on `tag`
 type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
@@ -32,76 +34,103 @@ const ProductCard: React.FC<Product> = ({
   stock_status,
 }) => {
   const router = useRouter();
-  
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
   // Determine badge based on product properties
-  const badge: BadgeVariant = !stock_status || on_hand_qty <= 0 
-    ? "out of stock" 
-    : is_on_sale 
-    ? "on sale" 
-    : "featured";
+  const badge: BadgeVariant =
+    !stock_status || on_hand_qty <= 0
+      ? "out of stock"
+      : is_on_sale
+      ? "on sale"
+      : "featured";
 
   const handleViewProduct = () => {
     if (id) {
       router.push(`/products/${id}`);
     }
   };
+  const handleGetQuote = () => {
+    setIsQuoteModalOpen(true);
+  };
 
   return (
-    <div className="flex flex-col justify-center items-center relative border border-gray-300 rounded-2xl p-1.5 w-64">
-      {/* Product Image */}
-      <div className="relative w-full h-fit overflow-hidden !rounded-lg shadow-lg mb-2 border-b">
-        <Image
-          width={500}
-          height={500}
-          src={
-            photos[0] ??
-            "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-          }
-          alt={product_name}
-          className="w-full h-full object-cover"
-        />
-        <div className="bg-black/30 absolute inset-0 w-full h-full" />
-      </div>
+    <Card className="group relative overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white h-80 rounded-xl">
+      <CardContent className="p-0 h-full flex flex-col">
+        {/* Product Image Container */}
+        <div className="relative overflow-hidden bg-white h-48 flex-shrink-0 border-b border-gray-100">
+          <Image
+            width={500}
+            height={500}
+            src={
+              photos[0] ??
+              "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
+            }
+            alt={product_name}
+            className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+          />
 
-      {/* Badge */}
-      {badge && (
-        <Badge className={`${badgeStyles[badge]} absolute top-3 right-3`}>
-          {badgeLabels[badge]}
-        </Badge>
-      )}
+          {/* Action Buttons - Always Visible */}
+          <WishlistButton product_id={id ?? ""} />
+          <div className="absolute bottom-2 right-2 flex gap-1">
+            <button
+              onClick={handleViewProduct}
+              className="bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-lg shadow-md transition-all duration-200 hover:scale-105 border border-gray-200"
+            >
+              <Eye className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
 
-      {/* Wishlist */}
-      <WishlistButton product_id={id ?? ""} />
+          {/* Badge */}
+          {badge && (
+            <Badge
+              className={`absolute top-0 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px]`}
+            >
+              {badgeLabels[badge]}
+            </Badge>
+          )}
+        </div>
 
-      {/* Product Info */}
-      <div className="flex flex-col gap-1 mt-2">
-        <H4 className="font-medium text-center">{product_name}</H4>
-        {model_number && (
-          <P className="text-sm text-gray-500 text-center">
-            Model: {model_number}
-          </P>
-        )}
-      </div>
+        {/* Product Info - Compact */}
+        <div className="flex flex-col flex-grow p-3 justify-between">
+          <div className="space-y-1">
+            <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+              {product_name}
+            </h3>
+            {model_number && (
+              <p className="text-xs text-gray-500 font-medium">
+                {model_number}
+              </p>
+            )}
+          </div>
 
-      {/* Button */}
-      <div className="p-2 w-full pb-4">
-        <Button
-          onClick={handleViewProduct}
-          disabled={badge === "out of stock"}
-          className={`bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] font-bold text-[#272727]/80 w-full ${
-            badge === "out of stock"
-              ? "opacity-50 cursor-not-allowed"
-              : ""
-          }`}
-        >
-          <P>
-            {badge === "out of stock"
-              ? "Unavailable"
-              : "View Product"}
-          </P>
-        </Button>
-      </div>
-    </div>
+          {/* Get Quote Button - Compact */}
+          <Button
+            onClick={handleGetQuote}
+            disabled={badge === "out of stock"}
+            size="sm"
+            className={`w-full mt-2 h-8 rounded-lg font-medium text-xs transition-all duration-200 ${
+              badge === "out of stock"
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100"
+                : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+            }`}
+          >
+            {badge === "out of stock" ? "Unavailable" : "Get Quote"}
+          </Button>
+        </div>
+      </CardContent>
+
+      {/* Get Quote Modal */}
+      <GetQuoteModal
+        open={isQuoteModalOpen}
+        onOpenChange={setIsQuoteModalOpen}
+        product={{
+          id: id,
+          product_name,
+          model_number,
+          photos,
+        }}
+      />
+    </Card>
   );
 };
 

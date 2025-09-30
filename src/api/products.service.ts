@@ -1,6 +1,6 @@
 import { Product, Accessories, Spares } from '@/supabase/schema/schema.type';
 import { products_service } from '@/supabase/services/products-service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
 export const useGetAllProducts = () => {
     return useQuery<Product[], Error>({
@@ -75,5 +75,88 @@ export const useGetProductSpares = (spareIds: string[]) => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         staleTime: 1000 * 60 * 5,
+    });
+};
+
+export interface ProductFilters {
+    search?: string;
+    categories?: string[];
+    brands?: string[];
+    priceRange?: [number, number];
+    sortBy?: string;
+}
+
+export const useGetProductsInfinite = (filters: ProductFilters = {}) => {
+    return useInfiniteQuery({
+        queryKey: ['products_infinite', JSON.stringify(filters)],
+        queryFn: async ({ pageParam = 0 }) => {
+            // For now, we'll use the existing service and implement client-side pagination
+            // In a real app, you'd want server-side pagination
+            const allProducts = await products_service.getAllProducts() ?? [];
+            
+            // Apply filters
+            let filteredProducts = allProducts;
+            
+            if (filters.search) {
+                filteredProducts = filteredProducts.filter(product =>
+                    product.product_name?.toLowerCase().includes(filters.search!.toLowerCase()) ||
+                    product.model_number?.toLowerCase().includes(filters.search!.toLowerCase())
+                );
+            }
+            
+            if (filters.categories && filters.categories.length > 0) {
+                filteredProducts = filteredProducts.filter(product =>
+                    filters.categories!.includes(product.category_id || '')
+                );
+            }
+            
+            if (filters.brands && filters.brands.length > 0) {
+                filteredProducts = filteredProducts.filter(product =>
+                    filters.brands!.includes(product.brand_id || '')
+                );
+            }
+            
+            // Apply sorting
+            if (filters.sortBy) {
+                switch (filters.sortBy) {
+                    case 'newest':
+                        filteredProducts.sort((a, b) => 
+                            new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()
+                        );
+                        break;
+                    case 'name_asc':
+                        filteredProducts.sort((a, b) => 
+                            (a.product_name || '').localeCompare(b.product_name || '')
+                        );
+                        break;
+                    case 'name_desc':
+                        filteredProducts.sort((a, b) => 
+                            (b.product_name || '').localeCompare(a.product_name || '')
+                        );
+                        break;
+                    default:
+                        // Featured - no sorting needed
+                        break;
+                }
+            }
+            
+            // Implement pagination
+            const pageSize = 12;
+            const start = pageParam * pageSize;
+            const end = start + pageSize;
+            const paginatedProducts = filteredProducts.slice(start, end);
+            
+            return {
+                products: paginatedProducts,
+                nextPage: end < filteredProducts.length ? pageParam + 1 : undefined,
+                totalCount: filteredProducts.length,
+            };
+        },
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        initialPageParam: 0,
+        refetchOnWindowFocus: false,
+        staleTime: 1000 * 60 * 5,
+        placeholderData: (previousData) => previousData, // Keep previous data while loading
+        refetchOnMount: false, // Don't refetch when component mounts again
     });
 };

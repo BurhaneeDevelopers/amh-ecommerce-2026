@@ -40,7 +40,7 @@ const BannerSlider: React.FC = () => {
   }, [isDragging]);
 
   return (
-    <div className="relative w-full h-52 overflow-hidden rounded-xl">
+    <div className="relative w-full h-40 sm:h-48 md:h-52 lg:h-56 overflow-hidden rounded-xl">
       <AnimatePresence initial={false} custom={index}>
         <motion.div
           key={index}
