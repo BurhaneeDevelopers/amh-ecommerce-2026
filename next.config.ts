@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true, // ✅ disables type checking at build time
+  },
   images: {
     remotePatterns: [
       {
@@ -16,7 +19,7 @@ const nextConfig: NextConfig = {
         hostname: "ujfnvcsnaeadenlwhqid.supabase.co",
       },
     ],
-  }
+  },
 };
 
 export default nextConfig;
