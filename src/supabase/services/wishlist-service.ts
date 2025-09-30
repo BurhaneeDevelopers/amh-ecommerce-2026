@@ -1,10 +1,10 @@
 import { supabase } from "../client";
-import { Wishlist} from "../schema/schema.type";
+import { Wishlist, WishlistWithProduct } from "../schema/schema.type";
 
 class Wishlist_Service {
   private table = "wishlist";
 
-  async getWishlistsBasedOnUser(user_id: string): Promise<Wishlist[] | null> {
+  async getWishlistsBasedOnUser(user_id: string): Promise<WishlistWithProduct[] | null> {
     const { data, error } = await supabase
       .from(this.table)
       .select(`

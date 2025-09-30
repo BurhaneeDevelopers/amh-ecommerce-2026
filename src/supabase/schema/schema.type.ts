@@ -64,8 +64,30 @@ export interface Product {
 export interface Wishlist {
   id?: string;
   user_id: string; // FK to Users table
-  product_id: string; // FK to Products table
+  products: string[]; // FK to Products table
   created_at?: string;
+}
+
+// Wishlist with joined Product data
+export interface WishlistWithProduct {
+  id?: string;
+  user_id: string;
+  product_id: string;
+  created_at?: string;
+  products: {
+    id: string;
+    product_name: string;
+    model_number: string;
+    model_tally_name: string;
+    specifications: string[];
+    photos: string[];
+    brand_id: string | null;
+    category_id: string | null;
+    is_on_sale: boolean;
+    is_featured: boolean;
+    on_hand_qty: number;
+    stock_status?: boolean;
+  };
 }
 
 // User Accounts (Portal)
