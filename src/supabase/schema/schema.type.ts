@@ -64,7 +64,7 @@ export interface Product {
 export interface Wishlist {
   id?: string;
   user_id: string; // FK to Users table
-  products: string[]; // FK to Products table
+  product_id: string // FK to Products table
   created_at?: string;
 }
 
