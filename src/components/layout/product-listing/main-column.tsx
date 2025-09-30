@@ -13,29 +13,33 @@ const mockProducts: Product[] = [
         id: "1",
         model_tally_name: "p-123",
         product_name: "Abrasive Saw",
-        product_image: "https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg",
         model_number: "AS-001",
         specifications: ["Heavy duty cutting tool"],
-        photos: ["/images/abrasive-saw.png"],
+        pcs_per_crtn: 1,
+        photos: ["https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg"],
         brand_id: "b1",
         category_id: "c1",
-        tag: "featured",
-        isFeatured: true,
+        capacity: "Professional",
+        is_on_sale: false,
+        is_featured: true,
         on_hand_qty: 12,
+        stock_status: true,
     },
     {
         id: "2",
         model_tally_name: "p-124",
         product_name: "Demo Tool",
-        product_image: "https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg",
         model_number: "DT-002",
         specifications: ["Multipurpose tool"],
-        photos: ["/images/demo.png"],
+        pcs_per_crtn: 1,
+        photos: ["https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg"],
         brand_id: "b1",
         category_id: "c1",
-        tag: "on sale",
-        isFeatured: false,
+        capacity: "DIY",
+        is_on_sale: true,
+        is_featured: false,
         on_hand_qty: 0,
+        stock_status: false,
     },
 ];
 
@@ -51,7 +55,11 @@ const MainColumn = () => {
     const filteredProducts = mockProducts.filter((product) => {
         const matchesSearch = product.product_name.toLowerCase().includes(search.toLowerCase());
         const matchesCapacity = capacity ? product.capacity === capacity : true;
-        const matchesTag = tag ? product.tag === tag : true;
+        const matchesTag = tag ? 
+            (tag === "featured" && product.is_featured) ||
+            (tag === "on sale" && product.is_on_sale) ||
+            (tag === "out of stock" && !product.stock_status)
+            : true;
         return matchesSearch && matchesCapacity && matchesTag;
     });
 
@@ -108,19 +116,19 @@ const MainColumn = () => {
                         <ProductCard
                             key={product.id}
                             id={product.id}
-                            title={product.product_name}
-                            model={product.model_number}
-                            image={product.product_image || "/placeholder.png"}
-                            badge={
-                                product.tag === "on sale"
-                                    ? "sale"
-                                    : product.tag === "out of stock"
-                                        ? "out_of_stock"
-                                        : product.tag === "featured"
-                                            ? "featured"
-                                            : null
-                            }
-                            onShopNow={(id) => console.log("Shop Now:", id)}
+                            model_tally_name={product.model_tally_name}
+                            product_name={product.product_name}
+                            model_number={product.model_number}
+                            photos={product.photos}
+                            specifications={product.specifications}
+                            pcs_per_crtn={product.pcs_per_crtn}
+                            brand_id={product.brand_id}
+                            category_id={product.category_id}
+                            capacity={product.capacity}
+                            is_on_sale={product.is_on_sale}
+                            is_featured={product.is_featured}
+                            on_hand_qty={product.on_hand_qty}
+                            stock_status={product.stock_status}
                         />
                     ))}
                 </div>
