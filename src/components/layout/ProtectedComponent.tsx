@@ -11,6 +11,7 @@ import Topbar from "../constants/topbar";
 import Footer from "../constants/footer";
 import Navbar from "../constants/navbar";
 import { Providers } from "@/api/providers";
+import AnnouncementBanner from "../announcement/announcement-banner";
 
 const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
   // const pathname = usePathname();
@@ -83,6 +84,7 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
       <Toaster />
       <Topbar />
       <Navbar />
+      <AnnouncementBanner />
       {children}
       <Footer />
       {/* </ThemeProvider> */}

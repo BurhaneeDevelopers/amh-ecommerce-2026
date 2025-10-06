@@ -154,3 +154,15 @@ export interface NewsLetter {
   email: string;
   created_at?: string;
 }
+
+// Announcement
+export interface Announcement {
+  id?: string | null;
+  headline: string;
+  type: "danger" | "info" | "warning";
+  is_scrolling: boolean;
+  is_active: boolean;
+  start_date: string;
+  end_date: string;
+  updated_at?: string;
+}
