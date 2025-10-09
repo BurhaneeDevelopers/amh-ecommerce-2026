@@ -166,3 +166,30 @@ export interface Announcement {
   end_date: string;
   updated_at?: string;
 }
+
+// Ads
+export type AdPlacement =
+  | "banner_slider"
+  | "deal_of_the_day"
+  | "off_product"
+  | "shop_now"
+  | "mobile_deals"
+  | "homepage_right_banner";
+
+export type AdType = "image" | "video";
+
+export interface Ad {
+  id?: string | null;
+  title: string;
+  description?: string | null;
+  media_url: string; // public URL to image/video
+  click_url?: string | null; // optional CTA target
+  placement: AdPlacement;
+  type: AdType;
+  start_date?: string | null;
+  end_date?: string | null;
+  is_active: boolean;
+  order_index?: number | null; // for carousels, ascending priority
+  created_at?: string;
+  updated_at?: string | null;
+}
