@@ -193,3 +193,57 @@ export interface Ad {
   created_at?: string;
   updated_at?: string | null;
 }
+
+// Testimonials
+export interface Testimonial {
+  id?: string | null;
+  client_name: string;
+  client_designation?: string | null;
+  company_name?: string | null;
+  testimonial_text: string;
+  rating: number; // 1-5 star rating
+  client_image?: string | null; // optional client photo
+  is_featured: boolean;
+  is_active: boolean;
+  order_index?: number | null; // for display ordering
+  created_at?: string;
+  updated_at?: string | null;
+}
+
+// Blog Categories
+export interface BlogCategory {
+  id?: string | null;
+  category_name: string;
+  slug: string;
+  description?: string | null;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string | null;
+}
+
+// Blog Posts
+export interface Blog {
+  id?: string | null;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content: string; // rich text content
+  featured_image?: string | null;
+  gallery_images?: string[]; // additional images
+  author_name: string;
+  author_image?: string | null;
+  category_id: string | null; // FK to BlogCategory
+  tags?: string[]; // array of tags
+  is_published: boolean;
+  is_featured: boolean;
+  publish_date?: string | null;
+  meta_title?: string | null; // SEO
+  meta_description?: string | null; // SEO
+  read_time?: number | null; // estimated read time in minutes
+  views_count?: number; // track article views
+  created_at?: string;
+  updated_at?: string | null;
+  
+  // Joined fields
+  category?: BlogCategory;
+}
