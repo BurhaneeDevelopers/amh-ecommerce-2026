@@ -54,10 +54,10 @@ const ProductCard: React.FC<Product> = ({
   };
 
   return (
-    <Card className="group relative overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white h-80 rounded-xl">
+    <Card className="group relative overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white h-72 sm:h-80 rounded-xl">
       <CardContent className="p-0 h-full flex flex-col">
         {/* Product Image Container */}
-        <div className="relative overflow-hidden bg-white h-48 flex-shrink-0 border-b border-gray-100">
+        <div className="relative overflow-hidden bg-white h-40 sm:h-48 flex-shrink-0 border-b border-gray-100">
           <Image
             width={500}
             height={500}

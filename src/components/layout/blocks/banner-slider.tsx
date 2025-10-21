@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGetAdsByPlacement } from '@/api/ads.service';
 
 // Fallback images if no ads are available
@@ -12,7 +13,7 @@ const fallbackImages = [
   '/banners/tool-box.jpg',
 ];
 
-const swipeConfidenceThreshold = 8000; // smaller for more responsive swipes
+const swipeConfidenceThreshold = 5000;
 const swipePower = (offset: number, velocity: number) =>
   Math.abs(offset) * velocity;
 
@@ -50,93 +51,175 @@ const BannerSlider: React.FC = () => {
     });
   }, [slides.length]);
 
+  const goToSlide = useCallback((slideIndex: number) => {
+    setIndex(slideIndex);
+  }, []);
+
   // Auto-slide
   useEffect(() => {
-    if (!isDragging) {
+    if (!isDragging && slides.length > 1) {
       intervalRef.current = setInterval(() => {
         paginate(1);
-      }, 4000);
+      }, 5000); // Increased to 5 seconds for better UX
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isDragging, paginate]);
+  }, [isDragging, paginate, slides.length]);
+
+  // Handle drag end
+  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    setIsDragging(false);
+    const swipe = swipePower(info.offset.x, info.velocity.x);
+    if (swipe < -swipeConfidenceThreshold) {
+      paginate(1);
+    } else if (swipe > swipeConfidenceThreshold) {
+      paginate(-1);
+    }
+  }, [paginate]);
 
   return (
-    <div className="relative w-full h-40 sm:h-48 md:h-52 lg:h-56 overflow-hidden rounded-xl">
-      <AnimatePresence initial={false} custom={index}>
-        <motion.div
-          key={index}
-          custom={index}
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{
-            x: 0,
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.9, ease: [0.25, 1, 0.5, 1] }, // smoother cubic-bezier
-          }}
-          exit={{
-            x: '-100%',
-            opacity: 0,
-            scale: 0.98,
-            transition: { duration: 0.9, ease: [0.25, 1, 0.5, 1] },
-          }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.15}
-          onDragStart={() => setIsDragging(true)}
-          onDragEnd={(_, { offset, velocity }) => {
-            setIsDragging(false);
-            const swipe = swipePower(offset.x, velocity.x);
-            if (swipe < -swipeConfidenceThreshold) {
-              paginate(1);
-            } else if (swipe > swipeConfidenceThreshold) {
-              paginate(-1);
-            }
-          }}
-          whileDrag={{ scale: 0.97 }} // subtle shrink while dragging
-          className="absolute w-full h-full cursor-grab active:cursor-grabbing"
-        >
-          <Image
-            src={slides[index].src}
-            alt={slides[index].alt}
-            fill
-            className="object-cover !object-center select-none pointer-events-none"
-            priority
-          />
-          
-          {/* Content overlay with title, description and button */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center justify-start p-6">
-            <div className="text-white max-w-md">
-              {slides[index]?.title && (
-                <h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-lg">
-                  {slides[index].title}
-                </h2>
-              )}
-              {slides[index]?.description && (
-                <p className="text-sm md:text-base mb-4 drop-shadow-lg opacity-90">
-                  {slides[index].description}
-                </p>
-              )}
-              {slides[index]?.clickUrl && (
-                <a 
-                  href={slides[index].clickUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg pointer-events-auto"
-                  >
-                    Shop Now
-                  </Button>
-                </a>
-              )}
+    <div className="relative w-full group">
+      {/* Main slider container with responsive height */}
+      <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-xl bg-gray-100">
+        {/* Render all slides but only show current one */}
+        {slides.map((slide, slideIndex) => (
+          <motion.div
+            key={`${slideIndex}-${slide.src}`}
+            initial={false}
+            animate={{
+              x: `${(slideIndex - index) * 100}%`,
+              transition: {
+                duration: 0.5,
+                ease: [0.25, 0.1, 0.25, 1]
+              }
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragStart={() => setIsDragging(true)}
+            onDragEnd={handleDragEnd}
+            whileDrag={{ 
+              scale: 0.98,
+              transition: { duration: 0.2 }
+            }}
+            className="absolute w-full h-full cursor-grab active:cursor-grabbing"
+            style={{
+              pointerEvents: slideIndex === index ? 'auto' : 'none'
+            }}
+          >
+            {/* Responsive image container */}
+            <div className="relative w-full h-full">
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                className="object-contain sm:object-cover select-none pointer-events-none"
+                style={{
+                  objectPosition: 'center'
+                }}
+                priority={slideIndex === index}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"
+              />
+              
+              {/* Gradient overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent sm:from-black/50 sm:via-black/10 sm:to-transparent" />
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+            
+            {/* Content overlay - only animate when slide is active */}
+            {slideIndex === index && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                className="absolute inset-0 flex items-center justify-start p-4 sm:p-6 lg:p-8"
+              >
+                <div className="text-white max-w-xs sm:max-w-md lg:max-w-lg">
+                  {slide?.title && (
+                    <motion.h2 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg leading-tight"
+                    >
+                      {slide.title}
+                    </motion.h2>
+                  )}
+                  {slide?.description && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="text-xs sm:text-sm md:text-base mb-3 sm:mb-4 drop-shadow-lg opacity-90 leading-relaxed"
+                    >
+                      {slide.description}
+                    </motion.p>
+                  )}
+                  {slide?.clickUrl && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      <a 
+                        href={slide.clickUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Button 
+                          size="sm"
+                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg pointer-events-auto transition-all duration-300 hover:scale-105 sm:text-base"
+                        >
+                          Shop Now
+                        </Button>
+                      </a>
+                    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        ))}
+
+        {/* Navigation arrows - only show on hover and if more than 1 slide */}
+        {slides.length > 1 && (
+          <>
+            <button
+              onClick={() => paginate(-1)}
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 sm:p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <button
+              onClick={() => paginate(1)}
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 sm:p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Pagination dots - only show if more than 1 slide */}
+      {slides.length > 1 && (
+        <div className="flex justify-center items-center mt-4 gap-2">
+          {slides.map((_, slideIndex) => (
+            <button
+              key={slideIndex}
+              onClick={() => goToSlide(slideIndex)}
+              className={`transition-all duration-300 rounded-full ${
+                slideIndex === index
+                  ? 'w-8 h-2 bg-blue-600'
+                  : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${slideIndex + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import { useGetTopAdByPlacement } from '@/api/ads.service';
 
 const HomepageRightBanner: React.FC = () => {
@@ -17,7 +18,7 @@ const HomepageRightBanner: React.FC = () => {
     return null; // Don't render anything if no ad is available
   }
 
-  const content = (
+  return (
     <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
       <Image
         src={ad.media_url}
@@ -26,35 +27,27 @@ const HomepageRightBanner: React.FC = () => {
         className="object-cover object-center"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
-      {/* Optional overlay with title/description */}
-      {(ad.title || ad.description) && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-          {ad.title && (
-            <h3 className="text-white font-semibold text-lg mb-1">{ad.title}</h3>
-          )}
-          {ad.description && (
-            <p className="text-white/90 text-sm">{ad.description}</p>
-          )}
-        </div>
-      )}
+      {/* Overlay with title, description and button */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
+        {ad.title && (
+          <h3 className="text-white font-semibold text-lg mb-1">{ad.title}</h3>
+        )}
+        {ad.description && (
+          <p className="text-white/90 text-sm mb-3">{ad.description}</p>
+        )}
+        {ad.click_url && (
+          <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
+            <Button 
+              size="sm" 
+              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+            >
+              Learn More
+            </Button>
+          </a>
+        )}
+      </div>
     </div>
   );
-
-  // If ad has click URL, make it clickable
-  if (ad.click_url) {
-    return (
-      <a 
-        href={ad.click_url} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="block cursor-pointer"
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return content;
 };
 
 export default HomepageRightBanner;

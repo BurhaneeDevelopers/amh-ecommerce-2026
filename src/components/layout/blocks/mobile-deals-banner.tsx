@@ -18,13 +18,29 @@ const MobileDealsSection: React.FC = () => {
     );
   }
 
-  if (ads.length === 0) {
-    return null; // Don't render anything if no ads are available
-  }
+  // Show fallback content if no ads are available
+  const fallbackAds = [
+    {
+      id: 'fallback-1',
+      title: 'Special Offers',
+      description: 'Check out our latest deals',
+      media_url: 'https://images.pexels.com/photos/4312860/pexels-photo-4312860.jpeg',
+      click_url: null
+    },
+    {
+      id: 'fallback-2', 
+      title: 'New Arrivals',
+      description: 'Discover our newest products',
+      media_url: 'https://images.pexels.com/photos/4889065/pexels-photo-4889065.jpeg',
+      click_url: null
+    }
+  ];
+
+  const displayAds = ads.length > 0 ? ads.slice(0, 2) : fallbackAds;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {ads.slice(0, 2).map((ad, index) => {
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      {displayAds.map((ad, index) => {
         const content = (
           <div className="relative h-24 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-r from-primary/5 to-secondary/5">
             <div className="absolute inset-0">

@@ -9,7 +9,7 @@ interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
 export const Container: React.FC<ContainerProps> = ({ children, className, ...props }) => {
     return (
         <div
-            className={cn("px-4 py-5 lg:p-7", className)}
+            className={cn("px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6 xl:px-7 xl:py-7", className)}
             {...props}
         >
             {children}
