@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import { useGetAdsByPlacement } from '@/api/ads.service';
 
 // Fallback images if no ads are available
@@ -96,30 +97,44 @@ const BannerSlider: React.FC = () => {
           whileDrag={{ scale: 0.97 }} // subtle shrink while dragging
           className="absolute w-full h-full cursor-grab active:cursor-grabbing"
         >
-          {slides[index]?.clickUrl ? (
-            <a 
-              href={slides[index].clickUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block w-full h-full"
-            >
-              <Image
-                src={slides[index].src}
-                alt={slides[index].alt}
-                fill
-                className="object-cover !object-center select-none pointer-events-none"
-                priority
-              />
-            </a>
-          ) : (
-            <Image
-              src={slides[index].src}
-              alt={slides[index].alt}
-              fill
-              className="object-cover !object-center select-none pointer-events-none"
-              priority
-            />
-          )}
+          <Image
+            src={slides[index].src}
+            alt={slides[index].alt}
+            fill
+            className="object-cover !object-center select-none pointer-events-none"
+            priority
+          />
+          
+          {/* Content overlay with title, description and button */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center justify-start p-6">
+            <div className="text-white max-w-md">
+              {slides[index]?.title && (
+                <h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-lg">
+                  {slides[index].title}
+                </h2>
+              )}
+              {slides[index]?.description && (
+                <p className="text-sm md:text-base mb-4 drop-shadow-lg opacity-90">
+                  {slides[index].description}
+                </p>
+              )}
+              {slides[index]?.clickUrl && (
+                <a 
+                  href={slides[index].clickUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg pointer-events-auto"
+                  >
+                    Shop Now
+                  </Button>
+                </a>
+              )}
+            </div>
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>
