@@ -8,7 +8,7 @@ class TestimonialsService {
     const { data, error } = await supabase
       .from(this.table)
       .select("*")
-      .order("order_index", { ascending: true, nullsLast: true })
+    //   .order("order_index", { ascending: true, nullsLast: true })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -20,7 +20,7 @@ class TestimonialsService {
       .from(this.table)
       .select("*")
       .eq("is_active", true)
-      .order("order_index", { ascending: true, nullsLast: true })
+    //   .order("order_index", { ascending: true, nullsLast: true })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -33,7 +33,7 @@ class TestimonialsService {
       .select("*")
       .eq("is_active", true)
       .eq("is_featured", true)
-      .order("order_index", { ascending: true, nullsLast: true })
+    //   .order("order_index", { ascending: true, nullsLast: true })
       .order("created_at", { ascending: false });
 
     if (error) throw error;

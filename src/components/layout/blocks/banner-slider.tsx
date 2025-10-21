@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useGetAdsByPlacement } from '@/api/ads.service';
 
-const images = [
+// Fallback images if no ads are available
+const fallbackImages = [
   '/banners/cordless-tool.jpg',
   '/banners/tool-box.jpg',
 ];
@@ -17,15 +19,35 @@ const BannerSlider: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Fetch banner ads
+  const { data: bannerAds = [] } = useGetAdsByPlacement('banner_slider');
+  
+  // Use ads if available, otherwise fallback to static images
+  const slides = bannerAds.length > 0 
+    ? bannerAds.map(ad => ({ 
+        src: ad.media_url, 
+        alt: ad.title, 
+        clickUrl: ad.click_url,
+        title: ad.title,
+        description: ad.description 
+      }))
+    : fallbackImages.map((img, idx) => ({ 
+        src: img, 
+        alt: `Banner ${idx + 1}`, 
+        clickUrl: null,
+        title: null,
+        description: null 
+      }));
 
-  const paginate = (direction: number) => {
+  const paginate = useCallback((direction: number) => {
     setIndex((prev) => {
       const newIndex = prev + direction;
-      if (newIndex < 0) return images.length - 1;
-      if (newIndex >= images.length) return 0;
+      if (newIndex < 0) return slides.length - 1;
+      if (newIndex >= slides.length) return 0;
       return newIndex;
     });
-  };
+  }, [slides.length]);
 
   // Auto-slide
   useEffect(() => {
@@ -37,7 +59,7 @@ const BannerSlider: React.FC = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isDragging]);
+  }, [isDragging, paginate]);
 
   return (
     <div className="relative w-full h-40 sm:h-48 md:h-52 lg:h-56 overflow-hidden rounded-xl">
@@ -74,13 +96,30 @@ const BannerSlider: React.FC = () => {
           whileDrag={{ scale: 0.97 }} // subtle shrink while dragging
           className="absolute w-full h-full cursor-grab active:cursor-grabbing"
         >
-          <Image
-            src={images[index]}
-            alt={`Banner ${index + 1}`}
-            fill
-            className="object-cover !object-center select-none pointer-events-none"
-            priority
-          />
+          {slides[index]?.clickUrl ? (
+            <a 
+              href={slides[index].clickUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full h-full"
+            >
+              <Image
+                src={slides[index].src}
+                alt={slides[index].alt}
+                fill
+                className="object-cover !object-center select-none pointer-events-none"
+                priority
+              />
+            </a>
+          ) : (
+            <Image
+              src={slides[index].src}
+              alt={slides[index].alt}
+              fill
+              className="object-cover !object-center select-none pointer-events-none"
+              priority
+            />
+          )}
         </motion.div>
       </AnimatePresence>
     </div>
