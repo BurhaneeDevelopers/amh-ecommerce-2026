@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from "../client";
 import { Blog } from "../schema/schema.type";
 
@@ -33,7 +34,7 @@ class BlogsService {
         )
       `)
       .eq("is_published", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -53,7 +54,7 @@ class BlogsService {
       `)
       .eq("is_published", true)
       .eq("is_featured", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -73,7 +74,7 @@ class BlogsService {
       `)
       .eq("category_id", categoryId)
       .eq("is_published", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -93,7 +94,7 @@ class BlogsService {
       `)
       .contains("tags", [tag])
       .eq("is_published", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -229,7 +230,7 @@ class BlogsService {
       `)
       .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%,excerpt.ilike.%${searchTerm}%`)
       .eq("is_published", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -290,7 +291,7 @@ class BlogsService {
         )
       `)
       .eq("is_published", true)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -318,7 +319,7 @@ class BlogsService {
       .eq("category_id", categoryId)
       .eq("is_published", true)
       .neq("id", blogId)
-      .order("publish_date", { ascending: false, nullsLast: true })
+      .order("publish_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(limit);
 

@@ -59,9 +59,9 @@ export default function CategoryBox() {
                                                             <DropdownMenuItem key={sub.name} asChild>
                                                                 <Link
                                                                     href={sub.href}
-                                                                    className="w-full cursor-pointer text-sm text-muted-foreground hover:text-primary transition-colors"
+                                                                    className="w-full cursor-pointer text-sm text-gray-700 hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-md px-2 py-1.5 flex items-center"
                                                                 >
-                                                                    {sub.name}
+                                                                    <span className="truncate">{sub.name}</span>
                                                                 </Link>
                                                             </DropdownMenuItem>
                                                         ))}
