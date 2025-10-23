@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useFormik } from "formik"
 import * as Yup from "yup"
+import { Use_create_cew_user } from "@/api/user.service"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 
 interface FormValues {
     full_name: string
@@ -18,6 +22,10 @@ export function CreateAccountForm({
     className,
     ...props
 }: React.ComponentProps<"form">) {
+    const router = useRouter()
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const createUserMutation = Use_create_cew_user()
+
     const formik = useFormik<FormValues>({
         initialValues: {
             full_name: "",
@@ -41,9 +49,29 @@ export function CreateAccountForm({
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
         }),
-        onSubmit: (values) => {
-            console.log("Form submitted:", values)
-            // TODO: API call for login/signup
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                setErrorMessage(null)
+                await createUserMutation.mutateAsync(values)
+                
+                toast.success("Account created successfully!", {
+                    description: "Welcome to MSI E-commerce. Redirecting to home...",
+                })
+                
+                // Redirect to home page after successful signup
+                setTimeout(() => {
+                    router.push("/")
+                }, 1500)
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Failed to create account. Please try again."
+                setErrorMessage(message)
+                
+                toast.error("Error", {
+                    description: message,
+                })
+            } finally {
+                setSubmitting(false)
+            }
         },
     })
 
@@ -58,6 +86,11 @@ export function CreateAccountForm({
                 <p className="text-muted-foreground text-sm text-balance">
                     Fill in your details to create an account
                 </p>
+                {errorMessage && (
+                    <div className="w-full p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                        {errorMessage}
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6">
@@ -119,9 +152,11 @@ export function CreateAccountForm({
 
                 {/* Password */}
                 <div className="grid gap-2">
+                    <label htmlFor="password">Password</label>
                     <Input
                         id="password"
                         type="password"
+                        placeholder="Enter your password"
                         {...formik.getFieldProps("password")}
                     />
                     {formik.touched.password && formik.errors.password && (
@@ -142,7 +177,7 @@ export function CreateAccountForm({
                 </div>
 
                 {/* Social Login */}
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                     Sign up with Google
                 </Button>
             </div>

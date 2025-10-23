@@ -17,11 +17,12 @@ export const Use_create_cew_user = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: async (payload: User_Profile) => {
-            return await users_service.signup_user(payload.email, payload.password)
+        mutationFn: async (payload: Omit<User_Profile, 'id' | 'profile_image'>) => {
+            return await users_service.signup_user(payload)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["users"] })
+            queryClient.invalidateQueries({ queryKey: ["auth", "user"] })
         },
     })
 }

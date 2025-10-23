@@ -36,11 +36,11 @@ class UsersService {
     }
 
     // register a new user
-    async signup_user(email: string, password: string): Promise<User | null> {
+    async signup_user(payload: Omit<User_Profile, 'id' | 'profile_image'>): Promise<User | null> {
         // Step 1: Create account in Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signUp({
-            email: email,
-            password: password,
+            email: payload.email,
+            password: payload.password,
         });
 
         if (authError) throw authError;
@@ -52,6 +52,9 @@ class UsersService {
         const userPayload = {
             id: user.id, // match auth user id
             email: user.email,
+            full_name: payload.full_name,
+            phone: payload.phone,
+            company_name: payload.company_name,
         };
 
         const { data: db_user, error: dbError } = await supabase
@@ -70,7 +73,7 @@ class UsersService {
     }
 
 
-    // ✅ Login user
+    // Login user
     async login_user(email: string, password: string): Promise<Session | null> {
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email,
