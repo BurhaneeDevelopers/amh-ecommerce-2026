@@ -192,8 +192,8 @@ const BlogsSection = () => {
                                                 />
                                             ) : (
                                                 <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <span className="text-gray-500 text-xs font-medium">
-                                                        {blog.author_name.charAt(0).toUpperCase()}
+                                                    <span className="text-gray-500 text-xs font-medium capitalize">
+                                                        {blog.author_name}
                                                     </span>
                                                 </div>
                                             )}
