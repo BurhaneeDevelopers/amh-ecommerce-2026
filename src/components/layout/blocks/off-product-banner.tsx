@@ -32,8 +32,8 @@ const OffProductBanner: React.FC = () => {
       </div>
       
       {/* Content overlay */}
-      <div className="relative z-10 flex items-center justify-between h-full p-6 bg-gradient-to-r from-black/50 to-transparent">
-        <div className="flex-1">
+      <div className="relative z-10 flex items-center justify-center h-full p-6 bg-gradient-to-r from-black/50 to-transparent">
+        <div className="flex flex-col items-center justify-center text-center">
           <div className="mb-2">
             <Badge variant="destructive" className="bg-red-600 text-white font-bold text-sm">
               LIMITED OFFER
@@ -56,21 +56,12 @@ const OffProductBanner: React.FC = () => {
             <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
               <Button 
                 size="lg" 
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg"
+                className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold shadow-lg"
               >
                 Get Deal Now
               </Button>
             </a>
           )}
-        </div>
-        
-        {/* Optional percentage or discount badge */}
-        <div className="ml-4 hidden md:block">
-          <div className="bg-white/90 rounded-full p-4 text-center min-w-[80px]">
-            <div className="text-red-600 font-bold text-lg">UP TO</div>
-            <div className="text-red-600 font-bold text-2xl">50%</div>
-            <div className="text-red-600 font-bold text-sm">OFF</div>
-          </div>
         </div>
       </div>
     </div>

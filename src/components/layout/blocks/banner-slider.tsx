@@ -132,9 +132,9 @@ const BannerSlider: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="absolute inset-0 flex items-center justify-start p-4 sm:p-6 lg:p-8"
+                className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8"
               >
-                <div className="text-white max-w-xs sm:max-w-md lg:max-w-lg">
+                <div className="text-white max-w-xs sm:max-w-md lg:max-w-lg text-center">
                   {slide?.title && (
                     <motion.h2 
                       initial={{ opacity: 0, y: 20 }}
@@ -169,7 +169,7 @@ const BannerSlider: React.FC = () => {
                       >
                         <Button 
                           size="sm"
-                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg pointer-events-auto transition-all duration-300 hover:scale-105 sm:text-base"
+                          className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold shadow-lg pointer-events-auto transition-all duration-300 hover:scale-105 sm:text-base"
                         >
                           Shop Now
                         </Button>

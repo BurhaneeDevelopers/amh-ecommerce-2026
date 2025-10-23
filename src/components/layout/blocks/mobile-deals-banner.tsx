@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useGetAdsByPlacement } from '@/api/ads.service';
 
 const MobileDealsSection: React.FC = () => {
@@ -40,21 +41,24 @@ const MobileDealsSection: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-      {displayAds.map((ad, index) => {
-        const content = (
-          <div className="relative h-24 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-r from-primary/5 to-secondary/5">
-            <div className="absolute inset-0">
-              <Image
-                src={ad.media_url}
-                alt={ad.title}
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 640px) 100vw, 50vw"
-              />
-            </div>
-            
-            {/* Content overlay */}
-            <div className="relative z-10 flex items-center h-full p-3 bg-black/30">
+      {displayAds.map((ad, index) => (
+        <div 
+          key={ad.id || index}
+          className="relative h-32 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-r from-primary/5 to-secondary/5"
+        >
+          <div className="absolute inset-0">
+            <Image
+              src={ad.media_url}
+              alt={ad.title}
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 640px) 100vw, 50vw"
+            />
+          </div>
+          
+          {/* Content overlay */}
+          <div className="relative z-10 flex flex-col justify-between h-full p-3 bg-black/30">
+            <div className="flex items-start justify-between">
               <div className="flex-1">
                 {ad.title && (
                   <h3 className="text-white font-semibold text-sm mb-1 drop-shadow-lg">
@@ -68,36 +72,26 @@ const MobileDealsSection: React.FC = () => {
                 )}
               </div>
               
-              <div className="ml-2">
-                <Badge variant="secondary" className="bg-white/90 text-primary font-semibold">
-                  Deal
-                </Badge>
-              </div>
+              <Badge variant="secondary" className="bg-white/90 text-primary font-semibold ml-2">
+                Deal
+              </Badge>
             </div>
+            
+            {ad.click_url && (
+              <div className="mt-2">
+                <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
+                  <Button 
+                    size="sm" 
+                    className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold w-full"
+                  >
+                    Shop Now
+                  </Button>
+                </a>
+              </div>
+            )}
           </div>
-        );
-
-        // If ad has click URL, make it clickable
-        if (ad.click_url) {
-          return (
-            <a 
-              key={ad.id || index}
-              href={ad.click_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block cursor-pointer"
-            >
-              {content}
-            </a>
-          );
-        }
-
-        return (
-          <div key={ad.id || index}>
-            {content}
-          </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 };

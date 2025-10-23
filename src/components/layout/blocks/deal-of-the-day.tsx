@@ -40,7 +40,7 @@ const DealOfTheDay: React.FC = () => {
 
                 <div className="p-2 w-full pb-4">
                     <a href={clickUrl} target="_blank" rel="noopener noreferrer">
-                        <Button className='bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] font-bold text-[#272727]/80 w-full'>
+                        <Button className='bg-gradient-to-r from-primary to-secondary font-bold text-gray-900 hover:opacity-90 w-full'>
                             <P>
                                 Shop Now
                             </P>

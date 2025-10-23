@@ -31,32 +31,29 @@ const ShopNowBanner: React.FC = () => {
       </div>
       
       {/* Content overlay */}
-      <div className="relative z-10 flex items-center justify-between h-full p-4 md:p-6 bg-black/20">
-        <div className="flex-1">
+      <div className="relative z-10 flex items-center justify-center h-full p-4 md:p-6 bg-black/20">
+        <div className="flex flex-col items-center justify-center text-center">
           {ad.title && (
             <h2 className="text-white font-bold text-lg md:text-2xl mb-1 drop-shadow-lg">
               {ad.title}
             </h2>
           )}
           {ad.description && (
-            <p className="text-white/90 text-sm md:text-base drop-shadow-lg">
+            <p className="text-white/90 text-sm md:text-base drop-shadow-lg mb-3">
               {ad.description}
             </p>
           )}
-        </div>
-        
-        {ad.click_url && (
-          <div className="ml-4">
+          {ad.click_url && (
             <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
               <Button 
                 size="lg" 
-                className="bg-white text-primary hover:bg-gray-100 font-semibold shadow-lg"
+                className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold shadow-lg"
               >
                 Shop Now
               </Button>
             </a>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

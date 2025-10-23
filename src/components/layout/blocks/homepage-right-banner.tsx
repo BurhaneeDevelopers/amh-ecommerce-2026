@@ -28,7 +28,7 @@ const HomepageRightBanner: React.FC = () => {
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
       {/* Overlay with title, description and button */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col items-center justify-center p-4 text-center">
         {ad.title && (
           <h3 className="text-white font-semibold text-lg mb-1">{ad.title}</h3>
         )}
@@ -39,7 +39,7 @@ const HomepageRightBanner: React.FC = () => {
           <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
             <Button 
               size="sm" 
-              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+              className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold"
             >
               Learn More
             </Button>
