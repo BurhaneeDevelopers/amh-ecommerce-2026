@@ -55,6 +55,8 @@ class UsersService {
             full_name: payload.full_name,
             phone: payload.phone,
             company_name: payload.company_name,
+            city: payload.city,
+            state: payload.state,
         };
 
         const { data: db_user, error: dbError } = await supabase

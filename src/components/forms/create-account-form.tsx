@@ -7,8 +7,9 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Use_create_cew_user } from "@/api/user.service"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "sonner"
+import { autoFetchLocation } from "@/lib/geolocation"
 
 interface FormValues {
     full_name: string
@@ -16,6 +17,8 @@ interface FormValues {
     phone: string
     email: string
     password: string
+    city: string
+    state: string
 }
 
 export function CreateAccountForm({
@@ -24,6 +27,7 @@ export function CreateAccountForm({
 }: React.ComponentProps<"form">) {
     const router = useRouter()
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [isLoadingLocation, setIsLoadingLocation] = useState(false)
     const createUserMutation = Use_create_cew_user()
 
     const formik = useFormik<FormValues>({
@@ -33,6 +37,8 @@ export function CreateAccountForm({
             phone: "",
             email: "",
             password: "",
+            city: "",
+            state: "",
         },
         validationSchema: Yup.object({
             full_name: Yup.string()
@@ -48,6 +54,8 @@ export function CreateAccountForm({
             password: Yup.string()
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
+            city: Yup.string().required("City is required"),
+            state: Yup.string().required("State is required"),
         }),
         onSubmit: async (values, { setSubmitting }) => {
             try {
@@ -74,6 +82,23 @@ export function CreateAccountForm({
             }
         },
     })
+
+    // Auto-fetch location on component mount
+    useEffect(() => {
+        const fetchLocation = async () => {
+            setIsLoadingLocation(true)
+            const location = await autoFetchLocation()
+            
+            if (location) {
+                formik.setFieldValue("city", location.city)
+                formik.setFieldValue("state", location.state)
+            }
+            setIsLoadingLocation(false)
+        }
+
+        fetchLocation()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <form
@@ -133,6 +158,36 @@ export function CreateAccountForm({
                     />
                     {formik.touched.phone && formik.errors.phone && (
                         <p className="text-sm text-red-500">{formik.errors.phone}</p>
+                    )}
+                </div>
+
+                {/* City */}
+                <div className="grid gap-2">
+                    <label htmlFor="city">City</label>
+                    <Input
+                        id="city"
+                        type="text"
+                        placeholder={isLoadingLocation ? "Detecting location..." : "Mumbai"}
+                        disabled={isLoadingLocation}
+                        {...formik.getFieldProps("city")}
+                    />
+                    {formik.touched.city && formik.errors.city && (
+                        <p className="text-sm text-red-500">{formik.errors.city}</p>
+                    )}
+                </div>
+
+                {/* State */}
+                <div className="grid gap-2">
+                    <label htmlFor="state">State</label>
+                    <Input
+                        id="state"
+                        type="text"
+                        placeholder={isLoadingLocation ? "Detecting location..." : "Maharashtra"}
+                        disabled={isLoadingLocation}
+                        {...formik.getFieldProps("state")}
+                    />
+                    {formik.touched.state && formik.errors.state && (
+                        <p className="text-sm text-red-500">{formik.errors.state}</p>
                     )}
                 </div>
 

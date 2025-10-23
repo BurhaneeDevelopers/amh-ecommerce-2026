@@ -98,6 +98,8 @@ export interface User_Profile {
   password: string;
   phone?: string;
   company_name?: string;
+  city?: string;
+  state?: string;
   profile_image?: string;
 }
 
