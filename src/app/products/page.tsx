@@ -103,7 +103,7 @@ const Shop = () => {
           filteredCount={allProducts.length}
         />
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 relative">
           {/* Filters Sidebar */}
           <FiltersSidebar
             showFilters={showFilters}

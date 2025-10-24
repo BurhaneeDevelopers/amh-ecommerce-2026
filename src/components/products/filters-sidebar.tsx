@@ -63,7 +63,7 @@ export default function FiltersSidebar({
 
   return (
     <aside
-      className={`lg:w-80 space-y-6 ${
+      className={`lg:w-80 space-y-6 !sticky top-10 ${
         showFilters ? 'block' : 'hidden lg:block'
       }`}
     >
@@ -78,7 +78,7 @@ export default function FiltersSidebar({
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Price Range */}
-          <div>
+          {/* <div>
             <h3 className="font-semibold mb-3">Price Range</h3>
             <div className="space-y-3">
               <Slider
@@ -93,7 +93,7 @@ export default function FiltersSidebar({
                 <span>${priceRange[1]}</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Categories */}
           <div>
@@ -165,7 +165,7 @@ export default function FiltersSidebar({
               <h3 className="font-semibold mb-3">Active Filters</h3>
               <div className="flex flex-wrap gap-2">
                 {getSelectedCategoryNames().map((categoryName) => (
-                  <Badge key={categoryName} variant="secondary" className="text-xs">
+                  <Badge key={categoryName} variant="secondary" className="text-xs bg-primary text-white">
                     {categoryName}
                     <button
                       onClick={() => {
@@ -181,7 +181,7 @@ export default function FiltersSidebar({
                   </Badge>
                 ))}
                 {getSelectedBrandNames().map((brandName) => (
-                  <Badge key={brandName} variant="secondary" className="text-xs">
+                  <Badge key={brandName} variant="secondary" className="text-xs bg-primary text-white">
                     {brandName}
                     <button
                       onClick={() => {

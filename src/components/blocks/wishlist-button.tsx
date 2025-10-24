@@ -63,7 +63,7 @@ const WishlistButton = ({
         className={`${
           isAdded
             ? "bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)]"
-            : "bg-white border border-amber-600 hover:text-white"
+            : "bg-transparent border border-amber-600 hover:text-white"
         } text-[#272727] absolute top-0 left-3 ${className}`}
         onClick={handleClick}
       >

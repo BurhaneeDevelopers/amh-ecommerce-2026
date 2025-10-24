@@ -15,7 +15,7 @@ type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
 const badgeStyles: Record<Exclude<BadgeVariant, null>, string> = {
   "on sale": "bg-red-500",
   "out of stock": "bg-gray-500",
-  featured: "bg-yellow-500 text-black",
+  featured: "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 text-black shadow-[0_0_10px_rgba(251,191,36,0.6)] animate-pulse",
 };
 
 const badgeLabels: Record<Exclude<BadgeVariant, null>, string> = {
@@ -54,7 +54,11 @@ const ProductCard: React.FC<Product> = ({
   };
 
   return (
-    <Card className="group relative overflow-hidden border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white h-72 sm:h-80 rounded-xl">
+    <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white h-72 sm:h-80 rounded-xl ${
+      badge === "featured" 
+        ? "border-2 border-yellow-400 shadow-[0_0_25px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
+        : "border-gray-200"
+    }`}>
       <CardContent className="p-0 h-full flex flex-col">
         {/* Product Image Container */}
         <div className="relative overflow-hidden bg-white h-40 sm:h-48 flex-shrink-0 border-b border-gray-100">
@@ -83,7 +87,7 @@ const ProductCard: React.FC<Product> = ({
           {/* Badge */}
           {badge && (
             <Badge
-              className={`absolute top-0 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px]`}
+              className={`absolute top-0 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
             >
               {badgeLabels[badge]}
             </Badge>

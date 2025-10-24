@@ -95,7 +95,7 @@ const LatestProducts = () => {
         <Container className='!px-0'>
             {/* Header */}
             <div className="flex justify-between items-center">
-                <H2>Latest Products</H2>
+                <H2>Featured Products</H2>
                 <div className="flex gap-2 items-center">
                     <button
                         onClick={handlePrev}
@@ -148,7 +148,7 @@ const LatestProducts = () => {
                         {currentProducts.map((product) => (
                             <div
                                 key={`${product.id}-${currentPage}`}
-                                className="w-full h-fit"
+                                className="w-full h-fit pb-10"
                             >
                                 <ProductCard {...product} />
                             </div>
