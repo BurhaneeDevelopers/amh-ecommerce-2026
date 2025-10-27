@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
 import Image from "next/image";
 import { H2 } from "@/components/typography/typography";
@@ -21,6 +21,9 @@ const TestimonialsSection = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const controls = useAnimation();
+  const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Show 3 testimonials at a time on desktop, 1 on mobile
   const itemsPerPage =
@@ -29,19 +32,54 @@ const TestimonialsSection = () => {
   const canGoPrev = currentIndex > 0;
   const canGoNext = currentIndex < totalPages - 1;
 
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (totalPages <= 1 || isPaused) return;
+    
+    const startAutoScroll = () => {
+      autoScrollIntervalRef.current = setInterval(() => {
+        if (!isAnimating) {
+          setIsAnimating(true);
+          setCurrentIndex((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
+          setTimeout(() => setIsAnimating(false), 300);
+        }
+      }, 5000); // Change slide every 5 seconds
+    };
+    
+    startAutoScroll();
+    
+    return () => {
+      if (autoScrollIntervalRef.current) {
+        clearInterval(autoScrollIntervalRef.current);
+      }
+    };
+  }, [totalPages, isPaused, isAnimating]);
+
   const handleNext = useCallback(() => {
     if (canGoNext && !isAnimating) {
+      // Pause auto-scrolling temporarily when manually navigating
+      setIsPaused(true);
       setIsAnimating(true);
       setCurrentIndex((prev) => prev + 1);
-      setTimeout(() => setIsAnimating(false), 300);
+      setTimeout(() => {
+        setIsAnimating(false);
+        // Resume auto-scrolling after a delay
+        setTimeout(() => setIsPaused(false), 5000);
+      }, 300);
     }
   }, [canGoNext, isAnimating]);
 
   const handlePrev = useCallback(() => {
     if (canGoPrev && !isAnimating) {
+      // Pause auto-scrolling temporarily when manually navigating
+      setIsPaused(true);
       setIsAnimating(true);
       setCurrentIndex((prev) => prev - 1);
-      setTimeout(() => setIsAnimating(false), 300);
+      setTimeout(() => {
+        setIsAnimating(false);
+        // Resume auto-scrolling after a delay
+        setTimeout(() => setIsPaused(false), 5000);
+      }, 300);
     }
   }, [canGoPrev, isAnimating]);
 
@@ -131,7 +169,7 @@ const TestimonialsSection = () => {
             {currentTestimonials.map((testimonial: Testimonial) => (
               <div
                 key={testimonial.id}
-                className="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300"
+                className="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-[320px]"
               >
                 {/* Quote Icon */}
                 <div className="flex justify-between items-start mb-4">
@@ -142,12 +180,14 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Testimonial Text */}
-                <p className="text-gray-700 text-sm leading-relaxed mb-6 line-clamp-4">
-                  &ldquo;{testimonial.testimonial_text}&rdquo;
-                </p>
+                <div className="flex-grow">
+                  <p className="text-gray-700 text-sm leading-relaxed line-clamp-5">
+                    &ldquo;{testimonial.testimonial_text}&rdquo;
+                  </p>
+                </div>
 
-                {/* Client Info */}
-                <div className="flex items-center gap-3">
+                {/* Client Info - Always at bottom */}
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
                   {testimonial.client_image ? (
                     <Image
                       src={testimonial.client_image}
