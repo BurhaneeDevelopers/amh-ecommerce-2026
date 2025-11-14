@@ -21,18 +21,18 @@ const LatestProducts = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
     
-    // Responsive configuration - improved for better laptop experience
+    // Responsive configuration - optimized for all screen sizes
     const getResponsiveConfig = useCallback(() => {
         if (typeof window !== 'undefined') {
             const width = window.innerWidth;
-            if (width < 640) return { itemsPerRow: 1, rows: 2 }; // mobile: 1x2 for better card size
-            if (width < 768) return { itemsPerRow: 2, rows: 2 }; // tablet: 2x2  
-            if (width < 1024) return { itemsPerRow: 2, rows: 2 }; // small laptop: 2x2 to prevent compression
-            if (width < 1280) return { itemsPerRow: 3, rows: 2 }; // medium laptop: 3x2
-            if (width < 1536) return { itemsPerRow: 4, rows: 2 }; // large laptop: 4x2
+            if (width < 640) return { itemsPerRow: 1, rows: 2 }; // mobile: 1x2
+            if (width < 768) return { itemsPerRow: 2, rows: 2 }; // small tablet: 2x2  
+            if (width < 1024) return { itemsPerRow: 2, rows: 2 }; // tablet/small laptop: 2x2
+            if (width < 1280) return { itemsPerRow: 3, rows: 2 }; // laptop: 3x2
+            if (width < 1536) return { itemsPerRow: 3, rows: 2 }; // large laptop: 3x2
             return { itemsPerRow: 4, rows: 2 }; // xl desktop: 4x2
         }
-        return { itemsPerRow: 4, rows: 2 };
+        return { itemsPerRow: 3, rows: 2 };
     }, []);
     
     const [config, setConfig] = useState(getResponsiveConfig());
@@ -124,7 +124,7 @@ const LatestProducts = () => {
                 <div 
                     className="relative overflow-hidden"
                     style={{ 
-                        minHeight: config.rows === 1 ? '300px' : config.itemsPerRow === 1 ? '600px' : '640px' // Responsive heights based on layout
+                        minHeight: config.itemsPerRow === 1 ? '600px' : '500px' // Responsive heights
                     }}
                 >
                     <motion.div

@@ -176,7 +176,9 @@ export type AdPlacement =
   | "off_product"
   | "shop_now"
   | "mobile_deals"
-  | "homepage_right_banner";
+  | "homepage_right_banner"
+  | "homepage_right_banner_2"
+  | "featured_deal";
 
 export type AdType = "image" | "video";
 

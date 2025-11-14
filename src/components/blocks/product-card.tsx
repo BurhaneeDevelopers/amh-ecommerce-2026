@@ -54,14 +54,14 @@ const ProductCard: React.FC<Product> = ({
   };
 
   return (
-    <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white h-72 sm:h-80 rounded-xl ${
+    <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl flex flex-col ${
       badge === "featured" 
         ? "border-2 border-yellow-400 shadow-[0_0_25px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
         : "border-gray-200"
     }`}>
       <CardContent className="p-0 h-full flex flex-col">
-        {/* Product Image Container */}
-        <div className="relative overflow-hidden bg-white h-40 sm:h-48 flex-shrink-0 border-b border-gray-100">
+        {/* Product Image Container - Fixed aspect ratio */}
+        <div className="relative overflow-hidden bg-white aspect-square flex-shrink-0 border-b border-gray-100">
           <Image
             width={500}
             height={500}
@@ -87,32 +87,32 @@ const ProductCard: React.FC<Product> = ({
           {/* Badge */}
           {badge && (
             <Badge
-              className={`absolute top-0 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
+              className={`absolute top-2 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
             >
               {badgeLabels[badge]}
             </Badge>
           )}
         </div>
 
-        {/* Product Info - Compact */}
-        <div className="flex flex-col flex-grow p-3 justify-between">
-          <div className="space-y-1">
-            <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+        {/* Product Info - Flexible height with proper spacing */}
+        <div className="flex flex-col flex-grow p-3 sm:p-4 justify-between min-h-[120px]">
+          <div className="space-y-1 flex-grow">
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
               {product_name}
             </h3>
             {model_number && (
-              <p className="text-xs text-gray-500 font-medium">
+              <p className="text-xs sm:text-sm text-gray-500 font-medium truncate">
                 {model_number}
               </p>
             )}
           </div>
 
-          {/* Get Quote Button - Compact */}
+          {/* Get Quote Button - Responsive */}
           <Button
             onClick={handleGetQuote}
             disabled={badge === "out of stock"}
             size="sm"
-            className={`w-full mt-2 h-8 rounded-lg font-medium text-xs transition-all duration-200 ${
+            className={`w-full mt-3 h-9 sm:h-10 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 ${
               badge === "out of stock"
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100"
                 : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"

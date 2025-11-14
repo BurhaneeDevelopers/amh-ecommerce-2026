@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
 import Image from "next/image";
 import { H2 } from "@/components/typography/typography";
@@ -22,12 +22,29 @@ const TestimonialsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const controls = useAnimation();
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Show 3 testimonials at a time on desktop, 1 on mobile
-  const itemsPerPage =
-    typeof window !== "undefined" && window.innerWidth < 768 ? 1 : 3;
+  // Responsive items per page
+  const getItemsPerPage = () => {
+    if (typeof window === "undefined") return 3;
+    const width = window.innerWidth;
+    if (width < 768) return 1; // mobile
+    if (width < 1024) return 2; // tablet
+    return 3; // desktop
+  };
+  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
+  
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerPage(getItemsPerPage());
+      setCurrentIndex(0); // Reset to first page on resize
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
   const canGoPrev = currentIndex > 0;
   const canGoNext = currentIndex < totalPages - 1;
@@ -164,7 +181,7 @@ const TestimonialsSection = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
           >
             {currentTestimonials.map((testimonial: Testimonial) => (
               <div
