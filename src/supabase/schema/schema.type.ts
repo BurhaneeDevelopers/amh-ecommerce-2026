@@ -41,7 +41,7 @@ export interface Product {
   stock_status?: boolean;
   created_at?: Date | string;
   updated_at?: Date | string;
-  
+
   // Joined data from related tables
   brand?: {
     id: string;
@@ -247,7 +247,59 @@ export interface Blog {
   views_count?: number; // track article views
   created_at?: string;
   updated_at?: string | null;
-  
+
   // Joined fields
   category?: BlogCategory;
+}
+
+// Product Comments/Feedback System
+export type CommentStatus = "pending" | "approved" | "rejected";
+
+export interface ProductComment {
+  id?: string | null;
+  product_id: string; // FK to Product
+  user_id: string; // FK to User_Profile
+  rating: number; // 1-5 star rating
+  title: string; // Comment title/summary
+  comment: string; // Detailed feedback
+  pros?: string[]; // Array of positive points
+  cons?: string[]; // Array of negative points
+  is_verified_purchase?: boolean; // If user actually purchased the product
+  status: CommentStatus;
+  admin_notes?: string | null; // Internal notes for admin
+  approved_by?: string | null; // Admin user ID who approved/rejected
+  approved_at?: string | null;
+  is_featured?: boolean; // Highlight exceptional reviews
+  helpful_count?: number; // Number of users who found this helpful
+  created_at?: string;
+  updated_at?: string | null;
+
+  // Joined fields
+  user?: User_Profile;
+  product?: Product;
+  admin?: User_Profile; // Admin who approved/rejected
+}
+
+// Comment Helpfulness tracking
+export interface CommentHelpful {
+  id?: string | null;
+  comment_id: string; // FK to ProductComment
+  user_id: string; // FK to User_Profile
+  is_helpful: boolean; // true for helpful, false for not helpful
+  created_at?: string;
+}
+
+// Comment Replies (for admin responses)
+export interface CommentReply {
+  id?: string | null;
+  comment_id: string; // FK to ProductComment
+  admin_id: string; // FK to User_Profile (admin)
+  reply_text: string;
+  is_public: boolean; // Whether to show publicly or keep internal
+  created_at?: string;
+  updated_at?: string | null;
+
+  // Joined fields
+  admin?: User_Profile;
+  comment?: ProductComment;
 }

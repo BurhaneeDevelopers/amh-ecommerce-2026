@@ -11,6 +11,7 @@ import ProductImageGallery from '@/components/product/product-image-gallery'
 import ProductInfo from '@/components/product/product-info'
 import RelatedItemsSection from '@/components/product/related-items-section'
 import Breadcrumb from '@/components/product/breadcrumb'
+import CommentsSection from '@/components/product/comments-section'
 
 export default function ProductDetailsPage() {
   const params = useParams()
@@ -130,6 +131,11 @@ export default function ProductDetailsPage() {
         accessories={productAccessories}
         spares={productSpares}
       />
+
+      {/* Comments Section */}
+      <div className="mt-16">
+        <CommentsSection productId={productId} />
+      </div>
 
       {/* Get Quote Modal */}
       <GetQuoteModal
