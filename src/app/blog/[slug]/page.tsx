@@ -164,16 +164,43 @@ export default function BlogDetailPage() {
                             </Button>
                         </div>
 
-                        {/* Featured Image */}
-                        {blog.featured_image && (
-                            <div className="relative w-full h-[400px] md:h-[500px] mb-8 rounded-xl overflow-hidden">
-                                <Image
-                                    src={blog.featured_image}
-                                    alt={blog.title}
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                />
+                        {/* Gallery Images */}
+                        {blog.gallery_images && blog.gallery_images.length > 0 && (
+                            <div className="mb-8">
+                                {blog.gallery_images.length === 1 ? (
+                                    // Single image - full width
+                                    <div className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden">
+                                        <Image
+                                            src={blog.gallery_images[0]}
+                                            alt={blog.title}
+                                            fill
+                                            className="object-cover"
+                                            priority
+                                        />
+                                    </div>
+                                ) : (
+                                    // Multiple images - grid layout
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {blog.gallery_images.map((image, index) => (
+                                            <div 
+                                                key={index} 
+                                                className={`relative rounded-xl overflow-hidden ${
+                                                    index === 0 && blog.gallery_images!.length % 2 !== 0 
+                                                        ? 'md:col-span-2 h-[400px] md:h-[500px]' 
+                                                        : 'h-[300px] md:h-[350px]'
+                                                }`}
+                                            >
+                                                <Image
+                                                    src={image}
+                                                    alt={`${blog.title} - Image ${index + 1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    priority={index === 0}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -196,25 +223,6 @@ export default function BlogDetailPage() {
                                         {tag}
                                     </Link>
                                 ))}
-                            </div>
-                        )}
-
-                        {/* Gallery Images */}
-                        {blog.gallery_images && blog.gallery_images.length > 0 && (
-                            <div className="mb-8">
-                                <h3 className="text-xl font-semibold mb-4">Gallery</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    {blog.gallery_images.map((image, index) => (
-                                        <div key={index} className="relative h-48 rounded-lg overflow-hidden">
-                                            <Image
-                                                src={image}
-                                                alt={`Gallery image ${index + 1}`}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
                         )}
                     </article>

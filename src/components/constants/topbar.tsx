@@ -26,7 +26,8 @@ export default function Topbar() {
                     </div>
                     <div>
                         <H4 className="font-semibold">Customer Support</H4>
-                        <P>123-456-7890</P>
+                        <P>+91 86088 18555</P>
+                        <P>+91 82489 27038</P>
                     </div>
                 </div>
 

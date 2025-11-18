@@ -157,7 +157,7 @@ const LatestProducts = () => {
                         {currentProducts.map((product) => (
                             <div
                                 key={`${product.id}-${currentPage}`}
-                                className="w-full h-fit pb-10"
+                                className="w-full h-fit"
                             >
                                 <ProductCard {...product} />
                             </div>

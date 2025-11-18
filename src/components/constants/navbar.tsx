@@ -15,7 +15,7 @@ import ToggleCategories from "../blocks/toggle-categories";
 export default function Navbar() {
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Products", href: "/contact" },
+    { label: "Products", href: "/products" },
     { label: "Blog", href: "/blog" },
   ];
   return (

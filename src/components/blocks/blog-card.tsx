@@ -25,9 +25,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
                 <CardContent className="p-0 h-full flex flex-col">
                     {/* Featured Image */}
                     <div className="relative h-48 overflow-hidden flex-shrink-0 border-b border-gray-100">
-                        {blog.featured_image ? (
+                        {blog.gallery_images && blog.gallery_images.length > 0 ? (
                             <Image
-                                src={blog.featured_image}
+                                src={blog.gallery_images[0]}
                                 alt={blog.title}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-300"

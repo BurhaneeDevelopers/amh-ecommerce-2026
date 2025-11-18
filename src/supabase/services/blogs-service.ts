@@ -281,7 +281,10 @@ class BlogsService {
         title,
         slug,
         excerpt,
-        featured_image,
+        gallery_images,
+        author_name,
+        author_image,
+        read_time,
         publish_date,
         created_at,
         category:category_id (
@@ -307,7 +310,10 @@ class BlogsService {
         title,
         slug,
         excerpt,
-        featured_image,
+        gallery_images,
+        author_name,
+        author_image,
+        read_time,
         publish_date,
         created_at,
         category:category_id (

@@ -56,7 +56,7 @@ const ProductCard: React.FC<Product> = ({
   return (
     <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl flex flex-col ${
       badge === "featured" 
-        ? "border-2 border-yellow-400 shadow-[0_0_25px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
+        ? "border-2 border-yellow-400 shadow-[0_0_5px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
         : "border-gray-200"
     }`}>
       <CardContent className="p-0 h-full flex flex-col">
