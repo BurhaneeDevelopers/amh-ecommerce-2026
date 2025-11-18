@@ -20,6 +20,7 @@ const LatestProducts = () => {
     
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
     
     // Responsive configuration - optimized for all screen sizes
     const getResponsiveConfig = useCallback(() => {
@@ -35,10 +36,18 @@ const LatestProducts = () => {
         return { itemsPerRow: 3, rows: 2 };
     }, []);
     
-    const [config, setConfig] = useState(getResponsiveConfig());
+    const [config, setConfig] = useState({ itemsPerRow: 3, rows: 2 });
+    
+    // Set mounted state and initial config
+    useEffect(() => {
+        setIsMounted(true);
+        setConfig(getResponsiveConfig());
+    }, [getResponsiveConfig]);
     
     // Handle window resize with debouncing
     useEffect(() => {
+        if (!isMounted) return;
+        
         let timeoutId: NodeJS.Timeout;
         const handleResize = () => {
             clearTimeout(timeoutId);
@@ -53,7 +62,7 @@ const LatestProducts = () => {
             window.removeEventListener('resize', handleResize);
             clearTimeout(timeoutId);
         };
-    }, [getResponsiveConfig]);
+    }, [getResponsiveConfig, isMounted]);
 
     // Limit products for "Latest Products" section (typically 12-16 products max)
     const maxProducts = 16; // Show max 16 latest products

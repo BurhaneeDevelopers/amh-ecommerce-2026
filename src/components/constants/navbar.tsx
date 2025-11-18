@@ -15,9 +15,8 @@ import ToggleCategories from "../blocks/toggle-categories";
 export default function Navbar() {
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Contact", href: "/contact" },
-    { label: "Brands", href: "/brands" },
-    { label: "Blogs", href: "/blogs" },
+    { label: "Products", href: "/contact" },
+    { label: "Blog", href: "/blog" },
   ];
   return (
     <NavigationMenu className="min-w-full" viewport={false}>
