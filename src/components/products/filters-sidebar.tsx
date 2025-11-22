@@ -63,11 +63,12 @@ export default function FiltersSidebar({
 
   return (
     <aside
-      className={`lg:w-80 space-y-6 !sticky top-10 ${
+      className={`lg:w-80 space-y-6 ${
         showFilters ? 'block' : 'hidden lg:block'
       }`}
     >
-      <Card>
+      <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+        <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Filters</CardTitle>
@@ -201,6 +202,7 @@ export default function FiltersSidebar({
           )}
         </CardContent>
       </Card>
+      </div>
     </aside>
   )
 }
