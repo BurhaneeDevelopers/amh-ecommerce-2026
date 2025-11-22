@@ -31,8 +31,8 @@ export default function Navbar() {
   
   return (
     <NavigationMenu className="min-w-full" viewport={false}>
-      <Container className="bg-[#272727] text-white !py-4 w-full">
-        <div className="mx-auto flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 w-full">
+      <Container className="bg-[#272727] text-white !py-2 md:!py-4 w-full">
+        <div className="mx-auto flex flex-wrap lg:flex-nowrap items-center justify-between gap-2 md:gap-4 w-full">
           {/* Left: Category Button with dropdown */}
           <NavigationMenuList>
             <ToggleCategories />
@@ -55,8 +55,8 @@ export default function Navbar() {
           {/* Mobile Menu Modal */}
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-white text-black !py-7 !px-4 lg:hidden hover:bg-gray-100">
-                <Menu className="!w-8 !h-8" />
+              <Button className="bg-white text-black !py-2 !px-3 lg:hidden hover:bg-gray-100">
+                <Menu className="!w-5 !h-5" />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -92,11 +92,11 @@ export default function Navbar() {
           <div className="flex items-center w-full lg:w-auto">
             <Input
               type="text"
-              placeholder="Search here..."
-              className="bg-white rounded-e-none w-full flex-grow lg:!w-80 !text-base !py-7 outline-none border-none"
+              placeholder="Search..."
+              className="bg-white rounded-e-none w-full flex-grow lg:!w-80 !text-sm md:!text-base !py-5 md:!py-7 outline-none border-none"
             />
-            <Button className="rounded-s-none bg-gradient-to-tl from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-7 !px-4">
-              <Search className="!w-7 !h-7" />
+            <Button className="rounded-s-none bg-gradient-to-tl from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-5 md:!py-7 !px-3 md:!px-4">
+              <Search className="!w-5 !h-5 md:!w-7 md:!h-7" />
             </Button>
           </div>
         </div>
