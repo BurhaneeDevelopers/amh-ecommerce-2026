@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import Image from "next/image";
 import { H2 } from "@/components/typography/typography";
 import { Container } from "../container";
@@ -18,92 +16,6 @@ const TestimonialsSection = () => {
   } = useGetActiveTestimonials();
 
   if (testimonials_error) toast.error("Error fetching testimonials");
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Responsive items per page
-  const getItemsPerPage = () => {
-    if (typeof window === "undefined") return 3;
-    const width = window.innerWidth;
-    if (width < 768) return 1; // mobile
-    if (width < 1024) return 2; // tablet
-    return 3; // desktop
-  };
-  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
-  
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerPage(getItemsPerPage());
-      setCurrentIndex(0); // Reset to first page on resize
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
-  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
-  const canGoPrev = currentIndex > 0;
-  const canGoNext = currentIndex < totalPages - 1;
-
-  // Auto-scroll functionality
-  useEffect(() => {
-    if (totalPages <= 1 || isPaused) return;
-    
-    const startAutoScroll = () => {
-      autoScrollIntervalRef.current = setInterval(() => {
-        if (!isAnimating) {
-          setIsAnimating(true);
-          setCurrentIndex((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
-          setTimeout(() => setIsAnimating(false), 300);
-        }
-      }, 5000); // Change slide every 5 seconds
-    };
-    
-    startAutoScroll();
-    
-    return () => {
-      if (autoScrollIntervalRef.current) {
-        clearInterval(autoScrollIntervalRef.current);
-      }
-    };
-  }, [totalPages, isPaused, isAnimating]);
-
-  const handleNext = useCallback(() => {
-    if (canGoNext && !isAnimating) {
-      // Pause auto-scrolling temporarily when manually navigating
-      setIsPaused(true);
-      setIsAnimating(true);
-      setCurrentIndex((prev) => prev + 1);
-      setTimeout(() => {
-        setIsAnimating(false);
-        // Resume auto-scrolling after a delay
-        setTimeout(() => setIsPaused(false), 5000);
-      }, 300);
-    }
-  }, [canGoNext, isAnimating]);
-
-  const handlePrev = useCallback(() => {
-    if (canGoPrev && !isAnimating) {
-      // Pause auto-scrolling temporarily when manually navigating
-      setIsPaused(true);
-      setIsAnimating(true);
-      setCurrentIndex((prev) => prev - 1);
-      setTimeout(() => {
-        setIsAnimating(false);
-        // Resume auto-scrolling after a delay
-        setTimeout(() => setIsPaused(false), 5000);
-      }, 300);
-    }
-  }, [canGoPrev, isAnimating]);
-
-  const currentTestimonials = testimonials.slice(
-    currentIndex * itemsPerPage,
-    (currentIndex + 1) * itemsPerPage
-  );
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -142,140 +54,65 @@ const TestimonialsSection = () => {
   return (
     <Container className="!px-0 mt-16">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-7">
         <H2>What Our Customers Say</H2>
-        {totalPages > 1 && (
-          <div className="flex gap-2 items-center">
-            <button
-              onClick={handlePrev}
-              className={`bg-[#272727] p-2 rounded-full transition-opacity duration-200 ${
-                !canGoPrev || isAnimating
-                  ? "opacity-30 cursor-not-allowed"
-                  : "opacity-100 hover:opacity-80"
-              }`}
-              disabled={!canGoPrev || isAnimating}
-            >
-              <ChevronLeft color="#fff" size={24} />
-            </button>
-            <button
-              onClick={handleNext}
-              className={`bg-[#272727] p-2 rounded-full transition-opacity duration-200 ${
-                !canGoNext || isAnimating
-                  ? "opacity-30 cursor-not-allowed"
-                  : "opacity-100 hover:opacity-80"
-              }`}
-              disabled={!canGoNext || isAnimating}
-            >
-              <ChevronRight color="#fff" size={24} />
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Testimonials Grid */}
-      <div className="mt-7">
-        <div className="relative overflow-hidden min-h-[300px]">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+      {/* Testimonials - Horizontal scroll on mobile, grid on desktop */}
+      <div className="flex gap-4 sm:gap-6 overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide">
+        {testimonials.map((testimonial: Testimonial) => (
+          <div
+            key={testimonial.id}
+            className="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-[320px] w-[360px] md:w-auto snap-start flex-shrink-0"
           >
-            {currentTestimonials.map((testimonial: Testimonial) => (
-              <div
-                key={testimonial.id}
-                className="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col h-[320px]"
-              >
-                {/* Quote Icon */}
-                <div className="flex justify-between items-start mb-4">
-                  <Quote className="text-gray-300" size={32} />
-                  <div className="flex gap-1">
-                    {renderStars(testimonial.rating)}
-                  </div>
-                </div>
+            {/* Quote Icon */}
+            <div className="flex justify-between items-start mb-4">
+              <Quote className="text-gray-300" size={32} />
+              <div className="flex gap-1">
+                {renderStars(testimonial.rating)}
+              </div>
+            </div>
 
-                {/* Testimonial Text */}
-                <div className="flex-grow">
-                  <p className="text-gray-700 text-sm leading-relaxed line-clamp-5">
-                    &ldquo;{testimonial.testimonial_text}&rdquo;
+            {/* Testimonial Text */}
+            <div className="flex-grow">
+              <p className="text-gray-700 text-sm leading-relaxed line-clamp-5">
+                &ldquo;{testimonial.testimonial_text}&rdquo;
+              </p>
+            </div>
+
+            {/* Client Info - Always at bottom */}
+            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
+              {testimonial.client_image ? (
+                <Image
+                  src={testimonial.client_image}
+                  alt={testimonial.client_name}
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500 font-medium text-lg">
+                    {testimonial.client_name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div>
+                <h4 className="font-semibold text-gray-900 text-sm">
+                  {testimonial.client_name}
+                </h4>
+                {testimonial.client_designation && (
+                  <p className="text-xs text-gray-500">
+                    {testimonial.client_designation}
+                    {testimonial.company_name &&
+                      `, ${testimonial.company_name}`}
                   </p>
-                </div>
-
-                {/* Client Info - Always at bottom */}
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
-                  {testimonial.client_image ? (
-                    <Image
-                      src={testimonial.client_image}
-                      alt={testimonial.client_name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500 font-medium text-lg">
-                        {testimonial.client_name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <div>
-                    <h4 className="font-semibold text-gray-900 text-sm">
-                      {testimonial.client_name}
-                    </h4>
-                    {testimonial.client_designation && (
-                      <p className="text-xs text-gray-500">
-                        {testimonial.client_designation}
-                        {testimonial.company_name &&
-                          `, ${testimonial.company_name}`}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
-            ))}
-
-            {/* Fill empty slots to maintain grid structure */}
-            {Array.from({
-              length: itemsPerPage - currentTestimonials.length,
-            }).map((_, index) => (
-              <div
-                key={`empty-${index}`}
-                className="w-full h-fit opacity-0 pointer-events-none"
-              >
-                {/* Invisible placeholder to maintain grid */}
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Pagination Dots */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center mt-6">
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (!isAnimating) {
-                    setIsAnimating(true);
-                    setCurrentIndex(index);
-                    setTimeout(() => setIsAnimating(false), 300);
-                  }
-                }}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                  index === currentIndex
-                    ? "bg-[#272727] w-6"
-                    : "bg-gray-300 hover:bg-gray-400"
-                }`}
-                disabled={isAnimating}
-              />
-            ))}
+            </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </Container>
   );
 };

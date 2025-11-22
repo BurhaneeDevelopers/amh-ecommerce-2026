@@ -68,7 +68,7 @@ const BannerSlider: React.FC = () => {
   }, [isDragging, paginate, slides.length]);
 
   // Handle drag end
-  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = useCallback((_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     setIsDragging(false);
     const swipe = swipePower(info.offset.x, info.velocity.x);
     if (swipe < -swipeConfidenceThreshold) {
@@ -103,80 +103,65 @@ const BannerSlider: React.FC = () => {
               scale: 0.98,
               transition: { duration: 0.2 }
             }}
-            className="absolute w-full h-full cursor-grab active:cursor-grabbing"
+            className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"
             style={{
               pointerEvents: slideIndex === index ? 'auto' : 'none'
             }}
           >
-            {/* Responsive image container */}
-            <div className="relative w-full h-full">
+            {/* Responsive image container - Full width, no cropping */}
+            <div className="relative w-full h-full rounded-2xl overflow-hidden">
               <Image
                 src={slide.src}
                 alt={slide.alt}
                 fill
-                className="object-contain sm:object-cover select-none pointer-events-none"
-                style={{
-                  objectPosition: 'center'
-                }}
+                className="object-contain select-none pointer-events-none rounded-2xl"
                 priority={slideIndex === index}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"
+                sizes="100vw"
               />
-              
-              {/* Gradient overlay for better text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent sm:from-black/50 sm:via-black/10 sm:to-transparent" />
             </div>
             
-            {/* Content overlay - only animate when slide is active */}
-            {slideIndex === index && (
+            {/* Content overlay - Bottom right glassmorphism card */}
+            {slideIndex === index && (slide?.title || slide?.description || slide?.clickUrl) && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8"
+                className="absolute inset-0 flex items-end justify-end p-4 sm:p-6 lg:p-8 pointer-events-none"
               >
-                <div className="text-white max-w-xs sm:max-w-md lg:max-w-lg text-center">
+                {/* Glassmorphism card for text content */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 30, y: 30 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="backdrop-blur-md bg-white/85 dark:bg-gray-900/85 rounded-2xl shadow-2xl border border-white/30 p-3 sm:p-4 max-w-[280px] sm:max-w-xs"
+                >
                   {slide?.title && (
-                    <motion.h2 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                      className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg leading-tight"
-                    >
+                    <h2 className="text-sm sm:text-base md:text-lg font-bold mb-1.5 text-gray-900 dark:text-white leading-tight">
                       {slide.title}
-                    </motion.h2>
+                    </h2>
                   )}
                   {slide?.description && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                      className="text-xs sm:text-sm md:text-base mb-3 sm:mb-4 drop-shadow-lg opacity-90 leading-relaxed"
-                    >
+                    <p className="text-xs sm:text-sm mb-2.5 text-gray-700 dark:text-gray-200 leading-snug line-clamp-2">
                       {slide.description}
-                    </motion.p>
+                    </p>
                   )}
                   {slide?.clickUrl && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                    <a 
+                      href={slide.clickUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="pointer-events-auto inline-block"
                     >
-                      <a 
-                        href={slide.clickUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
+                      <Button 
+                        size="sm"
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 text-xs sm:text-sm"
                       >
-                        <Button 
-                          size="sm"
-                          className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold shadow-lg pointer-events-auto transition-all duration-300 hover:scale-105 sm:text-base"
-                        >
-                          Shop Now
-                        </Button>
-                      </a>
-                    </motion.div>
+                        Shop Now
+                      </Button>
+                    </a>
                   )}
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </motion.div>

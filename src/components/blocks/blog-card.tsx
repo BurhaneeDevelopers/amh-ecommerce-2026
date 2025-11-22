@@ -20,8 +20,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
     }
 
     return (
-        <Link href={`/blog/${blog.slug}`}>
-            <Card className="group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl h-full flex flex-col">
+        <Link href={`/blog/${blog.slug}`} className="block h-full">
+            <Card className="group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl h-full flex flex-col hover:-translate-y-1">
                 <CardContent className="p-0 h-full flex flex-col">
                     {/* Featured Image */}
                     <div className="relative h-48 overflow-hidden flex-shrink-0 border-b border-gray-100">

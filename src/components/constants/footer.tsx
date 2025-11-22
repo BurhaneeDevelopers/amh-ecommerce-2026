@@ -85,7 +85,7 @@ const Footer = () => {
                         </h3>
 
                         <ul className="space-y-3 text-sm">
-                            <li>
+                            {/* <li>
                                 <Link href="/delivery-info" className="text-gray-300 hover:text-primary transition-colors hover:translate-x-1 inline-block">
                                     Delivery Information
                                 </Link>
@@ -104,7 +104,7 @@ const Footer = () => {
                                 <Link href="/terms" className="text-gray-300 hover:text-primary transition-colors hover:translate-x-1 inline-block">
                                     Terms & Conditions
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link href="/faq" className="text-gray-300 hover:text-primary transition-colors hover:translate-x-1 inline-block">
                                     FAQs
@@ -125,7 +125,7 @@ const Footer = () => {
                         </p>
 
                         {/* Newsletter Form */}
-                        <div className="flex gap-2 mb-6">
+                        <div className="flex flex-wrap lg:flex-nowrap gap-2 mb-6">
                             <input
                                 type="email"
                                 placeholder="Your email"
