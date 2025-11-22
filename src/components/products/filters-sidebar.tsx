@@ -4,7 +4,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Slider } from '@/components/ui/slider'
 import { useGetAllCategories } from '@/api/category.service'
 import { useGetAllBrands } from '@/api/brand.service'
 import { Brand, Category } from '@/supabase/schema/schema.type'
@@ -26,8 +25,6 @@ export default function FiltersSidebar({
   setSelectedCategories,
   selectedBrands,
   setSelectedBrands,
-  priceRange,
-  setPriceRange,
   onClearFilters,
 }: FiltersSidebarProps) {
   const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategories()

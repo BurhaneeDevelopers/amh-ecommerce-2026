@@ -108,15 +108,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <div className="flex gap-2 mt-4">
                 <Button
                   onClick={handleGetQuote}
-                  disabled={badge === "out of stock"}
                   size="sm"
                   className={`flex-1 h-10 rounded-lg font-medium text-sm transition-all duration-200 ${
                     badge === "out of stock"
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100"
+                      ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                       : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                   }`}
                 >
-                  {badge === "out of stock" ? "Unavailable" : "Get Quote"}
+                  {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
                 </Button>
                 <button
                   onClick={handleViewProduct}
@@ -203,15 +202,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Get Quote Button - Responsive */}
           <Button
             onClick={handleGetQuote}
-            disabled={badge === "out of stock"}
             size="sm"
             className={`w-full mt-3 h-9 sm:h-10 rounded-lg font-medium text-xs sm:text-sm transition-all duration-200 ${
               badge === "out of stock"
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100"
+                ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                 : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
             }`}
           >
-            {badge === "out of stock" ? "Unavailable" : "Get Quote"}
+            {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
           </Button>
         </div>
       </CardContent>
