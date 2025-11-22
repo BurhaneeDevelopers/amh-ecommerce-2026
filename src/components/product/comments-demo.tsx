@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import StarRating from './star-rating'
 import CommentForm from './comment-form'
 import CommentStats from './comment-stats'
@@ -191,7 +190,7 @@ export default function CommentsDemo() {
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="font-semibold mb-2">3. Admin Approval Process</h4>
             <p className="text-sm text-muted-foreground">
-              Reviews are submitted with "pending" status and require admin approval before being visible.
+              Reviews are submitted with &apos;pending&apos; status and require admin approval before being visible.
               Use the admin dashboard to manage reviews.
             </p>
           </div>
