@@ -24,7 +24,11 @@ const badgeLabels: Record<Exclude<BadgeVariant, null>, string> = {
   featured: "Featured",
 };
 
-const ProductCard: React.FC<Product> = ({
+interface ProductCardProps extends Product {
+  viewMode?: 'grid' | 'list';
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({
   id,
   product_name,
   model_number,
@@ -32,6 +36,7 @@ const ProductCard: React.FC<Product> = ({
   on_hand_qty,
   is_on_sale,
   stock_status,
+  viewMode = 'grid',
 }) => {
   const router = useRouter();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -53,6 +58,94 @@ const ProductCard: React.FC<Product> = ({
     setIsQuoteModalOpen(true);
   };
 
+  // List view layout
+  if (viewMode === 'list') {
+    return (
+      <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl ${
+        badge === "featured" 
+          ? "border-2 border-yellow-400 shadow-[0_0_5px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
+          : "border-gray-200"
+      }`}>
+        <CardContent className="p-0 h-full">
+          <div className="flex flex-row gap-4 p-4">
+            {/* Product Image Container - Smaller fixed size for list view */}
+            <div className="relative overflow-hidden bg-white flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-lg border border-gray-100">
+              <Image
+                width={200}
+                height={200}
+                src={
+                  photos[0] ??
+                  "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
+                }
+                alt={product_name}
+                className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+              />
+
+              {/* Badge */}
+              {badge && (
+                <Badge
+                  className={`absolute top-2 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
+                >
+                  {badgeLabels[badge]}
+                </Badge>
+              )}
+            </div>
+
+            {/* Product Info - Takes remaining space */}
+            <div className="flex flex-col flex-grow justify-between min-w-0">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-gray-900 text-base sm:text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                  {product_name}
+                </h3>
+                {model_number && (
+                  <p className="text-sm text-gray-500 font-medium truncate">
+                    {model_number}
+                  </p>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mt-4">
+                <Button
+                  onClick={handleGetQuote}
+                  disabled={badge === "out of stock"}
+                  size="sm"
+                  className={`flex-1 h-10 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    badge === "out of stock"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100"
+                      : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                  }`}
+                >
+                  {badge === "out of stock" ? "Unavailable" : "Get Quote"}
+                </Button>
+                <button
+                  onClick={handleViewProduct}
+                  className="bg-white hover:bg-gray-50 p-2.5 rounded-lg shadow-sm transition-all duration-200 hover:scale-105 border border-gray-200"
+                >
+                  <Eye className="w-5 h-5 text-gray-600" />
+                </button>
+                <WishlistButton product_id={id ?? ""} />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+
+        {/* Get Quote Modal */}
+        <GetQuoteModal
+          open={isQuoteModalOpen}
+          onOpenChange={setIsQuoteModalOpen}
+          product={{
+            id: id,
+            product_name,
+            model_number,
+            photos,
+          }}
+        />
+      </Card>
+    );
+  }
+
+  // Grid view layout (default)
   return (
     <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl flex flex-col ${
       badge === "featured" 

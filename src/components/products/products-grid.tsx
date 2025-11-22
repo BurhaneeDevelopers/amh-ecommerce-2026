@@ -108,7 +108,7 @@ export default function ProductsGrid({
             key={product.id}
             className={viewMode === 'list' ? 'max-w-none' : ''}
           >
-            <ProductCard {...product} />
+            <ProductCard {...product} viewMode={viewMode} />
           </div>
         ))}
       </div>
