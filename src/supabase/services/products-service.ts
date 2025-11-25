@@ -12,6 +12,15 @@ class Products_Service {
         return data;
     }
 
+    async getFeaturedProducts(): Promise<Product[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .eq('is_featured', true)
+
+        if (error) throw error;
+        return data;
+    }
+
     async getProductsById(id: string): Promise<Product[] | null> {
         const { data, error } = await supabase.from(this.table)
             .select('*')

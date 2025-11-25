@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/components/layout/container";
 import { useGetProductsInfinite, ProductFilters } from "@/api/products.service";
+import { useGetAllCategories } from "@/api/category.service";
 import SearchFilters from "@/components/products/search-filters";
 import FiltersSidebar from "@/components/products/filters-sidebar";
 import ProductsGrid from "@/components/products/products-grid";
@@ -16,6 +17,8 @@ const Shop = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
+  const { data: allCategories = [] } = useGetAllCategories();
+
   // Debounce search query to prevent rapid API calls
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,14 +28,40 @@ const Shop = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Expand main categories to include their subcategories
+  const expandedCategories = useMemo(() => {
+    if (selectedCategories.length === 0) return [];
+    
+    const expanded = new Set<string>();
+    
+    selectedCategories.forEach(catId => {
+      // Add the selected category itself
+      expanded.add(catId);
+      
+      // Check if it's a main category
+      const category = allCategories.find(c => c.id === catId);
+      if (category?.type === 'main') {
+        // Add all subcategories of this main category
+        allCategories
+          .filter(c => c.parent_id === catId)
+          .forEach(subCat => {
+            if (subCat.id) expanded.add(subCat.id);
+          });
+      }
+    });
+    
+    return Array.from(expanded);
+  }, [selectedCategories, allCategories]);
+
   // Create filters object for the infinite query
   const filters: ProductFilters = useMemo(() => ({
     search: debouncedSearchQuery || undefined,
     categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+    expandedCategories: expandedCategories.length > 0 ? expandedCategories : undefined,
     brands: selectedBrands.length > 0 ? selectedBrands : undefined,
     priceRange: priceRange as [number, number],
     sortBy,
-  }), [debouncedSearchQuery, selectedCategories, selectedBrands, priceRange, sortBy]);
+  }), [debouncedSearchQuery, selectedCategories, expandedCategories, selectedBrands, priceRange, sortBy]);
 
   // Use infinite query for products
   const {
@@ -52,6 +81,8 @@ const Shop = () => {
 
   // Get total count from first page
   const totalCount = data?.pages[0]?.totalCount ?? 0;
+
+
 
   const clearFilters = () => {
     setSelectedCategories([]);

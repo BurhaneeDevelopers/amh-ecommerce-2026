@@ -8,32 +8,32 @@ import { H2 } from '@/components/typography/typography'
 import { Container } from '../container'
 import ProductCard from '@/components/blocks/product-card'
 import { toast } from 'sonner'
-import { useGetAllProducts } from '@/api/products.service'
+import { useGetFeaturedProducts } from '@/api/products.service'
 
 const LatestProducts = () => {
     const {
         data: products = [],
         error: products_error,
-    } = useGetAllProducts();
+    } = useGetFeaturedProducts();
 
-    if (products_error) toast.error("Error fetching products");
+    if (products_error) toast.error("Error fetching featured products");
     
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
     
-    // Responsive configuration - optimized for all screen sizes
+    // Responsive configuration - optimized for all screen sizes (more compact)
     const getResponsiveConfig = useCallback(() => {
         if (typeof window !== 'undefined') {
             const width = window.innerWidth;
-            if (width < 640) return { itemsPerRow: 1, rows: 2 }; // mobile: 1x2
-            if (width < 768) return { itemsPerRow: 2, rows: 2 }; // small tablet: 2x2  
-            if (width < 1024) return { itemsPerRow: 2, rows: 2 }; // tablet/small laptop: 2x2
-            if (width < 1280) return { itemsPerRow: 3, rows: 2 }; // laptop: 3x2
-            if (width < 1536) return { itemsPerRow: 3, rows: 2 }; // large laptop: 3x2
-            return { itemsPerRow: 4, rows: 2 }; // xl desktop: 4x2
+            if (width < 640) return { itemsPerRow: 2, rows: 3 }; // mobile: 2x3 (6 products)
+            if (width < 768) return { itemsPerRow: 3, rows: 2 }; // small tablet: 3x2 (6 products)
+            if (width < 1024) return { itemsPerRow: 3, rows: 2 }; // tablet: 3x2 (6 products)
+            if (width < 1280) return { itemsPerRow: 4, rows: 2 }; // laptop: 4x2 (8 products)
+            if (width < 1536) return { itemsPerRow: 4, rows: 2 }; // large laptop: 4x2 (8 products)
+            return { itemsPerRow: 5, rows: 2 }; // xl desktop: 5x2 (10 products)
         }
-        return { itemsPerRow: 3, rows: 2 };
+        return { itemsPerRow: 4, rows: 2 };
     }, []);
     
     const [config, setConfig] = useState({ itemsPerRow: 3, rows: 2 });
@@ -133,7 +133,7 @@ const LatestProducts = () => {
                 <div 
                     className="relative overflow-hidden"
                     style={{ 
-                        minHeight: config.itemsPerRow === 1 ? '600px' : '500px' // Responsive heights
+                        minHeight: config.itemsPerRow === 2 ? '550px' : '450px' // Responsive heights for compact cards
                     }}
                 >
                     <motion.div
@@ -145,13 +145,14 @@ const LatestProducts = () => {
                             duration: 0.3,
                             ease: [0.25, 0.1, 0.25, 1]
                         }}
-                        className={`grid gap-3 sm:gap-4 ${
-                            config.itemsPerRow === 1 ? 'grid-cols-1' :
+                        className={`grid gap-2 sm:gap-3 md:gap-4 ${
                             config.itemsPerRow === 2 ? 'grid-cols-2' :
                             config.itemsPerRow === 3 ? 'grid-cols-3' :
-                            'grid-cols-4'
+                            config.itemsPerRow === 4 ? 'grid-cols-4' :
+                            config.itemsPerRow === 5 ? 'grid-cols-5' :
+                            'grid-cols-6'
                         } ${
-                            config.rows === 2 ? 'grid-rows-2' : 'grid-rows-1'
+                            config.rows === 3 ? 'grid-rows-3' : config.rows === 2 ? 'grid-rows-2' : 'grid-rows-1'
                         }`}
                     >
                         {currentProducts.map((product) => (

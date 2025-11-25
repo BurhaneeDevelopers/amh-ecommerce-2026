@@ -12,6 +12,16 @@ export const useGetAllProducts = () => {
     });
 };
 
+export const useGetFeaturedProducts = () => {
+    return useQuery<Product[], Error>({
+        queryKey: ['product_list_featured'],
+        queryFn: async () => (await products_service.getFeaturedProducts()) ?? [],
+        refetchOnWindowFocus: false,  // Don't refetch on tab/window switch
+        refetchOnMount: true,        // Don't refetch when component mounts again
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
 export const useGetProductsById = (id: string) => {
     return useQuery<Product[], Error>({
         queryKey: ['product_by_user'],
@@ -84,6 +94,7 @@ export interface ProductFilters {
     brands?: string[];
     priceRange?: [number, number];
     sortBy?: string;
+    expandedCategories?: string[]; // All category IDs including subcategories
 }
 
 export const useGetProductsInfinite = (filters: ProductFilters = {}) => {
@@ -104,9 +115,11 @@ export const useGetProductsInfinite = (filters: ProductFilters = {}) => {
                 );
             }
             
-            if (filters.categories && filters.categories.length > 0) {
+            // Use expandedCategories if available (includes subcategories), otherwise use categories
+            const categoriesToFilter = filters.expandedCategories || filters.categories;
+            if (categoriesToFilter && categoriesToFilter.length > 0) {
                 filteredProducts = filteredProducts.filter(product =>
-                    filters.categories!.includes(product.category_id || '')
+                    categoriesToFilter!.includes(product.category_id || '')
                 );
             }
             

@@ -16,9 +16,11 @@ import RemoveWishlistModal from "./modal/remove-wishlist";
 const WishlistButton = ({
   product_id = "",
   className,
+  compact = false,
 }: {
   product_id: string;
   className?: string;
+  compact?: boolean;
 }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
@@ -64,14 +66,14 @@ const WishlistButton = ({
           isAdded
             ? "bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)]"
             : "bg-transparent border border-amber-600 hover:text-white"
-        } text-[#272727] absolute top-0 left-3 ${className}`}
+        } text-[#272727] ${compact ? 'p-1 h-auto min-w-0' : ''} ${className}`}
         onClick={handleClick}
       >
         {creating ? (
-          <Loader2 className="!size-6 stroke-amber-600 animate-spin" />
+          <Loader2 className={`${compact ? '!size-3 sm:!size-3.5' : '!size-6'} stroke-amber-600 animate-spin`} />
         ) : (
           <Heart
-            className={`!size-6 ${
+            className={`${compact ? '!size-3 sm:!size-3.5' : '!size-6'} ${
               isAdded ? "stroke-white fill-amber-600" : ""
             }`}
           />

@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import ProductCard from '@/components/blocks/product-card'
 import { Product } from '@/supabase/schema/schema.type'
 import { Loader2 } from 'lucide-react'
+import { useGetAllCategories } from '@/api/category.service'
 
 interface ProductsGridProps {
   products: Product[]
@@ -26,6 +27,111 @@ export default function ProductsGrid({
   isFiltering = false,
 }: ProductsGridProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null)
+  const { data: allCategories = [] } = useGetAllCategories()
+
+  // Always group products by category hierarchy (main category -> subcategories)
+  const groupedProducts = useMemo(() => {
+    if (products.length === 0) return []
+
+    // Create a map of main categories to their subcategories and products
+    const mainCategoryMap = new Map<string, {
+      mainCategory: { id: string; name: string };
+      mainCategoryProducts: Product[];
+      subcategories: Map<string, { category: { id: string; name: string }; products: Product[] }>;
+    }>()
+
+    // First, organize products by their categories
+    products.forEach(product => {
+      const categoryId = product.category_id
+      if (!categoryId) return
+
+      const category = allCategories.find(c => c.id === categoryId)
+      if (!category) return
+
+      if (category.type === 'main') {
+        // Product belongs directly to main category
+        if (!mainCategoryMap.has(categoryId)) {
+          mainCategoryMap.set(categoryId, {
+            mainCategory: { id: categoryId, name: category.category_name },
+            mainCategoryProducts: [],
+            subcategories: new Map()
+          })
+        }
+        mainCategoryMap.get(categoryId)!.mainCategoryProducts.push(product)
+      } else if (category.type === 'sub' && category.parent_id) {
+        // Product belongs to subcategory
+        const parentId = category.parent_id
+        const parentCategory = allCategories.find(c => c.id === parentId)
+        
+        if (!mainCategoryMap.has(parentId)) {
+          mainCategoryMap.set(parentId, {
+            mainCategory: { 
+              id: parentId, 
+              name: parentCategory?.category_name || 'Unknown Category' 
+            },
+            mainCategoryProducts: [],
+            subcategories: new Map()
+          })
+        }
+
+        const mainCatData = mainCategoryMap.get(parentId)!
+        if (!mainCatData.subcategories.has(categoryId)) {
+          mainCatData.subcategories.set(categoryId, {
+            category: { id: categoryId, name: category.category_name },
+            products: []
+          })
+        }
+        mainCatData.subcategories.get(categoryId)!.products.push(product)
+      }
+    })
+
+    // Convert to array and sort
+    const result: Array<{
+      type: 'main' | 'sub';
+      mainCategoryId: string;
+      mainCategoryName: string;
+      categoryId: string;
+      categoryName: string;
+      products: Product[];
+    }> = []
+
+    // Sort main categories alphabetically
+    const sortedMainCategories = Array.from(mainCategoryMap.entries()).sort((a, b) => 
+      a[1].mainCategory.name.localeCompare(b[1].mainCategory.name)
+    )
+
+    sortedMainCategories.forEach(([mainCatId, data]) => {
+      // Add main category products if any
+      if (data.mainCategoryProducts.length > 0) {
+        result.push({
+          type: 'main',
+          mainCategoryId: mainCatId,
+          mainCategoryName: data.mainCategory.name,
+          categoryId: mainCatId,
+          categoryName: data.mainCategory.name,
+          products: data.mainCategoryProducts
+        })
+      }
+
+      // Add subcategories sorted alphabetically
+      const sortedSubcategories = Array.from(data.subcategories.entries()).sort((a, b) =>
+        a[1].category.name.localeCompare(b[1].category.name)
+      )
+
+      sortedSubcategories.forEach(([subCatId, subData]) => {
+        result.push({
+          type: 'sub',
+          mainCategoryId: mainCatId,
+          mainCategoryName: data.mainCategory.name,
+          categoryId: subCatId,
+          categoryName: subData.category.name,
+          products: subData.products
+        })
+      })
+    })
+
+    return result
+  }, [products, allCategories])
 
   // Intersection Observer for infinite scroll
   const handleObserver = useCallback(
@@ -83,8 +189,9 @@ export default function ProductsGrid({
     )
   }
 
+  // Always render grouped products by category hierarchy
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Filtering Loading Overlay */}
       {isFiltering && (
         <div className="flex items-center justify-center py-4">
@@ -95,23 +202,50 @@ export default function ProductsGrid({
         </div>
       )}
 
-      {/* Products Grid */}
-      <div
-        className={`grid gap-4 sm:gap-6 ${
-          viewMode === 'grid'
-            ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'
-            : 'grid-cols-1'
-        } ${isFiltering ? 'opacity-60 pointer-events-none' : ''}`}
-      >
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className={viewMode === 'list' ? 'max-w-none' : ''}
-          >
-            <ProductCard {...product} viewMode={viewMode} />
+      {/* Grouped Products by Category Hierarchy */}
+      {groupedProducts.map((group, index) => (
+        <div key={`${group.categoryId}-${index}`} className="space-y-4">
+          {/* Category Header */}
+          <div className="border-b-2 border-gray-200 pb-3">
+            <div className="flex items-baseline gap-2 flex-wrap">
+              {group.type === 'sub' && (
+                <span className="text-sm text-gray-500 font-medium">
+                  {group.mainCategoryName} →
+                </span>
+              )}
+              <h2 className="text-xl font-bold text-gray-900">
+                {group.categoryName}
+              </h2>
+              <span className="text-sm font-normal text-gray-500">
+                ({group.products.length} {group.products.length === 1 ? 'product' : 'products'})
+              </span>
+            </div>
+            {group.type === 'main' && (
+              <p className="text-sm text-gray-500 mt-1">
+                Products directly in this category
+              </p>
+            )}
           </div>
-        ))}
-      </div>
+
+          {/* Products Grid for this Category */}
+          <div
+            className={`grid gap-2 sm:gap-3 md:gap-4 ${
+              viewMode === 'grid'
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
+                : 'grid-cols-1'
+            } ${isFiltering ? 'opacity-60 pointer-events-none' : ''}`}
+          >
+            {group.products.map((product) => (
+              <div
+                key={product.id}
+                className={viewMode === 'list' ? 'max-w-none' : ''}
+              >
+                <ProductCard {...product} viewMode={viewMode} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
 
       {/* Loading Indicator for Infinite Scroll */}
       <div ref={loadMoreRef} className="flex justify-center py-8">
