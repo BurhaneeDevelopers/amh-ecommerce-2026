@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { useGetProductsInfinite, ProductFilters } from "@/api/products.service";
@@ -8,7 +8,7 @@ import SearchFilters from "@/components/products/search-filters";
 import FiltersSidebar from "@/components/products/filters-sidebar";
 import ProductsGrid from "@/components/products/products-grid";
 
-const Shop = () => {
+const ShopContent = () => {
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   
@@ -178,6 +178,34 @@ const Shop = () => {
         </div>
       </div>
     </Container>
+  );
+};
+
+const Shop = () => {
+  return (
+    <Suspense fallback={
+      <Container>
+        <div className="mx-auto">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="flex gap-8">
+              <div className="w-80 space-y-4">
+                <div className="h-64 bg-gray-200 rounded"></div>
+              </div>
+              <div className="flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="h-96 bg-gray-200 rounded"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 };
 
