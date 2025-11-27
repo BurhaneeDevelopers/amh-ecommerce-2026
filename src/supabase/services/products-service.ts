@@ -111,6 +111,41 @@ class Products_Service {
         if (error) throw error;
         return data;
     }
+
+    async getProductsByMainCategory(mainCategoryId: string, limit: number = 10): Promise<Product[] | null> {
+        // First, get all subcategory IDs for this main category
+        const { data: subcategories, error: subError } = await supabase
+            .from('category')
+            .select('id')
+            .eq('parent_id', mainCategoryId);
+
+        if (subError) throw subError;
+
+        const subcategoryIds = subcategories?.map(sub => sub.id) || [];
+        const allCategoryIds = [mainCategoryId, ...subcategoryIds];
+
+        // Fetch products that belong to main category or any of its subcategories
+        const { data, error } = await supabase
+            .from(this.table)
+            .select(`
+                *,
+                brand:brand_id (
+                    id,
+                    brand_name,
+                    brand_logo
+                ),
+                category:category_id (
+                    id,
+                    category_name,
+                    type
+                )
+            `)
+            .in('category_id', allCategoryIds)
+            .limit(limit);
+
+        if (error) throw error;
+        return data;
+    }
 }
 
 export const products_service = new Products_Service();

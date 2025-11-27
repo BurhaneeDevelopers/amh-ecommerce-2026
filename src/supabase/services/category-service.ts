@@ -8,7 +8,20 @@ class Categories_Service {
     const { data, error } = await supabase
       .from(this.table)
       .select("*")
-      .eq("type", "main");
+      .eq("type", "main")
+      .order("order", { ascending: true });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getFeaturedMainCategories(): Promise<Category[] | null> {
+    const { data, error } = await supabase
+      .from(this.table)
+      .select("*")
+      .eq("type", "main")
+      .eq("is_featured", true)
+      .order("display_order", { ascending: true });
 
     if (error) throw error;
     return data;

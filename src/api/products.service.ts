@@ -88,6 +88,17 @@ export const useGetProductSpares = (spareIds: string[]) => {
     });
 };
 
+export const useGetProductsByMainCategory = (mainCategoryId: string, limit: number = 10) => {
+    return useQuery<Product[], Error>({
+        queryKey: ['products_by_main_category', mainCategoryId, limit],
+        queryFn: async () => (await products_service.getProductsByMainCategory(mainCategoryId, limit)) ?? [],
+        enabled: !!mainCategoryId,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
 export interface ProductFilters {
     search?: string;
     categories?: string[];

@@ -13,6 +13,17 @@ export const useGetAllMainCategories = () => {
   });
 };
 
+export const useGetFeaturedMainCategories = () => {
+  return useQuery<Category[], Error>({
+    queryKey: ["category_list_featured_main"],
+    queryFn: async () =>
+      (await categories_service.getFeaturedMainCategories()) ?? [],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useGetAllSubCategories = () => {
   return useQuery<Category[], Error>({
     queryKey: ["category_list_all_sub"],

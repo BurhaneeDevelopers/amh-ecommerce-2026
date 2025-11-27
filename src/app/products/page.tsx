@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { useGetProductsInfinite, ProductFilters } from "@/api/products.service";
 import { useGetAllCategories } from "@/api/category.service";
@@ -8,6 +9,9 @@ import FiltersSidebar from "@/components/products/filters-sidebar";
 import ProductsGrid from "@/components/products/products-grid";
 
 const Shop = () => {
+  const searchParams = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -18,6 +22,18 @@ const Shop = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: allCategories = [] } = useGetAllCategories();
+
+  // Set category from URL on mount
+  useEffect(() => {
+    if (categoryFromUrl && allCategories.length > 0) {
+      // Check if the category exists
+      const categoryExists = allCategories.some(cat => cat.id === categoryFromUrl);
+      if (categoryExists && !selectedCategories.includes(categoryFromUrl)) {
+        setSelectedCategories([categoryFromUrl]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryFromUrl, allCategories]);
 
   // Debounce search query to prevent rapid API calls
   useEffect(() => {
