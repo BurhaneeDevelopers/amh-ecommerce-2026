@@ -8,7 +8,7 @@ export interface Category {
   created_at?: string;
   type: "sub" | "main";
   is_featured?: boolean; // for homepage category sections
-  display_order?: number; // order for featured categories on homepage
+  order?: number; // order for featured categories on homepage
 
   // ✅ New field for self join
   parent_category_name?: string | null;

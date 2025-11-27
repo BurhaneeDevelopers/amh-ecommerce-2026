@@ -21,7 +21,7 @@ class Categories_Service {
       .select("*")
       .eq("type", "main")
       .eq("is_featured", true)
-      .order("display_order", { ascending: true });
+      .order("order", { ascending: true });
 
     if (error) throw error;
     return data;
