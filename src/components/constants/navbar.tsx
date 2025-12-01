@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import ToggleCategories from "../blocks/toggle-categories";
 import AccountMenu from "../layout/blocks/account-menu";
+import AISearchBar from "../blocks/ai-search-bar";
 import SearchBar from "../blocks/search-bar";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
@@ -40,10 +41,9 @@ export default function Navbar() {
   
   return (
     <NavigationMenu className="min-w-full sticky top-0 z-50 shadow-lg" viewport={false}>
-      <Container className="bg-gradient-to-r from-[#272727] to-[#474747] text-white !py-4 w-full">
-        {/* Top Row: Logo + Search + Actions */}
-        <div className="mx-auto flex items-center justify-between gap-4 w-full mb-3">
-          {/* Left: Logos + Category Button */}
+      <Container className="bg-gradient-to-r from-[#272727] to-[#474747] text-white !py-3 w-full">
+        <div className="mx-auto flex items-center justify-between gap-4 w-full">
+          {/* Left: Logos */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
             <h5 className="text-white text-2xl md:text-3xl font-bold">MSI</h5>
 
@@ -56,18 +56,15 @@ export default function Navbar() {
                 className="object-cover w-20 h-6 md:w-32 md:h-10"
               />
             </Link>
-
-            <NavigationMenuList className="hidden lg:block">
-              <ToggleCategories />
-            </NavigationMenuList>
           </div>
 
-          {/* Center: Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 justify-center px-4 max-w-3xl">
+          {/* Center: Search Bars - Desktop */}
+          <div className="hidden md:flex flex-1 justify-center px-4 gap-3">
             <SearchBar />
+            <AISearchBar />
           </div>
 
-          {/* Right: Actions */}
+          {/* Right: Nav Links + Actions */}
           <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
             {/* Search Icon - Mobile */}
             <Button className="md:hidden bg-white/10 hover:bg-white/20 !p-2">
@@ -75,7 +72,7 @@ export default function Navbar() {
             </Button>
 
             {/* Nav Links - Desktop */}
-            <nav className="hidden lg:flex gap-6 font-medium mr-2">
+            <nav className="hidden lg:flex gap-6 font-medium">
               {navLinks.map((link) => (
                 <Li key={link.href}>
                   <Link
@@ -88,10 +85,15 @@ export default function Navbar() {
               ))}
             </nav>
 
+            {/* Categories Button - Desktop */}
+            <NavigationMenuList className="hidden md:block">
+              <ToggleCategories />
+            </NavigationMenuList>
+
             {/* Wishlist */}
             <Link href="/wishlist">
-              <Button className="relative bg-white/10 hover:bg-white/20 !p-2 md:!p-2.5">
-                <ShoppingCart className="!w-5 !h-5 md:!w-5 md:!h-5" />
+              <Button className="relative bg-white/10 hover:bg-white/20 h-10 w-10 p-0">
+                <ShoppingCart className="!w-5 !h-5" />
                 {wishlistCount > 0 && (
                   <Badge 
                     variant="destructive"

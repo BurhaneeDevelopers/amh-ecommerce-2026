@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react"
 import { LayoutDashboard, Loader2 } from "lucide-react"
-import { H6, P } from "../typography/typography"
+import { H6 } from "../typography/typography"
 import {
     NavigationMenuTrigger,
     NavigationMenuContent,
@@ -67,12 +67,9 @@ export default function ToggleCategories() {
     return (
         <>
             {/* Desktop: Navigation Menu Item */}
-            <NavigationMenuItem className="hidden md:block min-w-full relative">
-                <NavigationMenuTrigger className="bg-gradient-to-r from-white/15 to-white/10 hover:from-white/25 hover:to-white/20 text-white h-10 flex gap-2 justify-between items-center px-4 lg:!w-44 rounded-md border border-white/20 hover:border-white/30 transition-all duration-200">
-                    <span className="flex gap-2 items-center">
-                        <LayoutDashboard className="!w-4 !h-4" />
-                        <P className="text-sm font-medium">All Categories</P>
-                    </span>
+            <NavigationMenuItem className="hidden md:block relative">
+                <NavigationMenuTrigger className="bg-white/10 hover:bg-white/20 text-white h-10 w-10 flex items-center justify-center p-0 rounded-md transition-all duration-200 [&>svg]:hidden">
+                    <LayoutDashboard color="#fff" className="!w-5 !h-5 flex!" />
                 </NavigationMenuTrigger>
 
                 <NavigationMenuContent className="p-6 bg-gradient-to-br from-white to-gray-50 text-black shadow-2xl rounded-xl z-50 border border-gray-200">
