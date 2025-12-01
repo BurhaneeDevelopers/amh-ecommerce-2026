@@ -45,7 +45,16 @@ export default function Navbar() {
         <div className="mx-auto flex items-center justify-between gap-4 w-full">
           {/* Left: Logos */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            <h5 className="text-white text-2xl md:text-3xl font-bold">MSI</h5>
+             <Link href="/" className="hidden sm:block p-1.5 md:p-2 rounded-lg hover:shadow-lg transition-shadow">
+              <Image
+                alt="MSI Banner"
+                src="/msi-logo-white.png"
+                width={500}
+                height={500}
+                className="object-cover w-20 h-6 md:h-10"
+              />
+            </Link>
+            {/* <h5 className="text-white text-2xl md:text-3xl font-bold">MSI</h5> */}
 
             <Link href="/" className="hidden sm:block p-1.5 md:p-2 rounded-lg hover:shadow-lg transition-shadow">
               <Image
@@ -53,7 +62,7 @@ export default function Navbar() {
                 src="/xlnt.png"
                 width={500}
                 height={500}
-                className="object-cover w-20 h-6 md:w-32 md:h-10"
+                className="object-cover w-20 h-6 md:h-10"
               />
             </Link>
           </div>

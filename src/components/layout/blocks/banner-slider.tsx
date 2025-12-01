@@ -81,7 +81,7 @@ const BannerSlider: React.FC = () => {
   return (
     <div className="relative w-full group">
       {/* Main slider container with responsive height */}
-      <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-xl bg-gray-100">
+      <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-xl">
         {/* Render all slides but only show current one */}
         {slides.map((slide, slideIndex) => (
           <motion.div
@@ -103,7 +103,7 @@ const BannerSlider: React.FC = () => {
               scale: 0.98,
               transition: { duration: 0.2 }
             }}
-            className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"
+            className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2x"
             style={{
               pointerEvents: slideIndex === index ? 'auto' : 'none'
             }}
@@ -133,7 +133,7 @@ const BannerSlider: React.FC = () => {
                   initial={{ opacity: 0, x: 30, y: 30 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="backdrop-blur-md bg-white/85 dark:bg-gray-900/85 rounded-2xl shadow-2xl border border-white/30 p-3 sm:p-4 max-w-[280px] sm:max-w-xs"
+                  className="backdrop-blur-md bg-white/85 dark:bg-gray-900/85 rounded-2xl border border-gray-400/30 p-3 sm:p-4 max-w-[280px] sm:max-w-xs"
                 >
                   {slide?.title && (
                     <h2 className="text-sm sm:text-base md:text-lg font-bold mb-1.5 text-gray-900 dark:text-white leading-tight">
