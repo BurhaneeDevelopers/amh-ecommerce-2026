@@ -7,7 +7,6 @@ import { current_user_auth_atom } from "@/jotai/store";
 import { toast } from "sonner";
 import { users_service } from "@/supabase/services/user-service";
 // import { ThemeProvider } from "next-themes";
-import Topbar from "../constants/topbar";
 import Footer from "../constants/footer";
 import Navbar from "../constants/navbar";
 import { Providers } from "@/api/providers";
@@ -82,7 +81,6 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
         disableTransitionOnChange
       > */}
       <Toaster richColors />
-      <Topbar />
       <Navbar />
       <AnnouncementBanner />
       {children}

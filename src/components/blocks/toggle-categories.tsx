@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react"
 import { LayoutDashboard, Loader2 } from "lucide-react"
-import { H6 } from "../typography/typography"
+import { H6, P } from "../typography/typography"
 import {
     NavigationMenuTrigger,
     NavigationMenuContent,
@@ -68,15 +68,20 @@ export default function ToggleCategories() {
         <>
             {/* Desktop: Navigation Menu Item */}
             <NavigationMenuItem className="hidden md:block min-w-full relative">
-                <NavigationMenuTrigger className="bg-gradient-to-br from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-7 flex gap-2 justify-between items-center flex-grow lg:!w-80 max-w-80">
+                <NavigationMenuTrigger className="bg-gradient-to-r from-white/15 to-white/10 hover:from-white/25 hover:to-white/20 text-white h-10 flex gap-2 justify-between items-center px-4 lg:!w-44 rounded-md border border-white/20 hover:border-white/30 transition-all duration-200">
                     <span className="flex gap-2 items-center">
-                        <LayoutDashboard className="!w-7 !h-7" />
-                        <H6>All Categories</H6>
+                        <LayoutDashboard className="!w-4 !h-4" />
+                        <P className="text-sm font-medium">All Categories</P>
                     </span>
                 </NavigationMenuTrigger>
 
-                <NavigationMenuContent className="p-6 bg-white text-black shadow-xl rounded-xl z-50">
+                <NavigationMenuContent className="p-6 bg-gradient-to-br from-white to-gray-50 text-black shadow-2xl rounded-xl z-50 border border-gray-200">
                     <div className="w-[90vw] max-w-[1200px]">
+                        <div className="mb-4 pb-3 border-b border-gray-200">
+                            <h3 className="text-lg font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+                                Browse All Categories
+                            </h3>
+                        </div>
                         {categoriesContent}
                     </div>
                 </NavigationMenuContent>

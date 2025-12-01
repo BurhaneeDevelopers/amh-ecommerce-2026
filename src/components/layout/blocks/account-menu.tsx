@@ -2,7 +2,6 @@
 "use client"
 import { Use_logout } from '@/api/user.service'
 import AuthModal from '@/components/blocks/modal/auth-modal'
-import { H4, P } from '@/components/typography/typography'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { current_user_auth_atom } from '@/jotai/store'
 import { useAtom } from 'jotai'
@@ -30,26 +29,20 @@ const AccountMenu = () => {
     return (
         <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
             <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 focus:outline-none cursor-pointer">
-                    <div className="bg-[var(--color-primary)] p-4 rounded-full">
-                        <User className="w-6 h-6 fill-white" />
-                    </div>
-                    {user ? (
-                        <div className="text-left">
-                            <H4 className="font-semibold">Hello</H4>
-                            <P>{user.full_name}</P>
-                        </div>
-                    ) : (
-                        <div className="text-left">
-                            <H4 className="font-semibold">My Account</H4>
-                            <P>Register</P>
-                        </div>
-                    )}
+                <button className="relative bg-white/10 hover:bg-white/20 p-2 md:p-2.5 rounded-md focus:outline-none cursor-pointer transition-colors">
+                    <User className="w-5 h-5 md:w-5 md:h-5 text-white" />
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-fit">
+            <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel className="px-2">
-                    {user ? `${user.email}` : "Welcome!"}
+                    {user ? (
+                        <div>
+                            <p className="font-semibold text-sm">Hello, {user.full_name}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{user.email}</p>
+                        </div>
+                    ) : (
+                        <p className="text-sm">Welcome!</p>
+                    )}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {user ? (
