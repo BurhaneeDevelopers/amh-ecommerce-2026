@@ -101,30 +101,23 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
 
             {/* Products Grid */}
             <div className="mt-7">
-                <div className="relative overflow-hidden" style={{ minHeight: '320px' }}>
-                    <motion.div
-                        key={currentPage}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{
-                            duration: 0.3,
-                            ease: [0.25, 0.1, 0.25, 1]
-                        }}
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4"
-                    >
-                        {currentProducts.map((product) => (
-                            <div key={`${product.id}-${currentPage}`} className="w-full h-fit">
-                                <ProductCard {...product} />
-                            </div>
-                        ))}
-                        
-                        {/* Fill empty slots */}
-                        {Array.from({ length: itemsPerPage - currentProducts.length }).map((_, index) => (
-                            <div key={`empty-${index}`} className="w-full h-fit opacity-0 pointer-events-none" />
-                        ))}
-                    </motion.div>
-                </div>
+                <motion.div
+                    key={currentPage}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{
+                        duration: 0.3,
+                        ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4"
+                >
+                    {currentProducts.map((product) => (
+                        <div key={`${product.id}-${currentPage}`} className="w-full">
+                            <ProductCard {...product} />
+                        </div>
+                    ))}
+                </motion.div>
             </div>
 
             {/* View All Link */}

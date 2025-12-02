@@ -3,7 +3,6 @@ export interface Category {
   category_name: string;
   slug: string;
   parent_id: string | null;
-  order: number;
   icon?: string | null;
   created_at?: string;
   type: "sub" | "main";

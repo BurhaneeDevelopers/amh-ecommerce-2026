@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
-import { useGetProductsInfinite, ProductFilters } from "@/api/products.service";
+import { useGetProductsByCategoryInfinite, ProductFilters } from "@/api/products.service";
 import { useGetAllCategories } from "@/api/category.service";
 import SearchFilters from "@/components/products/search-filters";
 import FiltersSidebar from "@/components/products/filters-sidebar";
@@ -79,7 +79,7 @@ const ShopContent = () => {
     sortBy,
   }), [debouncedSearchQuery, selectedCategories, expandedCategories, selectedBrands, priceRange, sortBy]);
 
-  // Use infinite query for products
+  // Use infinite query for products grouped by category
   const {
     data,
     fetchNextPage,
@@ -88,15 +88,20 @@ const ShopContent = () => {
     isLoading,
     isFetching,
     isPlaceholderData,
-  } = useGetProductsInfinite(filters);
+  } = useGetProductsByCategoryInfinite(filters);
 
-  // Flatten all pages into a single array
-  const allProducts = useMemo(() => {
-    return data?.pages.flatMap(page => page.products) ?? [];
+  // Flatten all pages into category groups
+  const categoryGroups = useMemo(() => {
+    return data?.pages.flatMap(page => page.categoryGroups) ?? [];
   }, [data]);
 
   // Get total count from first page
   const totalCount = data?.pages[0]?.totalCount ?? 0;
+
+  // Calculate total products displayed
+  const displayedProductsCount = useMemo(() => {
+    return categoryGroups.reduce((sum, group) => sum + group.products.length, 0);
+  }, [categoryGroups]);
 
 
 
@@ -147,7 +152,7 @@ const ShopContent = () => {
           showFilters={showFilters}
           setShowFilters={setShowFilters}
           totalProducts={totalCount}
-          filteredCount={allProducts.length}
+          filteredCount={displayedProductsCount}
         />
 
         <div className="flex flex-col lg:flex-row gap-8 relative">
@@ -166,7 +171,7 @@ const ShopContent = () => {
           {/* Products Grid with Infinite Loading */}
           <main className="flex-1">
             <ProductsGrid
-              products={allProducts}
+              categoryGroups={categoryGroups}
               viewMode={viewMode}
               hasNextPage={hasNextPage}
               isFetchingNextPage={isFetchingNextPage}

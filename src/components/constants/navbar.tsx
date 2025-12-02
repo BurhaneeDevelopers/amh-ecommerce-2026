@@ -62,7 +62,7 @@ export default function Navbar() {
                 src="/xlnt.png"
                 width={500}
                 height={500}
-                className="object-cover w-20 h-6 md:h-10"
+                className="object-cover w-32 h-6 md:h-10"
               />
             </Link>
           </div>
