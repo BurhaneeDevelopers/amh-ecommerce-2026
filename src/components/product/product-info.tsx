@@ -1,6 +1,6 @@
 "use client";
 
-import { Quote, Minus, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Quote, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { H1, H3, P } from "@/components/typography/typography";
 import WishlistButton from "@/components/blocks/wishlist-button";
@@ -34,15 +34,23 @@ export default function ProductInfo({
   const [quantity, setQuantity] = useAtom(productQuantityAtom);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
 
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty input while typing
+    if (value === "") {
+      return;
+    }
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= 1) {
+      setQuantity(numValue);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 1;
-    handleQuantityChange(value);
+  const handleInputBlur = () => {
+    // If quantity is 0 or invalid, reset to 1
+    if (!quantity || quantity < 1) {
+      setQuantity(1);
+    }
   };
   return (
     <div className="space-y-8 w-full flex-grow">
@@ -50,19 +58,10 @@ export default function ProductInfo({
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-start justify-between gap-4 mb-2">
               <H1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight !font-montserrat">
                 {product.product_name}
               </H1>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium  !font-poppins ${
-                  product.on_hand_qty > 0
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {product.on_hand_qty > 0 ? "In Stock" : "Out of Stock"}
-              </span>
             </div>
             {product.model_number && (
               <P className="text-lg text-gray-600 mt-2 font-medium">
@@ -125,38 +124,20 @@ export default function ProductInfo({
       {/* Quantity Selector */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6">
         <H3 className="text-lg font-semibold text-gray-900 mb-4">Quantity</H3>
-        <div className="flex items-center gap-4 mb-3">
-          <div className="flex items-center border border-gray-300 rounded-lg">
-            <button
-              onClick={() => handleQuantityChange(quantity - 1)}
-              disabled={quantity <= 1}
-              className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <Input
-              type="number"
-              value={quantity}
-              onChange={handleInputChange}
-              min="1"
-              className="w-20 text-center py-2 focus:!outline-none focus:!ring-0 border border-zinc-300"
-            />
-            <button
-              onClick={() => handleQuantityChange(quantity + 1)}
-              className="p-2 hover:bg-gray-100"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-          <P className="text-sm text-gray-600">
-            &ldquo;1&rdquo; quantity is equivalent to one carton
-          </P>
+        <div className="mb-3">
+          <Input
+            type="number"
+            value={quantity}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            min="1"
+            placeholder="Enter quantity"
+            className="w-32 px-4 py-2 text-center border border-gray-300 rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-blue-500"
+          />
         </div>
-        {product.on_hand_qty > 0 && (
-          <P className="text-sm text-green-600">
-            {product.on_hand_qty} units available
-          </P>
-        )}
+        <P className="text-sm text-gray-600">
+          We only accept bulk orders
+        </P>
       </div>
 
       {/* Additional Information */}

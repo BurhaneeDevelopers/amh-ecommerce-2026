@@ -4,10 +4,10 @@ import React, { useMemo, useState } from "react"
 import { LayoutDashboard, Loader2 } from "lucide-react"
 import { H6 } from "../typography/typography"
 import {
-    NavigationMenuTrigger,
-    NavigationMenuContent,
-    NavigationMenuItem,
-} from "@/components/ui/navigation-menu"
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ListItem } from "./nav/list-item"
@@ -66,23 +66,33 @@ export default function ToggleCategories() {
 
     return (
         <>
-            {/* Desktop: Navigation Menu Item */}
-            <NavigationMenuItem className="hidden md:block relative">
-                <NavigationMenuTrigger className="bg-white/10 hover:bg-white/20 text-white h-10 w-10 flex items-center justify-center p-0 rounded-md transition-all duration-200 [&>svg]:hidden">
-                    <LayoutDashboard color="#fff" className="!w-5 !h-5 flex!" />
-                </NavigationMenuTrigger>
-
-                <NavigationMenuContent className="p-6 bg-gradient-to-br from-white to-gray-50 text-black shadow-2xl rounded-xl z-50 border border-gray-200">
-                    <div className="w-[90vw] max-w-[1200px]">
+            {/* Desktop: HoverCard with viewport-aware positioning */}
+            <div className="hidden md:block">
+                <HoverCard openDelay={200} closeDelay={100}>
+                    <HoverCardTrigger asChild>
+                        <Button 
+                            className="bg-white/10 hover:bg-white/20 text-white h-10 w-10 flex items-center justify-center p-0 rounded-md transition-all duration-200"
+                        >
+                            <LayoutDashboard color="#fff" className="!w-5 !h-5" />
+                        </Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent 
+                        className="p-6 bg-gradient-to-br from-white to-gray-50 text-black shadow-2xl rounded-xl border border-gray-200 w-[90vw] max-w-[1200px]"
+                        align="end"
+                        sideOffset={8}
+                        alignOffset={-10}
+                        collisionPadding={16}
+                        avoidCollisions={true}
+                    >
                         <div className="mb-4 pb-3 border-b border-gray-200">
                             <h3 className="text-lg font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
                                 Browse All Categories
                             </h3>
                         </div>
                         {categoriesContent}
-                    </div>
-                </NavigationMenuContent>
-            </NavigationMenuItem>
+                    </HoverCardContent>
+                </HoverCard>
+            </div>
 
             {/* Mobile: Dialog Button */}
             <div className="md:hidden">

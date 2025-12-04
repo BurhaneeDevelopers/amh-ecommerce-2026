@@ -9,7 +9,6 @@ import { Container } from "../layout/container";
 import { Li } from "../typography/typography";
 import {
   NavigationMenu,
-  NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import {
   Dialog,
@@ -22,6 +21,7 @@ import ToggleCategories from "../blocks/toggle-categories";
 import AccountMenu from "../layout/blocks/account-menu";
 import AISearchBar from "../blocks/ai-search-bar";
 import SearchBar from "../blocks/search-bar";
+import SearchModal from "../blocks/search-modal";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { current_user_auth_atom } from "@/jotai/store";
@@ -29,6 +29,7 @@ import { useGetWishlistByUser } from "@/api/wishlist.service";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const user = useAtomValue(current_user_auth_atom);
   const { data: wishlistData } = useGetWishlistByUser(user?.id ?? "");
   const wishlistCount = wishlistData?.length || 0;
@@ -76,7 +77,10 @@ export default function Navbar() {
           {/* Right: Nav Links + Actions */}
           <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
             {/* Search Icon - Mobile */}
-            <Button className="md:hidden bg-white/10 hover:bg-white/20 !p-2">
+            <Button 
+              className="md:hidden bg-white/10 hover:bg-white/20 !p-2"
+              onClick={() => setIsSearchModalOpen(true)}
+            >
               <Search className="!w-5 !h-5" />
             </Button>
 
@@ -95,9 +99,7 @@ export default function Navbar() {
             </nav>
 
             {/* Categories Button - Desktop */}
-            <NavigationMenuList className="hidden md:block">
-              <ToggleCategories />
-            </NavigationMenuList>
+            <ToggleCategories />
 
             {/* Wishlist */}
             <Link href="/wishlist">
@@ -165,6 +167,12 @@ export default function Navbar() {
           </div>
         </div>
       </Container>
+
+      {/* Search Modal for Mobile */}
+      <SearchModal 
+        open={isSearchModalOpen} 
+        onOpenChange={setIsSearchModalOpen} 
+      />
     </NavigationMenu>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronRight, Package, ChevronDown } from "lucide-react"
 import { NavigationMenuLink } from "@/components/ui/navigation-menu"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 
 import Image from "next/image"
 import { H6 } from "@/components/typography/typography"
@@ -83,18 +84,18 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
         )
     }
 
-    // Desktop: Popover with hover
+    // Desktop: HoverCard with hover
     return (
         <>
-            {/* Desktop version with Popover */}
+            {/* Desktop version with HoverCard */}
             <li className="hidden md:block relative group">
-                <Popover>
-                    <PopoverTrigger asChild>
+                <HoverCard openDelay={200} closeDelay={100}>
+                    <HoverCardTrigger asChild>
                         <div className="p-3 sm:p-4 rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-yellow-50 hover:from-orange-100 hover:to-yellow-100 flex items-center justify-between gap-2 hover:shadow-lg transition-all duration-300 cursor-pointer group h-full">
                             {categoryContent}
                         </div>
-                    </PopoverTrigger>
-                    <PopoverContent 
+                    </HoverCardTrigger>
+                    <HoverCardContent 
                         side="right" 
                         align="start"
                         className="w-80 p-3 max-h-[400px] overflow-y-auto"
@@ -133,8 +134,8 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                                 </Link>
                             ))}
                         </div>
-                    </PopoverContent>
-                </Popover>
+                    </HoverCardContent>
+                </HoverCard>
             </li>
 
             {/* Mobile version with Popover dropdown */}

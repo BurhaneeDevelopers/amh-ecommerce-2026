@@ -21,7 +21,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children }) => {
                         <div className="absolute top-0 left-0 right-0 h-8  pointer-events-none z-10" />
                         <LeftColumn />
                         {/* Bottom scroll indicator */}
-                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bun dev pointer-events-none" />
                     </div>
                 </aside>
                 
@@ -37,7 +37,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children }) => {
                         <div className="absolute top-0 left-0 right-0 h-8  pointer-events-none z-10" />
                         <RightColumn />
                         {/* Bottom scroll indicator */}
-                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bun dev pointer-events-none" />
                     </div>
                 </aside>
                 

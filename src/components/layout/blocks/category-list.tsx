@@ -32,13 +32,13 @@ export default function CategoryBox() {
                 .map(sub => ({
                     id: sub.id || '',
                     name: sub.category_name,
-                    href: `/products?category=${sub.slug}`
+                    href: `/products?category=${sub.id}`
                 }))
             
             return {
                 id: mainCat.id || '',
                 name: mainCat.category_name,
-                href: `/products?category=${mainCat.slug}`,
+                href: `/products?category=${mainCat.id}`,
                 subcategories: subcategories.length > 0 ? subcategories : undefined
             }
         })
