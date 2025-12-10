@@ -2,8 +2,9 @@ import React from 'react'
 import { Container } from '../layout/container'
 import Image from 'next/image'
 import { P } from '../typography/typography'
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react'
+import { Mail, Phone, MapPin } from 'lucide-react'
 import Link from 'next/link'
+import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa'
 
 const Footer = () => {
     return (
@@ -17,26 +18,31 @@ const Footer = () => {
                         </div>
 
                         <p className="text-gray-300 text-sm leading-relaxed">
-                            Leading supplier of industrial tools and equipment. Quality products for professionals and DIY enthusiasts.
+                            Leading supplier of industrial tools and equipment in Chennai. Quality products for professionals and DIY enthusiasts.
                         </p>
 
                         {/* Contact Info */}
                         <div className="space-y-2 pt-2">
                             <div className="flex items-center gap-2 text-gray-300 text-sm">
                                 <Phone className="w-4 h-4 text-primary" />
-                                <a href="tel:+919876543210" className="hover:text-primary transition-colors">
-                                    +91 98765 43210
-                                </a>
+                                <div className="flex flex-col">
+                                    <a href="tel:+918608818555" className="hover:text-primary transition-colors">
+                                        +91 86088 18555
+                                    </a>
+                                    <a href="tel:+918248927038" className="hover:text-primary transition-colors">
+                                        +91 82489 27038
+                                    </a>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 text-gray-300 text-sm">
                                 <Mail className="w-4 h-4 text-primary" />
-                                <a href="mailto:info@msiindustries.com" className="hover:text-primary transition-colors">
-                                    info@msiindustries.com
+                                <a href="mailto:msindustries.chennai@gmail.com" className="hover:text-primary transition-colors">
+                                    msindustries.chennai@gmail.com
                                 </a>
                             </div>
                             <div className="flex items-start gap-2 text-gray-300 text-sm">
                                 <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                                <span>Industrial Area, Phase 2, City, State - 123456</span>
+                                <span>Chennai, Tamil Nadu, India</span>
                             </div>
                         </div>
                     </div>
@@ -57,6 +63,11 @@ const Footer = () => {
                             <li>
                                 <Link href="/products" className="text-gray-300 hover:text-primary transition-colors hover:translate-x-1 inline-block">
                                     All Products
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/blog" className="text-gray-300 hover:text-primary transition-colors hover:translate-x-1 inline-block">
+                                    Blog
                                 </Link>
                             </li>
                             <li>
@@ -141,44 +152,40 @@ const Footer = () => {
                             <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Follow Us</p>
                             <div className="flex gap-3">
                                 <a
-                                    href="https://facebook.com"
+                                    href="https://www.instagram.com/msindustries.chennai/"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white/10 hover:bg-primary p-2.5 rounded-lg transition-all duration-300 hover:scale-110 group"
+                                    aria-label="Follow us on Instagram"
                                 >
-                                    <Facebook className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
+                                    <FaInstagram className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
                                 </a>
                                 <a
-                                    href="https://instagram.com"
+                                    href="https://www.facebook.com/p/MS-Industries-100081911741796/"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white/10 hover:bg-primary p-2.5 rounded-lg transition-all duration-300 hover:scale-110 group"
+                                    aria-label="Follow us on Facebook"
                                 >
-                                    <Instagram className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
+                                    <FaFacebook className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
                                 </a>
                                 <a
-                                    href="https://twitter.com"
+                                    href="https://www.youtube.com/@MSINDUSTRIESCHENNAI01"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white/10 hover:bg-primary p-2.5 rounded-lg transition-all duration-300 hover:scale-110 group"
+                                    aria-label="Subscribe to our YouTube channel"
                                 >
-                                    <Twitter className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
+                                    <FaYoutube className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
                                 </a>
                                 <a
-                                    href="https://linkedin.com"
+                                    href="https://in.linkedin.com/company/msindustries-tools"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-white/10 hover:bg-primary p-2.5 rounded-lg transition-all duration-300 hover:scale-110 group"
+                                    aria-label="Connect with us on LinkedIn"
                                 >
-                                    <Linkedin className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
-                                </a>
-                                <a
-                                    href="https://youtube.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-white/10 hover:bg-primary p-2.5 rounded-lg transition-all duration-300 hover:scale-110 group"
-                                >
-                                    <Youtube className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
+                                    <FaLinkedin className="w-5 h-5 text-gray-300 group-hover:text-gray-900" />
                                 </a>
                             </div>
                         </div>
@@ -186,7 +193,7 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="mt-12 pt-8 border-t border-gray-700">
+                <div className="mt-12 pt-8 border-t border-gray-400">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <P className="text-gray-400 text-sm text-center md:text-left">
                             &copy; 2025 MSI Industries. All rights reserved.
@@ -202,6 +209,16 @@ const Footer = () => {
                                 Cookie Policy
                             </Link>
                         </div>
+                    </div>
+
+                    {/* Developer Watermark */}
+                    <div className="mt-4 pt-4 text-center">
+                        <P className="text-gray-300 text-xs">
+                            Crafted with Love ❤️ By{' '}
+                            <span className="text-primary font-medium hover:text-secondary transition-colors cursor-default">
+                                Taheri Developers
+                            </span>
+                        </P>
                     </div>
                 </div>
             </Container>
