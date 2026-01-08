@@ -102,6 +102,7 @@ export interface User_Profile {
   city?: string;
   state?: string;
   profile_image?: string;
+  role?: "customer" | "dealer" | "admin"; // user role
 }
 
 // Enquiry History (if implemented later)

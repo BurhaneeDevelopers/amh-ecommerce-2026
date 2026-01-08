@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { useAtom } from "jotai";
 import { productQuantityAtom } from "@/jotai/store";
+import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
 
 interface ProductInfoProps {
   product: Product;
@@ -33,6 +34,7 @@ export default function ProductInfo({
 }: ProductInfoProps) {
   const [quantity, setQuantity] = useAtom(productQuantityAtom);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+  const canViewQuantity = useCanViewQuantity();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -72,6 +74,15 @@ export default function ProductInfo({
               <P className="text-sm text-gray-500 mt-1">
                 by {product.brand.brand_name}
               </P>
+            )}
+            {canViewQuantity && (
+              <div className="mt-3 inline-block">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                  <P className="text-sm font-semibold text-blue-900">
+                    Available Stock: <span className="text-blue-600">{product.on_hand_qty}</span> units
+                  </P>
+                </div>
+              </div>
             )}
             {product.pcs_per_crtn && (
               <div className="mt-4">

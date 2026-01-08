@@ -8,6 +8,7 @@ import { Eye } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
 import GetQuoteModal from "../modals/get-quote-modal";
 import { Card, CardContent } from "../ui/card";
+import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
 
 // Define badge variants based on `tag`
 type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
@@ -41,6 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const router = useRouter();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const canViewQuantity = useCanViewQuantity();
 
   // Determine badge based on product properties
   const badge: BadgeVariant =
@@ -103,6 +105,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {model_number && (
                   <p className="text-sm text-gray-500 font-medium truncate">
                     {model_number}
+                  </p>
+                )}
+                {canViewQuantity && (
+                  <p className="text-sm text-blue-600 font-semibold">
+                    Stock: {on_hand_qty} units
                   </p>
                 )}
               </div>
@@ -202,6 +209,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {model_number && (
               <p className="text-[9px] sm:text-[10px] text-gray-500 font-medium truncate">
                 {model_number}
+              </p>
+            )}
+            {canViewQuantity && (
+              <p className="text-[9px] sm:text-[10px] text-blue-600 font-semibold">
+                Stock: {on_hand_qty}
               </p>
             )}
           </div>
