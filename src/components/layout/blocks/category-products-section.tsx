@@ -20,7 +20,7 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
     const [isAnimating, setIsAnimating] = useState(false)
     
     // Configuration for responsive grid
-    const itemsPerPage = 5 // Show 5 products per page
+    const itemsPerPage = 10 // Show 10 products per page (2 rows of 5)
     const totalPages = Math.ceil(products.length / itemsPerPage)
     const canGoNext = currentPage < totalPages - 1
     const canGoPrev = currentPage > 0

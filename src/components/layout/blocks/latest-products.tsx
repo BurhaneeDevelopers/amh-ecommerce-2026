@@ -129,49 +129,32 @@ const LatestProducts = () => {
 
             {/* Optimized Product Grid */}
             <div className="mt-7">
-                {/* Fixed height container to prevent layout shifts */}
-                <div 
-                    className="relative overflow-hidden"
-                    style={{ 
-                        minHeight: config.itemsPerRow === 2 ? '550px' : '450px' // Responsive heights for compact cards
+                <motion.div
+                    key={currentPage}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{
+                        duration: 0.3,
+                        ease: [0.25, 0.1, 0.25, 1]
                     }}
+                    className={`grid gap-2 sm:gap-3 md:gap-4 ${
+                        config.itemsPerRow === 2 ? 'grid-cols-2' :
+                        config.itemsPerRow === 3 ? 'grid-cols-3' :
+                        config.itemsPerRow === 4 ? 'grid-cols-4' :
+                        config.itemsPerRow === 5 ? 'grid-cols-5' :
+                        'grid-cols-6'
+                    }`}
                 >
-                    <motion.div
-                        key={currentPage}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{
-                            duration: 0.3,
-                            ease: [0.25, 0.1, 0.25, 1]
-                        }}
-                        className={`grid gap-2 sm:gap-3 md:gap-4 ${
-                            config.itemsPerRow === 2 ? 'grid-cols-2' :
-                            config.itemsPerRow === 3 ? 'grid-cols-3' :
-                            config.itemsPerRow === 4 ? 'grid-cols-4' :
-                            config.itemsPerRow === 5 ? 'grid-cols-5' :
-                            'grid-cols-6'
-                        } ${
-                            config.rows === 3 ? 'grid-rows-3' : config.rows === 2 ? 'grid-rows-2' : 'grid-rows-1'
-                        }`}
-                    >
-                        {currentProducts.map((product) => (
-                            <div
-                                key={`${product.id}-${currentPage}`}
-                                className="w-full h-fit"
-                            >
-                                <ProductCard {...product} />
-                            </div>
-                        ))}
-                        
-                        {/* Fill empty slots to maintain grid structure */}
-                        {Array.from({ length: itemsPerPage - currentProducts.length }).map((_, index) => (
-                            <div key={`empty-${index}`} className="w-full h-fit opacity-0 pointer-events-none">
-                                {/* Invisible placeholder to maintain grid */}
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
+                    {currentProducts.map((product) => (
+                        <div
+                            key={`${product.id}-${currentPage}`}
+                            className="w-full h-fit"
+                        >
+                            <ProductCard {...product} />
+                        </div>
+                    ))}
+                </motion.div>
             </div>
 
             {/* Enhanced Pagination Indicator */}
