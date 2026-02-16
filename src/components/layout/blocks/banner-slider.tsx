@@ -79,132 +79,134 @@ const BannerSlider: React.FC = () => {
   }, [paginate]);
 
   return (
-    <div className="relative w-full group">
-      {/* Main slider container with responsive height */}
-      <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-xl">
-        {/* Render all slides but only show current one */}
-        {slides.map((slide, slideIndex) => (
-          <motion.div
-            key={`${slideIndex}-${slide.src}`}
-            initial={false}
-            animate={{
-              x: `${(slideIndex - index) * 100}%`,
-              transition: {
-                duration: 0.5,
-                ease: [0.25, 0.1, 0.25, 1]
-              }
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.1}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={handleDragEnd}
-            whileDrag={{ 
-              scale: 0.98,
-              transition: { duration: 0.2 }
-            }}
-            className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2x"
-            style={{
-              pointerEvents: slideIndex === index ? 'auto' : 'none'
-            }}
-          >
-            {/* Responsive image container - Full width, no cropping */}
-            <div className="relative w-full h-full rounded-2xl overflow-hidden">
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                className="object-contain select-none pointer-events-none rounded-2xl"
-                priority={slideIndex === index}
-                sizes="100vw"
-              />
-            </div>
-            
-            {/* Content overlay - Bottom right glassmorphism card */}
-            {slideIndex === index && (slide?.title || slide?.description || slide?.clickUrl) && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="absolute inset-0 flex items-end justify-end p-4 sm:p-6 lg:p-8 pointer-events-none"
-              >
-                {/* Glassmorphism card for text content */}
+    <div className="relative w-full bg-gray-100 py-8">
+      <div className="w-full px-4 lg:px-6">
+        {/* Main slider container with proper height and rounded corners */}
+        <div className="relative w-full h-[70vh] overflow-hidden rounded-2xl shadow-lg group">
+          {/* Render all slides but only show current one */}
+          {slides.map((slide, slideIndex) => (
+            <motion.div
+              key={`${slideIndex}-${slide.src}`}
+              initial={false}
+              animate={{
+                x: `${(slideIndex - index) * 100}%`,
+                transition: {
+                  duration: 0.5,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.1}
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={handleDragEnd}
+              whileDrag={{ 
+                scale: 0.98,
+                transition: { duration: 0.2 }
+              }}
+              className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"
+              style={{
+                pointerEvents: slideIndex === index ? 'auto' : 'none'
+              }}
+            >
+              {/* Responsive image container */}
+              <div className="relative w-full h-full overflow-hidden rounded-2xl">
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  className="object-cover select-none pointer-events-none rounded-2xl"
+                  priority={slideIndex === index}
+                  sizes="100vw"
+                />
+              </div>
+              
+              {/* Content overlay - Bottom left with better styling */}
+              {slideIndex === index && (slide?.title || slide?.description || slide?.clickUrl) && (
                 <motion.div 
-                  initial={{ opacity: 0, x: 30, y: 30 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="backdrop-blur-md bg-white/85 dark:bg-gray-900/85 rounded-2xl border border-gray-400/30 p-3 sm:p-4 max-w-[280px] sm:max-w-xs"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="absolute inset-0 flex items-end justify-start p-6 sm:p-8 lg:p-12 pointer-events-none"
                 >
-                  {slide?.title && (
-                    <h2 className="text-sm sm:text-base md:text-lg font-bold mb-1.5 text-gray-900 dark:text-white leading-tight">
-                      {slide.title}
-                    </h2>
-                  )}
-                  {slide?.description && (
-                    <p className="text-xs sm:text-sm mb-2.5 text-gray-700 dark:text-gray-200 leading-snug line-clamp-2">
-                      {slide.description}
-                    </p>
-                  )}
-                  {slide?.clickUrl && (
-                    <a 
-                      href={slide.clickUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="pointer-events-auto inline-block"
-                    >
-                      <Button 
-                        size="sm"
-                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 text-xs sm:text-sm"
+                  {/* Content card */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: -30, y: 30 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="max-w-md space-y-4"
+                  >
+                    {slide?.title && (
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight drop-shadow-lg">
+                        {slide.title}
+                      </h2>
+                    )}
+                    {slide?.description && (
+                      <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed drop-shadow-md">
+                        {slide.description}
+                      </p>
+                    )}
+                    {slide?.clickUrl && (
+                      <a 
+                        href={slide.clickUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="pointer-events-auto inline-block"
                       >
-                        Shop Now
-                      </Button>
-                    </a>
-                  )}
+                        <Button 
+                          size="lg"
+                          className="bg-gradient-to-r from-[#f38b00] to-[#ffed05] hover:from-[#e07a00] hover:to-[#ffd700] text-white font-bold shadow-2xl transition-all duration-300 hover:scale-110 rounded-xl px-10 py-7 text-lg"
+                        >
+                          Get a Quote
+                        </Button>
+                      </a>
+                    )}
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
-
-        {/* Navigation arrows - only show on hover and if more than 1 slide */}
-        {slides.length > 1 && (
-          <>
-            <button
-              onClick={() => paginate(-1)}
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 sm:p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-            <button
-              onClick={() => paginate(1)}
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 sm:p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-          </>
-        )}
-      </div>
-
-      {/* Pagination dots - only show if more than 1 slide */}
-      {slides.length > 1 && (
-        <div className="flex justify-center items-center mt-4 gap-2">
-          {slides.map((_, slideIndex) => (
-            <button
-              key={slideIndex}
-              onClick={() => goToSlide(slideIndex)}
-              className={`transition-all duration-300 rounded-full ${
-                slideIndex === index
-                  ? 'w-8 h-2 bg-blue-600'
-                  : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to slide ${slideIndex + 1}`}
-            />
+              )}
+            </motion.div>
           ))}
+
+          {/* Navigation arrows - only show on hover and if more than 1 slide */}
+          {slides.length > 1 && (
+            <>
+              <button
+                onClick={() => paginate(-1)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10 shadow-lg"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => paginate(1)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 z-10 shadow-lg"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </>
+          )}
+
+          {/* Pagination dots - only show if more than 1 slide */}
+          {slides.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2 z-20">
+              {slides.map((_, slideIndex) => (
+                <button
+                  key={slideIndex}
+                  onClick={() => goToSlide(slideIndex)}
+                  className={`transition-all duration-300 rounded-full ${
+                    slideIndex === index
+                      ? 'w-8 h-2 bg-white shadow-lg'
+                      : 'w-2 h-2 bg-white/50 hover:bg-white/70'
+                  }`}
+                  aria-label={`Go to slide ${slideIndex + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

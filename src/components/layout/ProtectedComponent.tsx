@@ -81,8 +81,8 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
         disableTransitionOnChange
       > */}
       <Toaster richColors />
-      <Navbar />
       <AnnouncementBanner />
+      <Navbar />
       {children}
       <Footer />
       {/* </ThemeProvider> */}

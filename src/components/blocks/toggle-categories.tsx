@@ -70,24 +70,31 @@ export default function ToggleCategories() {
             <div className="hidden md:block">
                 <HoverCard openDelay={200} closeDelay={100}>
                     <HoverCardTrigger asChild>
-                        <Button 
-                            className="bg-white/10 hover:bg-white/20 text-white h-10 w-10 flex items-center justify-center p-0 rounded-md transition-all duration-200"
+                        <Button
+                            variant="ghost"
+                            className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
+                                     hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10
+                                     transition-all duration-300 group"
                         >
-                            <LayoutDashboard color="#fff" className="!w-5 !h-5" />
+                            <LayoutDashboard className="w-5 h-5 text-gray-600 group-hover:text-[#f38b00] transition-colors" />
+                            <span className="text-sm font-semibold text-gray-700 group-hover:text-[#f38b00]">
+                                Categories
+                            </span>
                         </Button>
                     </HoverCardTrigger>
                     <HoverCardContent 
-                        className="p-6 bg-gradient-to-br from-white to-gray-50 text-black shadow-2xl rounded-xl border border-gray-200 w-[90vw] max-w-[1200px]"
-                        align="end"
-                        sideOffset={8}
-                        alignOffset={-10}
+                        className="p-6 bg-white text-black shadow-2xl rounded-2xl border-2 border-gray-100 w-[90vw] max-w-[1200px]"
+                        align="start"
+                        sideOffset={12}
+                        alignOffset={0}
                         collisionPadding={16}
                         avoidCollisions={true}
                     >
-                        <div className="mb-4 pb-3 border-b border-gray-200">
-                            <h3 className="text-lg font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+                        <div className="mb-4 pb-3 border-b-2 border-gradient-to-r from-[#f38b00] to-[#ffed05]">
+                            <h3 className="text-xl font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
                                 Browse All Categories
                             </h3>
+                            <p className="text-sm text-gray-500 mt-1">Explore our wide range of products</p>
                         </div>
                         {categoriesContent}
                     </HoverCardContent>
@@ -98,16 +105,17 @@ export default function ToggleCategories() {
             <div className="md:hidden">
                 <Button 
                     onClick={() => setMobileOpen(true)}
-                    className="bg-gradient-to-br from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-5 flex gap-2 justify-between items-center w-full"
+                    className="bg-gradient-to-br from-[#f38b00] to-[#ffed05] text-white hover:from-[#e07a00] hover:to-[#ffd700] 
+                             !py-5 flex gap-2 justify-between items-center w-full rounded-xl shadow-md hover:shadow-lg transition-all"
                 >
                     <span className="flex gap-2 items-center">
                         <LayoutDashboard className="!w-5 !h-5" />
-                        <H6 className="text-sm">All Categories</H6>
+                        <H6 className="text-sm font-bold">All Categories</H6>
                     </span>
                 </Button>
 
                 <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
-                    <DialogContent className="max-w-[95vw] max-h-[85vh] p-0 gap-0">
+                    <DialogContent className="max-w-[95vw] max-h-[85vh] p-0 gap-0 rounded-2xl">
                         <DialogHeader className="p-4 pb-3 border-b sticky top-0 bg-white z-10">
                             <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
                                 All Categories
