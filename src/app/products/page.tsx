@@ -1,137 +1,26 @@
 "use client";
-import { useState, useMemo, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetProductsByCategoryInfinite, ProductFilters } from "@/api/products.service";
-import { useGetAllCategories } from "@/api/category.service";
-import SearchFilters from "@/components/products/search-filters";
-import FiltersSidebar from "@/components/products/filters-sidebar";
-import ProductsGrid from "@/components/products/products-grid";
+import { useGetAllMainCategoriesWithProductCount } from "@/api/category.service";
+import { useGetFeaturedProducts } from "@/api/products.service";
+import CategoryCard from "@/components/blocks/category-card";
+import FeaturedProductsCarousel from "@/components/products/featured-products-carousel";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const ShopContent = () => {
-  const searchParams = useSearchParams();
-  const categoryFromUrl = searchParams.get("category");
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [sortBy, setSortBy] = useState("featured");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showFilters, setShowFilters] = useState(false);
+const CategoriesContent = () => {
+  const { data: categories = [], isLoading: categoriesLoading } = useGetAllMainCategoriesWithProductCount();
+  const { data: featuredProducts = [], isLoading: featuredLoading } = useGetFeaturedProducts();
 
-  const { data: allCategories = [] } = useGetAllCategories();
-
-  // Set category from URL on mount
-  useEffect(() => {
-    if (categoryFromUrl && allCategories.length > 0) {
-      // Check if the category exists
-      const categoryExists = allCategories.some(cat => cat.id === categoryFromUrl);
-      if (categoryExists && !selectedCategories.includes(categoryFromUrl)) {
-        setSelectedCategories([categoryFromUrl]);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryFromUrl, allCategories]);
-
-  // Debounce search query to prevent rapid API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Expand main categories to include their subcategories
-  const expandedCategories = useMemo(() => {
-    if (selectedCategories.length === 0) return [];
-    
-    const expanded = new Set<string>();
-    
-    selectedCategories.forEach(catId => {
-      // Add the selected category itself
-      expanded.add(catId);
-      
-      // Check if it's a main category
-      const category = allCategories.find(c => c.id === catId);
-      if (category?.type === 'main') {
-        // Add all subcategories of this main category
-        allCategories
-          .filter(c => c.parent_id === catId)
-          .forEach(subCat => {
-            if (subCat.id) expanded.add(subCat.id);
-          });
-      }
-    });
-    
-    return Array.from(expanded);
-  }, [selectedCategories, allCategories]);
-
-  // Create filters object for the infinite query
-  const filters: ProductFilters = useMemo(() => ({
-    search: debouncedSearchQuery || undefined,
-    categories: selectedCategories.length > 0 ? selectedCategories : undefined,
-    expandedCategories: expandedCategories.length > 0 ? expandedCategories : undefined,
-    brands: selectedBrands.length > 0 ? selectedBrands : undefined,
-    priceRange: priceRange as [number, number],
-    sortBy,
-  }), [debouncedSearchQuery, selectedCategories, expandedCategories, selectedBrands, priceRange, sortBy]);
-
-  // Use infinite query for products grouped by category
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isFetching,
-    isPlaceholderData,
-  } = useGetProductsByCategoryInfinite(filters);
-
-  // Flatten all pages into category groups
-  const categoryGroups = useMemo(() => {
-    return data?.pages.flatMap(page => page.categoryGroups) ?? [];
-  }, [data]);
-
-  // Get total count from first page
-  const totalCount = data?.pages[0]?.totalCount ?? 0;
-
-  // Calculate total products displayed
-  const displayedProductsCount = useMemo(() => {
-    return categoryGroups.reduce((sum, group) => sum + group.products.length, 0);
-  }, [categoryGroups]);
-
-
-
-  const clearFilters = () => {
-    setSelectedCategories([]);
-    setSelectedBrands([]);
-    setPriceRange([0, 1000]);
-    setSearchQuery("");
-    setDebouncedSearchQuery("");
-  };
-
-  // Only show skeleton on initial load, not on filter changes
-  if (isLoading && !isPlaceholderData) {
+  if (categoriesLoading) {
     return (
       <Container>
-        <div className="mx-auto">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="flex gap-8">
-              <div className="w-80 space-y-4">
-                <div className="h-64 bg-gray-200 rounded"></div>
-              </div>
-              <div className="flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="h-96 bg-gray-200 rounded"></div>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <div className="mx-auto py-8">
+          <Skeleton className="h-12 w-64 mb-4" />
+          <Skeleton className="h-6 w-96 mb-12" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-80" />
+            ))}
           </div>
         </div>
       </Container>
@@ -140,78 +29,96 @@ const ShopContent = () => {
 
   return (
     <Container>
-      <div className="mx-auto">
-        {/* Search and Filters Header */}
-        <SearchFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          totalProducts={totalCount}
-          filteredCount={displayedProductsCount}
-        />
+      <div className="mx-auto py-8 space-y-16">
+        {/* Categories Section */}
+        <div>
+          {/* Header */}
+          <div className="mb-12 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Browse by Category
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Explore our wide range of products organized by category. Click on any category to view all available products.
+            </p>
+          </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 relative">
-          {/* Filters Sidebar */}
-          <FiltersSidebar
-            showFilters={showFilters}
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
-            selectedBrands={selectedBrands}
-            setSelectedBrands={setSelectedBrands}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            onClearFilters={clearFilters}
-          />
-
-          {/* Products Grid with Infinite Loading */}
-          <main className="flex-1">
-            <ProductsGrid
-              categoryGroups={categoryGroups}
-              viewMode={viewMode}
-              hasNextPage={hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              fetchNextPage={fetchNextPage}
-              onClearFilters={clearFilters}
-              isFiltering={isFetching && !isFetchingNextPage}
-            />
-          </main>
+          {/* Categories Grid */}
+          {categories.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No categories available
+                </h3>
+                <p className="text-gray-500">
+                  Categories will appear here once they are added.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categories.map((category) => (
+                <CategoryCard key={category.id} {...category} />
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Featured Products Carousel Section */}
+        {!featuredLoading && featuredProducts.length > 0 && (
+          <div className="border-t pt-16">
+            <FeaturedProductsCarousel products={featuredProducts} />
+          </div>
+        )}
+
+        {/* Featured Products Loading State */}
+        {featuredLoading && (
+          <div className="border-t pt-16">
+            <Skeleton className="h-12 w-64 mb-6" />
+            <div className="flex gap-4 overflow-hidden">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="flex-none w-[calc(20%-12.8px)] h-96" />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </Container>
   );
 };
 
-const Shop = () => {
+const ProductsPage = () => {
   return (
     <Suspense fallback={
       <Container>
-        <div className="mx-auto">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="flex gap-8">
-              <div className="w-80 space-y-4">
-                <div className="h-64 bg-gray-200 rounded"></div>
-              </div>
-              <div className="flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="h-96 bg-gray-200 rounded"></div>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <div className="mx-auto py-8">
+          <Skeleton className="h-12 w-64 mb-4" />
+          <Skeleton className="h-6 w-96 mb-12" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-80" />
+            ))}
           </div>
         </div>
       </Container>
     }>
-      <ShopContent />
+      <CategoriesContent />
     </Suspense>
   );
 };
 
-export default Shop;
+export default ProductsPage;

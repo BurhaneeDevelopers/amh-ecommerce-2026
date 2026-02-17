@@ -115,6 +115,53 @@ class Categories_Service {
     if (error) throw error;
     return data;
   }
+
+  async getAllMainCategoriesWithProductCount(): Promise<(Category & { product_count: number })[] | null> {
+    // Get all main categories
+    const { data: categories, error: catError } = await supabase
+      .from(this.table)
+      .select("*")
+      .eq("type", "main")
+      .order("order", { ascending: true });
+
+    if (catError) throw catError;
+    if (!categories) return null;
+
+    // For each category, count products
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (cat) => {
+        // Count products in this category
+        const { count: mainCount } = await supabase
+          .from("products")
+          .select("*", { count: "exact", head: true })
+          .eq("category_id", cat.id);
+
+        // Get subcategories
+        const { data: subcats } = await supabase
+          .from(this.table)
+          .select("id")
+          .eq("parent_id", cat.id);
+
+        // Count products in subcategories
+        let subCount = 0;
+        if (subcats && subcats.length > 0) {
+          const subcatIds = subcats.map(s => s.id);
+          const { count } = await supabase
+            .from("products")
+            .select("*", { count: "exact", head: true })
+            .in("category_id", subcatIds);
+          subCount = count || 0;
+        }
+
+        return {
+          ...cat,
+          product_count: (mainCount || 0) + subCount
+        };
+      })
+    );
+
+    return categoriesWithCount;
+  }
 }
 
 export const categories_service = new Categories_Service();

@@ -13,6 +13,17 @@ export const useGetAllMainCategories = () => {
   });
 };
 
+export const useGetAllMainCategoriesWithProductCount = () => {
+  return useQuery<(Category & { product_count: number })[], Error>({
+    queryKey: ["category_list_all_main_with_count"],
+    queryFn: async () =>
+      (await categories_service.getAllMainCategoriesWithProductCount()) ?? [],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useGetFeaturedMainCategories = () => {
   return useQuery<Category[], Error>({
     queryKey: ["category_list_featured_main"],
