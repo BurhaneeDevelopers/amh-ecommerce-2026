@@ -64,17 +64,19 @@ const WishlistButton = ({
       <Button
         className={`${
           isAdded
-            ? "bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)]"
-            : "bg-transparent border border-amber-600 hover:text-white"
-        } text-[#272727] ${compact ? 'p-1 h-auto min-w-0' : ''} ${className}`}
+            ? "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 border-0 shadow-lg"
+            : "bg-white/95 hover:bg-white border-2 border-gray-300 hover:border-red-400 shadow-md"
+        } backdrop-blur-sm transition-all duration-300 hover:scale-110 active:scale-95 ${
+          compact ? 'p-2 h-auto min-w-0 rounded-lg' : 'rounded-xl'
+        } ${className}`}
         onClick={handleClick}
       >
         {creating ? (
-          <Loader2 className={`${compact ? '!size-3 sm:!size-3.5' : '!size-6'} stroke-amber-600 animate-spin`} />
+          <Loader2 className={`${compact ? 'w-4 h-4' : 'w-6 h-6'} ${isAdded ? 'text-white' : 'text-red-500'} animate-spin`} />
         ) : (
           <Heart
-            className={`${compact ? '!size-3 sm:!size-3.5' : '!size-6'} ${
-              isAdded ? "stroke-white fill-amber-600" : ""
+            className={`${compact ? 'w-4 h-4' : 'w-6 h-6'} transition-all duration-300 ${
+              isAdded ? "fill-white stroke-white" : "stroke-red-500 hover:fill-red-100"
             }`}
           />
         )}

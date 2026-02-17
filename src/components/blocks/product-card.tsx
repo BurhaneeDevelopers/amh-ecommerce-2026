@@ -1,28 +1,26 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "../ui/badge";
 import WishlistButton from "./wishlist-button";
 import { Button } from "../ui/button";
-import { Eye } from "lucide-react";
+import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
 import GetQuoteModal from "../modals/get-quote-modal";
-import { Card, CardContent } from "../ui/card";
 import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
 
 // Define badge variants based on `tag`
 type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
 
 const badgeStyles: Record<Exclude<BadgeVariant, null>, string> = {
-  "on sale": "bg-red-500",
-  "out of stock": "bg-gray-500",
-  featured: "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 text-black shadow-[0_0_10px_rgba(251,191,36,0.6)] animate-pulse",
+  "on sale": "bg-gradient-to-r from-red-500 to-red-600 text-white",
+  "out of stock": "bg-gray-500 text-white",
+  featured: "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 text-black shadow-lg animate-pulse",
 };
 
 const badgeLabels: Record<Exclude<BadgeVariant, null>, string> = {
-  "on sale": "On Sale!",
+  "on sale": "🔥 Sale",
   "out of stock": "Out of Stock",
-  featured: "Featured",
+  featured: "⭐ Featured",
 };
 
 interface ProductCardProps extends Product {
@@ -59,6 +57,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       router.push(`/products/${id}`);
     }
   };
+  
   const handleGetQuote = () => {
     setIsQuoteModalOpen(true);
   };
@@ -66,78 +65,87 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // List view layout
   if (viewMode === 'list') {
     return (
-      <Card className={`group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl ${
+      <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
         badge === "featured" 
-          ? "border-2 border-yellow-400 shadow-[0_0_5px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
-          : "border-gray-200"
+          ? "border-yellow-400 shadow-lg hover:shadow-2xl" 
+          : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
       }`}>
-        <CardContent className="p-0 h-full">
-          <div className="flex flex-row gap-4 p-4">
-            {/* Product Image Container - Smaller fixed size for list view */}
-            <div className="relative overflow-hidden bg-white flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-lg border border-gray-100">
-              <Image
-                width={200}
-                height={200}
-                src={
-                  photos[0] ??
-                  "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-                }
-                alt={product_name}
-                className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-              />
+        <div className="flex flex-row gap-6 p-4">
+          {/* Product Image Container */}
+          <div className="relative flex-shrink-0 w-40 h-40 rounded-lg">
+            <Image
+              width={200}
+              height={200}
+              src={
+                photos[0] ??
+                "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
+              }
+              alt={product_name}
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+            />
 
-              {/* Badge */}
-              {badge && (
-                <Badge
-                  className={`absolute top-2 right-2 ${badgeStyles[badge]} border-0 shadow-md font-medium px-2 py-1 text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
-                >
-                  {badgeLabels[badge]}
-                </Badge>
+            {/* Badge */}
+            {badge && (
+              <div className={`absolute top-2 right-2 ${badgeStyles[badge]} rounded-lg px-2 py-1 text-xs font-bold shadow-lg`}>
+                {badgeLabels[badge]}
+              </div>
+            )}
+
+            {/* Featured sparkle */}
+            {badge === "featured" && (
+              <div className="absolute top-2 left-2">
+                <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+              </div>
+            )}
+          </div>
+
+          {/* Product Info */}
+          <div className="flex flex-col flex-grow justify-between min-w-0">
+            <div className="space-y-2">
+              <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                {product_name}
+              </h3>
+              {model_number && (
+                <p className="text-sm text-gray-600 font-medium bg-gray-100 px-3 py-1 rounded-lg inline-block">
+                  {model_number}
+                </p>
+              )}
+              {canViewQuantity && (
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                  <p className="text-sm font-semibold text-gray-700">
+                    {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
+                  </p>
+                </div>
               )}
             </div>
 
-            {/* Product Info - Takes remaining space */}
-            <div className="flex flex-col flex-grow justify-between min-w-0">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-gray-900 text-base sm:text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
-                  {product_name}
-                </h3>
-                {model_number && (
-                  <p className="text-sm text-gray-500 font-medium truncate">
-                    {model_number}
-                  </p>
-                )}
-                {canViewQuantity && (
-                  <p className="text-sm text-blue-600 font-semibold">
-                    Stock: {on_hand_qty} units
-                  </p>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-2 mt-4">
-                <Button
-                  onClick={handleGetQuote}
-                  size="sm"
-                  className={`flex-1 h-10 rounded-lg font-medium text-sm transition-all duration-200 ${
-                    badge === "out of stock"
-                      ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                      : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                  }`}
-                >
-                  {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
-                </Button>
-                <button
-                  onClick={handleViewProduct}
-                  className="bg-white hover:bg-gray-50 p-2.5 rounded-lg shadow-sm transition-all duration-200 hover:scale-105 border border-gray-200"
-                >
-                  <Eye className="w-5 h-5 text-gray-600" />
-                </button>
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-4">
+              <Button
+                onClick={handleGetQuote}
+                size="lg"
+                className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
+                  badge === "out of stock"
+                    ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
+                    : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
+                } hover:scale-105 active:scale-95`}
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
+              </Button>
+              <button
+                onClick={handleViewProduct}
+                className="h-11 px-4 rounded-xl border-2 border-gray-300 hover:border-primary bg-white hover:bg-primary/5 transition-all duration-300 hover:scale-105"
+              >
+                <Eye className="w-5 h-5 text-gray-700" />
+              </button>
+              <div className="flex items-center">
                 <WishlistButton product_id={id ?? ""} />
               </div>
             </div>
           </div>
-        </CardContent>
+        </div>
 
         {/* Get Quote Modal */}
         <GetQuoteModal
@@ -150,88 +158,95 @@ const ProductCard: React.FC<ProductCardProps> = ({
             photos,
           }}
         />
-      </Card>
+      </div>
     );
   }
 
-  // Grid view layout (default) - Ultra compact design for maximum density
+  // Grid view layout (default) - Compact and clean
   return (
-    <Card className={`group relative overflow-hidden border shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-md flex flex-col ${
+    <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
       badge === "featured" 
-        ? "border-2 border-yellow-400 shadow-[0_0_5px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
-        : "border-gray-200"
+        ? "border-yellow-400 shadow-lg hover:shadow-2xl" 
+        : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
     }`}>
-      <CardContent className="p-0 h-full flex flex-col">
-        {/* Product Image Container - Smaller with minimal padding */}
-        <div className="relative overflow-hidden bg-white aspect-square flex-shrink-0 border-b border-gray-100">
-          <Image
-            width={250}
-            height={250}
-            src={
-              photos[0] ??
-              "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-            }
-            alt={product_name}
-            className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
-          />
+      {/* Product Image Container */}
+      <div className="relative aspect-square p-3">
+        <Image
+          width={300}
+          height={300}
+          src={
+            photos[0] ??
+            "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
+          }
+          alt={product_name}
+          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+        />
 
-          {/* Wishlist Button - Top left, minimal */}
-          <div className="absolute top-0.5 left-0.5">
-            <WishlistButton product_id={id ?? ""} compact />
-          </div>
+        {/* Action Buttons - Always Visible */}
+        <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
+          {/* Wishlist Button */}
+          <WishlistButton product_id={id ?? ""} />
 
-          {/* View Button - Bottom right, minimal */}
-          <div className="absolute bottom-0.5 right-0.5">
-            <button
-              onClick={handleViewProduct}
-              className="bg-white/90 backdrop-blur-sm hover:bg-white p-1 rounded shadow-sm transition-all duration-200 hover:scale-105 border border-gray-200"
-            >
-              <Eye className="w-3 h-3 text-gray-600" />
-            </button>
-          </div>
-
-          {/* Badge - Minimal */}
+          {/* Badge */}
           {badge && (
-            <Badge
-              className={`absolute top-0.5 right-0.5 ${badgeStyles[badge]} border-0 shadow-sm font-medium px-1 py-0.5 text-[7px] sm:text-[8px] ${badge === "featured" ? "font-bold" : ""}`}
-            >
+            <div className={`${badgeStyles[badge]} rounded-lg px-2 py-1 text-xs font-bold shadow-lg`}>
               {badgeLabels[badge]}
-            </Badge>
+            </div>
           )}
         </div>
 
-        {/* Product Info - Ultra compact */}
-        <div className="flex flex-col flex-grow p-1.5 sm:p-2 justify-between min-h-[70px] sm:min-h-[80px]">
-          <div className="space-y-0.5 flex-grow">
-            <h3 className="font-semibold text-gray-900 text-[10px] sm:text-[11px] leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
-              {product_name}
-            </h3>
-            {model_number && (
-              <p className="text-[8px] sm:text-[9px] text-gray-500 font-medium truncate">
-                {model_number}
-              </p>
-            )}
-            {canViewQuantity && (
-              <p className="text-[8px] sm:text-[9px] text-blue-600 font-semibold">
-                Stock: {on_hand_qty}
-              </p>
-            )}
-          </div>
-
-          {/* Get Quote Button - Ultra compact */}
-          <Button
-            onClick={handleGetQuote}
-            size="sm"
-            className={`w-full mt-1 h-6 sm:h-7 rounded font-medium text-[9px] sm:text-[10px] transition-all duration-200 ${
-              badge === "out of stock"
-                ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-            }`}
+        {/* View Button - Always Visible on Mobile, Center on Desktop Hover */}
+        <div className="absolute bottom-2 right-2 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={handleViewProduct}
+            className="h-10 w-10 md:h-14 md:w-14 rounded-full bg-white shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center border-2 border-gray-200 hover:border-primary"
           >
-            {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
-          </Button>
+            <Eye className="w-5 h-5 md:w-6 md:h-6 text-gray-900" />
+          </button>
         </div>
-      </CardContent>
+
+        {/* Featured sparkle */}
+        {badge === "featured" && (
+          <div className="absolute top-2 left-2">
+            <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="p-3">
+        <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200 min-h-[2.5rem] mb-2">
+          {product_name}
+        </h3>
+        
+        {model_number && (
+          <p className="text-xs text-gray-600 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block mb-2">
+            {model_number}
+          </p>
+        )}
+        
+        {canViewQuantity && (
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className={`w-1.5 h-1.5 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+            <p className="text-xs font-semibold text-gray-700">
+              {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
+            </p>
+          </div>
+        )}
+
+        {/* Get Quote Button */}
+        <Button
+          onClick={handleGetQuote}
+          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
+            badge === "out of stock"
+              ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
+              : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
+          } hover:scale-105 active:scale-95`}
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
+        </Button>
+      </div>
 
       {/* Get Quote Modal */}
       <GetQuoteModal
@@ -244,7 +259,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           photos,
         }}
       />
-    </Card>
+    </div>
   );
 };
 
