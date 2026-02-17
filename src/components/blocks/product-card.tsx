@@ -154,75 +154,75 @@ const ProductCard: React.FC<ProductCardProps> = ({
     );
   }
 
-  // Grid view layout (default) - Compact design
+  // Grid view layout (default) - Ultra compact design for maximum density
   return (
-    <Card className={`group relative overflow-hidden border shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-lg flex flex-col ${
+    <Card className={`group relative overflow-hidden border shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-md flex flex-col ${
       badge === "featured" 
         ? "border-2 border-yellow-400 shadow-[0_0_5px_rgba(251,191,36,0.4)] hover:shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
         : "border-gray-200"
     }`}>
       <CardContent className="p-0 h-full flex flex-col">
-        {/* Product Image Container - Fixed aspect ratio with compact padding */}
+        {/* Product Image Container - Smaller with minimal padding */}
         <div className="relative overflow-hidden bg-white aspect-square flex-shrink-0 border-b border-gray-100">
           <Image
-            width={400}
-            height={400}
+            width={250}
+            height={250}
             src={
               photos[0] ??
               "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
             }
             alt={product_name}
-            className="w-full h-full object-contain p-1.5 sm:p-2 group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
           />
 
-          {/* Wishlist Button - Top left, smaller */}
-          <div className="absolute top-1 left-1">
+          {/* Wishlist Button - Top left, minimal */}
+          <div className="absolute top-0.5 left-0.5">
             <WishlistButton product_id={id ?? ""} compact />
           </div>
 
-          {/* View Button - Bottom right, smaller */}
-          <div className="absolute bottom-1 right-1">
+          {/* View Button - Bottom right, minimal */}
+          <div className="absolute bottom-0.5 right-0.5">
             <button
               onClick={handleViewProduct}
-              className="bg-white/90 backdrop-blur-sm hover:bg-white p-1.5 rounded-md shadow-sm transition-all duration-200 hover:scale-105 border border-gray-200"
+              className="bg-white/90 backdrop-blur-sm hover:bg-white p-1 rounded shadow-sm transition-all duration-200 hover:scale-105 border border-gray-200"
             >
-              <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600" />
+              <Eye className="w-3 h-3 text-gray-600" />
             </button>
           </div>
 
-          {/* Badge - Smaller */}
+          {/* Badge - Minimal */}
           {badge && (
             <Badge
-              className={`absolute top-1 right-1 ${badgeStyles[badge]} border-0 shadow-sm font-medium px-1.5 py-0.5 text-[8px] sm:text-[9px] ${badge === "featured" ? "font-bold" : ""}`}
+              className={`absolute top-0.5 right-0.5 ${badgeStyles[badge]} border-0 shadow-sm font-medium px-1 py-0.5 text-[7px] sm:text-[8px] ${badge === "featured" ? "font-bold" : ""}`}
             >
               {badgeLabels[badge]}
             </Badge>
           )}
         </div>
 
-        {/* Product Info - Compact spacing */}
-        <div className="flex flex-col flex-grow p-2 sm:p-2.5 justify-between min-h-[85px] sm:min-h-[95px]">
+        {/* Product Info - Ultra compact */}
+        <div className="flex flex-col flex-grow p-1.5 sm:p-2 justify-between min-h-[70px] sm:min-h-[80px]">
           <div className="space-y-0.5 flex-grow">
-            <h3 className="font-semibold text-gray-900 text-[11px] sm:text-xs leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+            <h3 className="font-semibold text-gray-900 text-[10px] sm:text-[11px] leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
               {product_name}
             </h3>
             {model_number && (
-              <p className="text-[9px] sm:text-[10px] text-gray-500 font-medium truncate">
+              <p className="text-[8px] sm:text-[9px] text-gray-500 font-medium truncate">
                 {model_number}
               </p>
             )}
             {canViewQuantity && (
-              <p className="text-[9px] sm:text-[10px] text-blue-600 font-semibold">
+              <p className="text-[8px] sm:text-[9px] text-blue-600 font-semibold">
                 Stock: {on_hand_qty}
               </p>
             )}
           </div>
 
-          {/* Get Quote Button - Compact */}
+          {/* Get Quote Button - Ultra compact */}
           <Button
             onClick={handleGetQuote}
             size="sm"
-            className={`w-full mt-1.5 sm:mt-2 h-7 sm:h-8 rounded-md font-medium text-[10px] sm:text-xs transition-all duration-200 ${
+            className={`w-full mt-1 h-6 sm:h-7 rounded font-medium text-[9px] sm:text-[10px] transition-all duration-200 ${
               badge === "out of stock"
                 ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                 : "bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"

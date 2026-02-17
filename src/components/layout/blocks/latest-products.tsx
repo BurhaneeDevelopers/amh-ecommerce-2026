@@ -22,21 +22,21 @@ const LatestProducts = () => {
     const [isAnimating, setIsAnimating] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
     
-    // Responsive configuration - optimized for all screen sizes (more compact)
+    // Responsive configuration - maximized density for all screen sizes
     const getResponsiveConfig = useCallback(() => {
         if (typeof window !== 'undefined') {
             const width = window.innerWidth;
-            if (width < 640) return { itemsPerRow: 2, rows: 3 }; // mobile: 2x3 (6 products)
-            if (width < 768) return { itemsPerRow: 3, rows: 2 }; // small tablet: 3x2 (6 products)
-            if (width < 1024) return { itemsPerRow: 3, rows: 2 }; // tablet: 3x2 (6 products)
-            if (width < 1280) return { itemsPerRow: 4, rows: 2 }; // laptop: 4x2 (8 products)
-            if (width < 1536) return { itemsPerRow: 4, rows: 2 }; // large laptop: 4x2 (8 products)
-            return { itemsPerRow: 5, rows: 2 }; // xl desktop: 5x2 (10 products)
+            if (width < 640) return { itemsPerRow: 3, rows: 3 }; // mobile: 3x3 (9 products)
+            if (width < 768) return { itemsPerRow: 4, rows: 2 }; // small tablet: 4x2 (8 products)
+            if (width < 1024) return { itemsPerRow: 5, rows: 2 }; // tablet: 5x2 (10 products)
+            if (width < 1280) return { itemsPerRow: 6, rows: 2 }; // laptop: 6x2 (12 products)
+            if (width < 1536) return { itemsPerRow: 7, rows: 2 }; // large laptop: 7x2 (14 products)
+            return { itemsPerRow: 7, rows: 2 }; // xl desktop: 7x2 (14 products)
         }
-        return { itemsPerRow: 4, rows: 2 };
+        return { itemsPerRow: 6, rows: 2 };
     }, []);
     
-    const [config, setConfig] = useState({ itemsPerRow: 3, rows: 2 });
+    const [config, setConfig] = useState({ itemsPerRow: 6, rows: 2 });
     
     // Set mounted state and initial config
     useEffect(() => {
@@ -138,12 +138,13 @@ const LatestProducts = () => {
                         duration: 0.3,
                         ease: [0.25, 0.1, 0.25, 1]
                     }}
-                    className={`grid gap-2 sm:gap-3 md:gap-4 ${
-                        config.itemsPerRow === 2 ? 'grid-cols-2' :
+                    className={`grid gap-1.5 sm:gap-2 md:gap-2.5 ${
                         config.itemsPerRow === 3 ? 'grid-cols-3' :
                         config.itemsPerRow === 4 ? 'grid-cols-4' :
                         config.itemsPerRow === 5 ? 'grid-cols-5' :
-                        'grid-cols-6'
+                        config.itemsPerRow === 6 ? 'grid-cols-6' :
+                        config.itemsPerRow === 7 ? 'grid-cols-7' :
+                        'grid-cols-8'
                     }`}
                 >
                     {currentProducts.map((product) => (

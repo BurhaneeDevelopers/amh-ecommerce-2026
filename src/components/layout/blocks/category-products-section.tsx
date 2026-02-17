@@ -19,8 +19,8 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
     
-    // Configuration for responsive grid
-    const itemsPerPage = 10 // Show 10 products per page (2 rows of 5)
+    // Configuration for responsive grid - increased density
+    const itemsPerPage = 14 // Show 14 products per page (2 rows of 7)
     const totalPages = Math.ceil(products.length / itemsPerPage)
     const canGoNext = currentPage < totalPages - 1
     const canGoPrev = currentPage > 0
@@ -110,7 +110,7 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
                         duration: 0.3,
                         ease: [0.25, 0.1, 0.25, 1]
                     }}
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4"
+                    className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-1.5 sm:gap-2 md:gap-2.5"
                 >
                     {currentProducts.map((product) => (
                         <div key={`${product.id}-${currentPage}`} className="w-full">

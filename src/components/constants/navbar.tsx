@@ -46,7 +46,7 @@ export default function Navbar() {
       {/* Main Navbar */}
       <div className="bg-gradient-to-r from-gray-50 to-white border-b">
         <div className="w-full px-4 lg:px-6">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-20 overflow-hidden">
             {/* Left: Logo - Much Larger */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
               <div className="relative flex gap-4">

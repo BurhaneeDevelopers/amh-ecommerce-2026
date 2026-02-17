@@ -141,9 +141,9 @@ export default function ProductsGrid({
 
           {/* Products Grid for this Category */}
           <div
-            className={`grid gap-2 sm:gap-3 md:gap-4 ${
+            className={`grid gap-1.5 sm:gap-2 md:gap-2.5 ${
               viewMode === 'grid'
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
+                ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8'
                 : 'grid-cols-1'
             } ${isFiltering ? 'opacity-60 pointer-events-none' : ''}`}
           >
