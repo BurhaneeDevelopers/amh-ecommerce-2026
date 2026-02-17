@@ -20,6 +20,7 @@ import { useAtomValue } from "jotai";
 import { current_user_auth_atom } from "@/jotai/store";
 import { useGetWishlistByUser } from "@/api/wishlist.service";
 import { useGetAllCategories } from "@/api/category.service";
+import { P } from "../typography/typography";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,8 +46,8 @@ export default function Navbar() {
     <div className="min-w-full sticky top-0 z-50 bg-white border-b shadow-sm">
       {/* Main Navbar */}
       <div className="bg-gradient-to-r from-gray-50 to-white border-b">
-        <div className="w-full px-4 lg:px-6">
-          <div className="flex items-center justify-between h-20 overflow-hidden">
+        <div className="w-full">
+          <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
             {/* Left: Logo - Much Larger */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
               <div className="relative flex gap-4">
@@ -255,28 +256,28 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Right: Featured Categories - Horizontal Layout */}
-            <div className="flex items-center gap-4">
+            {/* Right: Featured Categories - Responsive Layout */}
+            <div className="flex items-center overflow-x-auto scrollbar-hide max-w-[50%] lg:max-w-[60%] xl:max-w-none">
               {featuredCategories.length > 0 ? (
                 featuredCategories.map((category) => (
                   <Link 
                     key={category.id} 
                     href={`/products?category=${category.id}`}
-                    className="group"
+                    className="group flex-shrink-0"
                   >
-                    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10 transition-all duration-300">
-                      {/* Image/Icon First */}
+                    <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 px-2 lg:px-2.5 py-1.5 lg:py-2 rounded-xl hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10 transition-all duration-300 min-w-[60px] lg:min-w-0">
+                      {/* Image/Icon */}
                       {category.icon && !category.icon.startsWith('http') ? (
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
-                          <span className="text-2xl">{category.icon}</span>
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
+                          <span className="text-lg lg:text-xl">{category.icon}</span>
                         </div>
                       ) : category.icon && category.icon.startsWith('http') ? (
-                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
                           <Image
                             src={category.icon}
                             alt={category.category_name}
-                            width={40}
-                            height={40}
+                            width={36}
+                            height={36}
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
@@ -284,14 +285,14 @@ export default function Navbar() {
                           />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
-                          <Package className="w-5 h-5 text-gray-600 group-hover:text-[#f38b00]" />
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
+                          <Package className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600 group-hover:text-[#f38b00]" />
                         </div>
                       )}
-                      {/* Label Next */}
-                      <span className="text-sm font-semibold text-gray-700 group-hover:text-[#f38b00] transition-colors whitespace-nowrap">
+                      {/* Label - Responsive sizing and wrapping */}
+                      <P className="text-[10px] xl:text-sm font-semibold text-gray-700 group-hover:text-[#f38b00] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
                         {category.category_name}
-                      </span>
+                      </P>
                     </div>
                   </Link>
                 ))
