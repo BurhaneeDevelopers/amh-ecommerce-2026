@@ -81,8 +81,8 @@ const BannerSlider: React.FC = () => {
   return (
     <div className="relative w-full bg-gray-100 py-8">
       <div className="w-full px-4 lg:px-6">
-        {/* Main slider container with proper height and rounded corners */}
-        <div className="relative w-full h-[70vh] overflow-hidden rounded-2xl shadow-lg group">
+        {/* Main slider container with 3:2 aspect ratio (1080x720) - no cropping */}
+        <div className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl shadow-lg group bg-gradient-to-br from-gray-200 to-gray-300">
           {/* Render all slides but only show current one */}
           {slides.map((slide, slideIndex) => (
             <motion.div
@@ -109,13 +109,13 @@ const BannerSlider: React.FC = () => {
                 pointerEvents: slideIndex === index ? 'auto' : 'none'
               }}
             >
-              {/* Responsive image container */}
-              <div className="relative w-full h-full overflow-hidden rounded-2xl">
+              {/* Responsive image container - contains full poster without cropping */}
+              <div className="relative w-full h-full overflow-hidden rounded-2xl flex items-center justify-center">
                 <Image
                   src={slide.src}
                   alt={slide.alt}
                   fill
-                  className="object-cover select-none pointer-events-none rounded-2xl"
+                  className="object-contain select-none pointer-events-none rounded-2xl"
                   priority={slideIndex === index}
                   sizes="100vw"
                 />
