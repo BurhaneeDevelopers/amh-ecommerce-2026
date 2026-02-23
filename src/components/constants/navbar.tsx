@@ -262,7 +262,7 @@ export default function Navbar() {
                 featuredCategories.map((category) => (
                   <Link 
                     key={category.id} 
-                    href={`/products?category=${category.id}`}
+                    href={`/category/${category.id}`}
                     className="group flex-shrink-0"
                   >
                     <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 px-2 lg:px-2.5 py-1.5 lg:py-2 rounded-xl hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10 transition-all duration-300 min-w-[60px] lg:min-w-0">

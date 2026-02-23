@@ -27,14 +27,14 @@ export default function ToggleCategories() {
                 .map(sub => ({
                     id: sub.id || '',
                     name: sub.category_name,
-                    href: `/products?category=${sub.id}`,
+                    href: `/category/${sub.id}`,
                     icon: sub.icon
                 }))
             
             return {
                 id: mainCat.id || '',
                 name: mainCat.category_name,
-                href: `/products?category=${mainCat.id}`,
+                href: `/category/${mainCat.id}`,
                 icon: mainCat.icon,
                 subcategories: subcategories.length > 0 ? subcategories : undefined
             }

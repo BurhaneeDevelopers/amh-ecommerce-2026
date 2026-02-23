@@ -40,17 +40,18 @@ export default function ProductInfo({
     const value = e.target.value;
     // Allow empty input while typing
     if (value === "") {
+      setQuantity(0);
       return;
     }
     const numValue = parseInt(value);
-    if (!isNaN(numValue) && numValue >= 1) {
+    if (!isNaN(numValue) && numValue >= 0) {
       setQuantity(numValue);
     }
   };
 
   const handleInputBlur = () => {
     // If quantity is 0 or invalid, reset to 1
-    if (!quantity || quantity < 1) {
+    if (quantity < 1) {
       setQuantity(1);
     }
   };
@@ -138,13 +139,20 @@ export default function ProductInfo({
         <div className="mb-3">
           <Input
             type="number"
-            value={quantity}
+            value={quantity === 0 ? '' : quantity}
             onChange={handleInputChange}
             onBlur={handleInputBlur}
             min="1"
             placeholder="Enter quantity"
-            className="w-32 px-4 py-2 text-center border border-gray-300 rounded-lg focus:!outline-none focus:!ring-2 focus:!ring-blue-500"
+            className={`w-32 px-4 py-2 text-center border rounded-lg focus:!outline-none focus:!ring-2 ${
+              quantity < 1 
+                ? 'border-red-300 focus:!ring-red-500' 
+                : 'border-gray-300 focus:!ring-blue-500'
+            }`}
           />
+          {quantity < 1 && (
+            <p className="text-xs text-red-600 mt-2">Quantity must be at least 1</p>
+          )}
         </div>
         <P className="text-sm text-gray-600">
           We only accept bulk orders
@@ -228,10 +236,10 @@ export default function ProductInfo({
       <div className="sticky bottom-0 bg-white pt-6 border-t border-gray-100">
         <Button
           onClick={onGetQuote}
-          disabled={isOutOfStock}
+          disabled={isOutOfStock || quantity < 1}
           size="lg"
           className={`w-full h-14 text-lg font-semibold rounded-2xl transition-all duration-200 ${
-            isOutOfStock
+            isOutOfStock || quantity < 1
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           }`}
@@ -239,6 +247,8 @@ export default function ProductInfo({
           <Quote className="w-5 h-5" />
           {isOutOfStock
             ? "Out of Stock"
+            : quantity < 1
+            ? "Enter Quantity"
             : `Get Quote (${quantity} carton${quantity > 1 ? "s" : ""})`}
         </Button>
         {!isOutOfStock && (

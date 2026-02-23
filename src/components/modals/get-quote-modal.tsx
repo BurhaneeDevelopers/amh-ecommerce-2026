@@ -221,15 +221,34 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Quantity
+                            Quantity *
                         </label>
                         <Input
                             type="number"
                             min="1"
-                            value={quantity}
-                            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                            value={quantity === 0 ? '' : quantity}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === '') {
+                                    setQuantity(0);
+                                } else {
+                                    const numValue = parseInt(value);
+                                    if (!isNaN(numValue) && numValue >= 0) {
+                                        setQuantity(numValue);
+                                    }
+                                }
+                            }}
+                            onBlur={() => {
+                                if (quantity < 1) {
+                                    setQuantity(1);
+                                }
+                            }}
                             placeholder="Enter quantity needed"
+                            className={quantity < 1 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}
                         />
+                        {quantity < 1 && (
+                            <p className="text-xs text-red-600 mt-1">Quantity must be at least 1</p>
+                        )}
                     </div>
 
                     <div>

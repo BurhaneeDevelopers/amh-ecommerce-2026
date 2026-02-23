@@ -127,7 +127,7 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
                 </div>
                 
                 <Link 
-                    href={`/products?category=${category.id}`}
+                    href={`/category/${category.id}`}
                     className="flex items-center gap-2 text-sm text-[#272727] hover:text-orange-600 font-medium transition-colors group"
                 >
                     View All {category.category_name}
