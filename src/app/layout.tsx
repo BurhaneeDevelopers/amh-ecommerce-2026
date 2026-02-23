@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import ProtectedComponent from "@/components/layout/ProtectedComponent";
+import NextTopLoader from 'nextjs-toploader';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -29,6 +30,13 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${montserrat.variable} antialiased`}
       >
+        <NextTopLoader
+          color="#f38b00"
+          height={4}
+          showSpinner={false}
+          speed={200}
+          shadow="0 0 10px #f38b00,0 0 5px #f38b00"
+        />
         <ProtectedComponent>
           {children}
         </ProtectedComponent>
