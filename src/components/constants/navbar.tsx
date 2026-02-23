@@ -43,9 +43,9 @@ export default function Navbar() {
   ];
 
   return (
-    <div className="min-w-full sticky top-0 z-50 bg-white border-b shadow-sm">
+    <div className="min-w-full sticky top-0 z-50 bg-[#2d2d2d] border-b border-gray-700 shadow-lg">
       {/* Main Navbar */}
-      <div className="bg-gradient-to-r from-gray-50 to-white border-b">
+      <div className="bg-[#2d2d2d]">
         <div className="w-full">
           <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
             {/* Left: Logo - Much Larger */}
@@ -53,20 +53,20 @@ export default function Navbar() {
               <div className="relative flex gap-4">
                 <Image
                   alt="MSI Logo"
-                  src="/logo.png"
+                  src="/msi-logo-white.png"
                   width={500}
                   height={500}
-                  className="object-cover h-20 bg-gray-50 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover scale-150 h-20 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
                   priority
                 />
-                {/* <Image
-                  alt="XLNT Logo"
+                <Image
+                  alt="MSI Logo"
                   src="/xlnt.png"
                   width={500}
                   height={500}
-                  className="object-cover h-20 bg-gray-50 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover scale-150 h-20 p-2 w-full transition-transform duration-300 group-hover:scale-105"
                   priority
-                /> */}
+                />
               </div>
             </Link>
 
@@ -79,15 +79,15 @@ export default function Navbar() {
                 <input
                   type="text"
                   placeholder='Search for "Power Tools", "Drills", "Saws"...'
-                  className="w-full pl-12 pr-4 py-4 text-sm font-medium bg-white border-2 border-gray-200 rounded-2xl 
+                  className="w-full pl-12 pr-4 py-4 text-sm font-medium bg-white/10 border-2 border-gray-600 rounded-2xl 
                            focus:outline-none focus:ring-2 focus:ring-[#f38b00] focus:border-transparent 
-                           hover:border-[#f38b00]/40 hover:shadow-md
-                           transition-all duration-300 placeholder:text-gray-400"
+                           hover:border-[#f38b00]/40 hover:shadow-md text-white placeholder:text-gray-400
+                           transition-all duration-300"
                   onClick={() => setIsSearchModalOpen(true)}
                   readOnly
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-200 rounded">
+                  <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-gray-300 bg-gray-700 border border-gray-600 rounded">
                     ctrl + K
                   </kbd>
                 </div>
@@ -100,10 +100,10 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden hover:bg-[#f38b00]/10 rounded-xl"
+                className="lg:hidden hover:bg-white/10 rounded-xl"
                 onClick={() => setIsSearchModalOpen(true)}
               >
-                <Search className="w-5 h-5 text-gray-700" />
+                <Search className="w-5 h-5 text-gray-300" />
               </Button>
 
               {/* Sign In / Account - Desktop */}
@@ -141,9 +141,9 @@ export default function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="md:hidden hover:bg-[#f38b00]/10 rounded-xl"
+                    className="md:hidden hover:bg-white/10 rounded-xl"
                   >
-                    <Menu className="w-6 h-6 text-gray-700" />
+                    <Menu className="w-6 h-6 text-gray-300" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="">
@@ -194,7 +194,7 @@ export default function Navbar() {
       </div>
 
       {/* Bottom Navigation Bar - Desktop Only */}
-      <div className="hidden md:block bg-white border-t border-gray-100">
+      <div className="hidden md:block bg-[#3a3a3a] border-t border-gray-700">
         <div className="w-full px-4 lg:px-6">
           <div className="flex items-center justify-between py-3">
             {/* Left: Main Navigation Links */}
@@ -204,52 +204,52 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10
+                           hover:bg-white/10
                            transition-all duration-300 group"
                 >
-                  <Home className="w-5 h-5 text-gray-600 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-700 group-hover:text-[#f38b00]">
+                  <Home className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
+                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
                     Home
                   </span>
                 </Button>
               </Link>
 
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-gray-600" />
 
               {/* Categories */}
               <div className="flex items-center">
                 <ToggleCategories />
               </div>
 
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-gray-600" />
 
               {/* Products */}
               <Link href="/products">
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10
+                           hover:bg-white/10
                            transition-all duration-300 group"
                 >
-                  <Package className="w-5 h-5 text-gray-600 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-700 group-hover:text-[#f38b00]">
+                  <Package className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
+                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
                     Products
                   </span>
                 </Button>
               </Link>
 
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-gray-600" />
 
               {/* About */}
               <Link href="/about">
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10
+                           hover:bg-white/10
                            transition-all duration-300 group"
                 >
-                  <Info className="w-5 h-5 text-gray-600 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-700 group-hover:text-[#f38b00]">
+                  <Info className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
+                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
                     About
                   </span>
                 </Button>
@@ -265,14 +265,14 @@ export default function Navbar() {
                     href={`/category/${category.id}`}
                     className="group flex-shrink-0"
                   >
-                    <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 px-2 lg:px-2.5 py-1.5 lg:py-2 rounded-xl hover:bg-gradient-to-br hover:from-[#f38b00]/10 hover:to-[#ffed05]/10 transition-all duration-300 min-w-[60px] lg:min-w-0">
+                    <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 px-2 lg:px-2.5 py-1.5 lg:py-2 rounded-xl hover:bg-white/10 transition-all duration-300 min-w-[60px] lg:min-w-0">
                       {/* Image/Icon */}
                       {category.icon && !category.icon.startsWith('http') ? (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
                           <span className="text-lg lg:text-xl">{category.icon}</span>
                         </div>
                       ) : category.icon && category.icon.startsWith('http') ? (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-gray-700 group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
                           <Image
                             src={category.icon}
                             alt={category.category_name}
@@ -285,19 +285,19 @@ export default function Navbar() {
                           />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center group-hover:from-[#f38b00]/20 group-hover:to-[#ffed05]/20 transition-all duration-300 shadow-sm flex-shrink-0">
-                          <Package className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600 group-hover:text-[#f38b00]" />
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
+                          <Package className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 group-hover:text-[#f38b00]" />
                         </div>
                       )}
                       {/* Label - Responsive sizing and wrapping */}
-                      <P className="text-[10px] xl:text-sm font-semibold text-gray-700 group-hover:text-[#f38b00] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
+                      <P className="text-[10px] xl:text-sm font-semibold text-gray-300 group-hover:text-[#f38b00] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
                         {category.category_name}
                       </P>
                     </div>
                   </Link>
                 ))
               ) : (
-                <div className="text-xs text-gray-400 px-4">No featured categories</div>
+                <div className="text-xs text-gray-500 px-4">No featured categories</div>
               )}
             </div>
           </div>
