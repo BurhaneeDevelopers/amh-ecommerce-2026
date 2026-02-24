@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,12 +27,14 @@ interface BulkQuoteModalProps {
     onOpenChange: (open: boolean) => void
     products: BulkQuoteProduct[]
     onSuccess?: () => void
+    onRemoveProduct?: (productId: string) => void
 }
 
-export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess }: BulkQuoteModalProps) {
+export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess, onRemoveProduct }: BulkQuoteModalProps) {
     const user = useAtomValue(current_user_auth_atom)
     const createEnquiryMutation = useCreateNewEnquiry()
     const [isProductListOpen, setIsProductListOpen] = useState(false)
+    const [localProducts, setLocalProducts] = useState<BulkQuoteProduct[]>(products)
     
     const [formData, setFormData] = useState({
         name: user?.full_name || '',
@@ -44,6 +46,29 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
     })
 
     const PREVIEW_COUNT = 3
+
+    // Update local products when props change or modal opens
+    useEffect(() => {
+        if (open) {
+            setLocalProducts(products)
+        }
+    }, [open, products])
+
+    const handleRemoveProduct = (productId: string) => {
+        if (localProducts.length <= 1) {
+            toast.error('At least one product must remain in the quote request')
+            return
+        }
+        
+        const updatedProducts = localProducts.filter(p => p.id !== productId)
+        setLocalProducts(updatedProducts)
+        
+        if (onRemoveProduct) {
+            onRemoveProduct(productId)
+        }
+        
+        toast.success('Product removed from quote request')
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -73,27 +98,27 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
             return
         }
 
-        if (products.length === 0) {
+        if (localProducts.length === 0) {
             toast.error('No products selected')
             return
         }
 
         // Prepare product list for message
-        const productList = products.map((p, idx) => 
+        const productList = localProducts.map((p, idx) => 
             `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''}`
         ).join('\n')
 
         // Prepare enquiry payload
         const enquiryPayload: Enquiry = {
             user_id: user.id,
-            products: products.map(p => p.id),
+            products: localProducts.map(p => p.id),
             full_name: formData.name,
             email: formData.email,
             phone_number: formData.phone,
-            quantity: products.length.toString(),
+            quantity: localProducts.length.toString(),
             city: formData.city,
             company_name: formData.company,
-            message: `Bulk Quote Request for ${products.length} products:\n\n${productList}${
+            message: `Bulk Quote Request for ${localProducts.length} products:\n\n${productList}${
                 formData.message ? `\n\nAdditional Message: ${formData.message}` : ''
             }`,
         }
@@ -128,7 +153,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
     }
 
     // Safety check for products
-    const safeProducts = products || []
+    const safeProducts = localProducts || []
     const previewProducts = safeProducts.slice(0, PREVIEW_COUNT)
     const remainingProducts = safeProducts.slice(PREVIEW_COUNT)
     const hasMoreProducts = remainingProducts.length > 0
@@ -144,7 +169,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">Bulk Quote Request</h2>
-                            <p className="text-sm text-gray-500">Get pricing for {products.length} selected {products.length === 1 ? 'product' : 'products'}</p>
+                            <p className="text-sm text-gray-500">Get pricing for {localProducts.length} selected {localProducts.length === 1 ? 'product' : 'products'}</p>
                         </div>
                     </div>
                     <button
@@ -165,7 +190,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                     Selected Products
                                 </h3>
                                 <Badge variant="secondary" className="bg-amber-600 text-white">
-                                    {products.length} {products.length === 1 ? 'item' : 'items'}
+                                    {localProducts.length} {localProducts.length === 1 ? 'item' : 'items'}
                                 </Badge>
                             </div>
 
@@ -189,6 +214,15 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                 <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
                                             )}
                                         </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveProduct(product.id)}
+                                            disabled={localProducts.length <= 1}
+                                            className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                            title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
+                                        >
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -215,6 +249,15 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                         <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
                                                     )}
                                                 </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveProduct(product.id)}
+                                                    disabled={localProducts.length <= 1}
+                                                    className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
+                                                >
+                                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                                </button>
                                             </div>
                                         ))}
                                     </CollapsibleContent>
