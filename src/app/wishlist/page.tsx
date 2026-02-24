@@ -26,7 +26,10 @@ import {
 } from "@/api/wishlist.service";
 import { WishlistWithProduct } from "@/supabase/schema/schema.type";
 import RemoveWishlistModal from "@/components/blocks/modal/remove-wishlist";
+import GetQuoteModal from "@/components/modals/get-quote-modal";
+import BulkQuoteModal from "@/components/modals/bulk-quote-modal";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -36,6 +39,15 @@ const WishList = () => {
   const [product_id, setProduct_id] = useState("")
   const [wishlist_id, setWishlist_id] = useState("")
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showBulkQuoteModal, setShowBulkQuoteModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{
+    id: string;
+    product_name: string;
+    model_number?: string;
+    photos: string[];
+  } | null>(null);
+  
   const user = useAtomValue(current_user_auth_atom);
   const {
     data: wishlistData,
@@ -62,15 +74,38 @@ const WishList = () => {
   };
 
   const handleBulkEnquiry = () => {
-    const selectedItems =
-      wishlistData?.filter((i) => selected.includes(i.id || "")) || [];
-    console.log("Bulk Enquiry:", selectedItems);
-    // integrate with API later
+    const selectedItems = wishlistData?.filter((i) => 
+      selected.includes(i.id || "") && i.products && i.product_id
+    ) || [];
+    
+    if (selectedItems.length === 0) {
+      toast.error('No valid products selected');
+      return;
+    }
+
+    const bulkProducts = selectedItems.map(item => ({
+      id: item.product_id!,
+      product_name: item.products!.product_name,
+      model_number: item.products!.model_number,
+      photos: item.products!.photos || []
+    }));
+
+    setShowBulkQuoteModal(true);
   };
 
   const handleGetQuote = (item: WishlistWithProduct) => {
-    console.log("Get Quote for:", item);
-    // redirect / API call for quote
+    if (!item.products || !item.product_id) {
+      toast.error('Product information is not available');
+      return;
+    }
+
+    setSelectedProduct({
+      id: item.product_id,
+      product_name: item.products.product_name,
+      model_number: item.products.model_number,
+      photos: item.products.photos || []
+    });
+    setShowQuoteModal(true);
   };
 
   const handleDeleteItem = async (item: WishlistWithProduct) => {
@@ -379,6 +414,35 @@ const WishList = () => {
         product_id={product_id}
         user_id={user?.id ?? ""}
         refetch={refetch}
+      />
+
+      {selectedProduct && (
+        <GetQuoteModal
+          open={showQuoteModal}
+          onOpenChange={setShowQuoteModal}
+          product={selectedProduct}
+          onSuccess={() => {
+            setSelectedProduct(null);
+          }}
+        />
+      )}
+
+      <BulkQuoteModal
+        open={showBulkQuoteModal}
+        onOpenChange={setShowBulkQuoteModal}
+        products={
+          wishlistData
+            ?.filter((i) => selected.includes(i.id || "") && i.products && i.product_id)
+            .map(item => ({
+              id: item.product_id!,
+              product_name: item.products!.product_name,
+              model_number: item.products!.model_number,
+              photos: item.products!.photos || []
+            })) || []
+        }
+        onSuccess={() => {
+          setSelected([]);
+        }}
       />
     </Container>
   );

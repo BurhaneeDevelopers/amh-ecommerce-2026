@@ -1,183 +1,280 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, CheckCircle2 } from 'lucide-react'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { useAtomValue } from 'jotai'
+import { current_user_auth_atom } from '@/jotai/store'
+import { useCreateNewEnquiry } from '@/api/enquiry.service'
+import { Enquiry } from '@/supabase/schema/schema.type'
 
-interface BulkQuoteModalProps {
-  isOpen: boolean
-  onClose: () => void
-  categoryName?: string
+interface BulkQuoteProduct {
+    id: string
+    product_name: string
+    model_number?: string
+    photos: string[]
 }
 
-export default function BulkQuoteModal({ isOpen, onClose, categoryName }: BulkQuoteModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: '',
-  })
+interface BulkQuoteModalProps {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    products: BulkQuoteProduct[]
+    onSuccess?: () => void
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    setIsSubmitting(false)
-    setIsSuccess(true)
-
-    // Reset after 2 seconds
-    setTimeout(() => {
-      setIsSuccess(false)
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
+export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess }: BulkQuoteModalProps) {
+    const user = useAtomValue(current_user_auth_atom)
+    const createEnquiryMutation = useCreateNewEnquiry()
+    
+    const [formData, setFormData] = useState({
+        name: user?.full_name || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
         company: '',
-        message: '',
-      })
-      onClose()
-    }, 2000)
-  }
+        city: '',
+        message: ''
+    })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Request Bulk Quote</DialogTitle>
-          <DialogDescription>
-            {categoryName 
-              ? `Get a custom quote for bulk orders in ${categoryName}`
-              : 'Get a custom quote for bulk orders'}
-          </DialogDescription>
-        </DialogHeader>
+        // Validation
+        if (!formData.name || !formData.email || !formData.phone) {
+            toast.error('Please fill in all required fields')
+            return
+        }
 
-        {isSuccess ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <CheckCircle2 className="w-16 h-16 text-green-500 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Request Submitted!
-            </h3>
-            <p className="text-gray-600 text-center">
-              We&apos;ll get back to you shortly with a custom quote.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(formData.email)) {
+            toast.error('Please enter a valid email address')
+            return
+        }
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+1 234 567 8900"
-                  required
-                />
-              </div>
-            </div>
+        // Phone validation
+        const phoneRegex = /^[+]?[0-9\s\-\(\)]{10,}$/
+        if (!phoneRegex.test(formData.phone)) {
+            toast.error('Please enter a valid phone number (minimum 10 digits)')
+            return
+        }
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="john@company.com"
-                required
-              />
-            </div>
+        if (!user?.id) {
+            toast.error('Please login to submit an enquiry')
+            return
+        }
 
-            <div className="space-y-2">
-              <Label htmlFor="company">Company Name</Label>
-              <Input
-                id="company"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                placeholder="Your Company Ltd."
-              />
-            </div>
+        if (products.length === 0) {
+            toast.error('No products selected')
+            return
+        }
 
-            <div className="space-y-2">
-              <Label htmlFor="message">Requirements *</Label>
-              <Textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Please describe your bulk order requirements, quantities, and any specific needs..."
-                rows={4}
-                required
-              />
-            </div>
+        // Prepare product list for message
+        const productList = products.map((p, idx) => 
+            `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''}`
+        ).join('\n')
 
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit Request'
-                )}
-              </Button>
-            </div>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
-  )
+        // Prepare enquiry payload
+        const enquiryPayload: Enquiry = {
+            user_id: user.id,
+            products: products.map(p => p.id),
+            full_name: formData.name,
+            email: formData.email,
+            phone_number: formData.phone,
+            quantity: products.length.toString(),
+            city: formData.city,
+            company_name: formData.company,
+            message: `Bulk Quote Request for ${products.length} products:\n\n${productList}${
+                formData.message ? `\n\nAdditional Message: ${formData.message}` : ''
+            }`,
+        }
+
+        try {
+            await createEnquiryMutation.mutateAsync(enquiryPayload)
+            toast.success('Bulk quote request sent successfully!')
+            onOpenChange(false)
+
+            // Reset form
+            setFormData({
+                name: user?.full_name || '',
+                email: user?.email || '',
+                phone: user?.phone || '',
+                company: '',
+                city: '',
+                message: ''
+            })
+
+            // Call success callback
+            if (onSuccess) {
+                onSuccess()
+            }
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to send bulk quote request. Please try again.'
+            toast.error(errorMessage)
+        }
+    }
+
+    const handleInputChange = (field: string, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }))
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0" showCloseButton={false}>
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-100 rounded-lg">
+                            <ShoppingCart className="w-5 h-5 text-amber-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-semibold text-gray-900">Bulk Quote Request</h2>
+                            <p className="text-sm text-gray-500">Get pricing for {products.length} selected products</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => onOpenChange(false)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Products List */}
+                <div className="p-6 bg-gray-50 border-b max-h-64 overflow-y-auto">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <Package className="w-4 h-4" />
+                        Selected Products ({products.length})
+                    </h3>
+                    <div className="space-y-2">
+                        {products.map((product, index) => (
+                            <div key={product.id} className="flex gap-3 bg-white p-3 rounded-lg border">
+                                <Badge variant="secondary" className="h-6 w-6 flex items-center justify-center p-0">
+                                    {index + 1}
+                                </Badge>
+                                <Image
+                                    src={product.photos[0] || '/placeholder-product.jpg'}
+                                    alt={product.product_name}
+                                    width={48}
+                                    height={48}
+                                    className="w-12 h-12 object-cover rounded border"
+                                />
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
+                                    {product.model_number && (
+                                        <p className="text-xs text-gray-500">Model: {product.model_number}</p>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <User className="w-4 h-4 inline mr-1" />
+                                Full Name *
+                            </label>
+                            <Input
+                                required
+                                value={formData.name}
+                                onChange={(e) => handleInputChange('name', e.target.value)}
+                                placeholder="Enter your full name"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Mail className="w-4 h-4 inline mr-1" />
+                                Email Address *
+                            </label>
+                            <Input
+                                type="email"
+                                required
+                                value={formData.email}
+                                onChange={(e) => handleInputChange('email', e.target.value)}
+                                placeholder="Enter your email"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Phone className="w-4 h-4 inline mr-1" />
+                                Phone Number *
+                            </label>
+                            <Input
+                                required
+                                value={formData.phone}
+                                onChange={(e) => handleInputChange('phone', e.target.value)}
+                                placeholder="Enter your phone number"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Company Name
+                            </label>
+                            <Input
+                                value={formData.company}
+                                onChange={(e) => handleInputChange('company', e.target.value)}
+                                placeholder="Enter company name (optional)"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            City
+                        </label>
+                        <Input
+                            value={formData.city}
+                            onChange={(e) => handleInputChange('city', e.target.value)}
+                            placeholder="Enter your city (optional)"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <MessageSquare className="w-4 h-4 inline mr-1" />
+                            Additional Message
+                        </label>
+                        <Textarea
+                            value={formData.message}
+                            onChange={(e) => handleInputChange('message', e.target.value)}
+                            placeholder="Any specific requirements, quantities, or questions..."
+                            rows={4}
+                        />
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-3 pt-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                            className="flex-1"
+                            disabled={createEnquiryMutation.isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                            disabled={createEnquiryMutation.isPending}
+                        >
+                            {createEnquiryMutation.isPending ? 'Submitting...' : 'Send Bulk Quote Request'}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
 }
