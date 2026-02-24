@@ -30,6 +30,7 @@ import GetQuoteModal from "@/components/modals/get-quote-modal";
 import BulkQuoteModal from "@/components/modals/bulk-quote-modal";
 import Link from "next/link";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -41,6 +42,7 @@ const WishList = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [showBulkQuoteModal, setShowBulkQuoteModal] = useState(false);
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [selectedProduct, setSelectedProduct] = useState<{
     id: string;
     product_name: string;
@@ -87,10 +89,18 @@ const WishList = () => {
       id: item.product_id!,
       product_name: item.products!.product_name,
       model_number: item.products!.model_number,
-      photos: item.products!.photos || []
+      photos: item.products!.photos || [],
+      quantity: quantities[item.id || ''] || 1
     }));
 
     setShowBulkQuoteModal(true);
+  };
+
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    setQuantities(prev => ({
+      ...prev,
+      [itemId]: newQuantity
+    }));
   };
 
   const handleGetQuote = (item: WishlistWithProduct) => {
@@ -240,6 +250,7 @@ const WishList = () => {
                 <TableHead className="w-24">Image</TableHead>
                 <TableHead className="font-semibold">Product Name</TableHead>
                 <TableHead className="font-semibold">Model Number</TableHead>
+                <TableHead className="font-semibold w-32">Quantity</TableHead>
                 <TableHead className="text-right font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -320,6 +331,32 @@ const WishList = () => {
                         <Badge variant="outline" className="font-mono text-xs">
                           {item.products?.model_number || "N/A"}
                         </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {!hasNullProduct && (
+                        <Input
+                          type="number"
+                          min="1"
+                          value={quantities[item.id || ''] === 0 ? '' : quantities[item.id || ''] || 1}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '') {
+                              handleQuantityChange(item.id || '', 0);
+                            } else {
+                              const numValue = parseInt(value);
+                              if (!isNaN(numValue) && numValue >= 0) {
+                                handleQuantityChange(item.id || '', numValue);
+                              }
+                            }
+                          }}
+                          onBlur={() => {
+                            if ((quantities[item.id || ''] || 0) < 1) {
+                              handleQuantityChange(item.id || '', 1);
+                            }
+                          }}
+                          className="w-20 h-9 text-center"
+                        />
                       )}
                     </TableCell>
                     <TableCell>
@@ -437,7 +474,8 @@ const WishList = () => {
               id: item.product_id!,
               product_name: item.products!.product_name,
               model_number: item.products!.model_number,
-              photos: item.products!.photos || []
+              photos: item.products!.photos || [],
+              quantity: quantities[item.id || ''] || 1
             })) || []
         }
         onSuccess={() => {

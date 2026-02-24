@@ -20,6 +20,7 @@ interface BulkQuoteProduct {
     product_name: string
     model_number?: string
     photos: string[]
+    quantity?: number
 }
 
 interface BulkQuoteModalProps {
@@ -50,9 +51,19 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
     // Update local products when props change or modal opens
     useEffect(() => {
         if (open) {
-            setLocalProducts(products)
+            // Initialize quantities if not set
+            setLocalProducts(products.map(p => ({
+                ...p,
+                quantity: p.quantity || 1
+            })))
         }
     }, [open, products])
+
+    const handleQuantityChange = (productId: string, newQuantity: number) => {
+        setLocalProducts(prev => 
+            prev.map(p => p.id === productId ? { ...p, quantity: newQuantity } : p)
+        )
+    }
 
     const handleRemoveProduct = (productId: string) => {
         if (localProducts.length <= 1) {
@@ -105,8 +116,10 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
 
         // Prepare product list for message
         const productList = localProducts.map((p, idx) => 
-            `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''}`
+            `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''} - Quantity: ${p.quantity || 1}`
         ).join('\n')
+
+        const totalQuantity = localProducts.reduce((sum, p) => sum + (p.quantity || 1), 0)
 
         // Prepare enquiry payload
         const enquiryPayload: Enquiry = {
@@ -115,7 +128,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
             full_name: formData.name,
             email: formData.email,
             phone_number: formData.phone,
-            quantity: localProducts.length.toString(),
+            quantity: totalQuantity.toString(),
             city: formData.city,
             company_name: formData.company,
             message: `Bulk Quote Request for ${localProducts.length} products:\n\n${productList}${
@@ -214,15 +227,39 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                 <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
                                             )}
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveProduct(product.id)}
-                                            disabled={localProducts.length <= 1}
-                                            className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                            title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
-                                        >
-                                            <Trash2 className="w-4 h-4 text-red-500" />
-                                        </button>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <Input
+                                                type="number"
+                                                min="1"
+                                                value={product.quantity === 0 ? '' : product.quantity || 1}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    if (value === '') {
+                                                        handleQuantityChange(product.id, 0);
+                                                    } else {
+                                                        const numValue = parseInt(value);
+                                                        if (!isNaN(numValue) && numValue >= 0) {
+                                                            handleQuantityChange(product.id, numValue);
+                                                        }
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    if ((product.quantity || 0) < 1) {
+                                                        handleQuantityChange(product.id, 1);
+                                                    }
+                                                }}
+                                                className="w-16 h-8 text-center text-sm"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveProduct(product.id)}
+                                                disabled={localProducts.length <= 1}
+                                                className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
+                                            >
+                                                <Trash2 className="w-4 h-4 text-red-500" />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -249,15 +286,39 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                         <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
                                                     )}
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveProduct(product.id)}
-                                                    disabled={localProducts.length <= 1}
-                                                    className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                                    title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
-                                                >
-                                                    <Trash2 className="w-4 h-4 text-red-500" />
-                                                </button>
+                                                <div className="flex items-center gap-2 shrink-0">
+                                                    <Input
+                                                        type="number"
+                                                        min="1"
+                                                        value={product.quantity === 0 ? '' : product.quantity || 1}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            if (value === '') {
+                                                                handleQuantityChange(product.id, 0);
+                                                            } else {
+                                                                const numValue = parseInt(value);
+                                                                if (!isNaN(numValue) && numValue >= 0) {
+                                                                    handleQuantityChange(product.id, numValue);
+                                                                }
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if ((product.quantity || 0) < 1) {
+                                                                handleQuantityChange(product.id, 1);
+                                                            }
+                                                        }}
+                                                        className="w-16 h-8 text-center text-sm"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveProduct(product.id)}
+                                                        disabled={localProducts.length <= 1}
+                                                        className="shrink-0 p-1.5 hover:bg-red-50 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                        title={localProducts.length <= 1 ? "At least one product must remain" : "Remove product"}
+                                                    >
+                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         ))}
                                     </CollapsibleContent>

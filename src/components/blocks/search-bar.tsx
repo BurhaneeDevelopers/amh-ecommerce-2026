@@ -3,11 +3,24 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTypewriter } from "@/hooks/useTypewriter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchModal from "./search-modal";
 
 export default function SearchBar() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  
+  // Keyboard shortcut for search (Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
   const placeholderText = useTypewriter({
     words: [

@@ -15,7 +15,7 @@ import {
 import ToggleCategories from "../blocks/toggle-categories";
 import AccountMenu from "../layout/blocks/account-menu";
 import SearchModal from "../blocks/search-modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAtomValue } from "jotai";
 import { current_user_auth_atom } from "@/jotai/store";
 import { useGetWishlistByUser } from "@/api/wishlist.service";
@@ -32,6 +32,19 @@ export default function Navbar() {
 
   // Get top 5 brands (you can add a featured flag to Brand schema if needed)
   const featuredBrands = allBrands.slice(0, 5);
+
+  // Keyboard shortcut for search (Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const navLinks = [
     { label: "Home", href: "/", icon: Home },
