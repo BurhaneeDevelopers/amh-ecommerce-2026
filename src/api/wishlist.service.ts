@@ -37,3 +37,10 @@ export const useDeleteWishlist = () => {
     // },
   });
 };
+
+export const useDeleteWishlistById = () => {
+  return useMutation({
+    mutationFn: (wishlist_id: string) =>
+      wishlist_service.deleteWishlistById(wishlist_id),
+  });
+};

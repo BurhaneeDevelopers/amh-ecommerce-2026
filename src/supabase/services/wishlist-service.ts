@@ -56,6 +56,18 @@ class Wishlist_Service {
     if (error) throw error;
     return data;
   }
+
+  async deleteWishlistById(wishlist_id: string): Promise<Wishlist | null> {
+    const { data, error } = await supabase
+      .from(this.table)
+      .delete()
+      .eq("wishlist_id", wishlist_id)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
 }
 
 export const wishlist_service = new Wishlist_Service();
