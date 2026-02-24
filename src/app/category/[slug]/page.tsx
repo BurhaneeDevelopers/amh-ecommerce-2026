@@ -25,6 +25,15 @@ const CategoryContent = () => {
   const { data: category, isLoading: categoryLoading } = useGetSingleCategory(categorySlug);
   const { data: subcategories = [] } = useGetSubCatBasedOnMainCatId(category?.id);
 
+  // Reset filters when category changes
+  useEffect(() => {
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+    setSelectedSubcategories([]);
+    setSelectedBrands([]);
+    setPriceRange([0, 1000]);
+  }, [categorySlug]);
+
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {

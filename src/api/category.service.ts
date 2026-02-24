@@ -73,7 +73,7 @@ export const useGetAllCategories = () => {
 
 export const useGetSingleCategory = (id: string | null) => {
   return useQuery<Category | null, Error>({
-    queryKey: ["category_by_id"],
+    queryKey: ["category_by_id", id],
     queryFn: async () => await categories_service.getSingleCategoryById(id),
     enabled: !!id,
     refetchOnWindowFocus: false, // Don't refetch on tab/window switch
