@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart } from 'lucide-react'
+import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { toast } from 'sonner'
 import { useAtomValue } from 'jotai'
 import { current_user_auth_atom } from '@/jotai/store'
@@ -31,6 +32,7 @@ interface BulkQuoteModalProps {
 export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess }: BulkQuoteModalProps) {
     const user = useAtomValue(current_user_auth_atom)
     const createEnquiryMutation = useCreateNewEnquiry()
+    const [isProductListOpen, setIsProductListOpen] = useState(false)
     
     const [formData, setFormData] = useState({
         name: user?.full_name || '',
@@ -40,6 +42,8 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         city: '',
         message: ''
     })
+
+    const PREVIEW_COUNT = 3
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -123,18 +127,22 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         setFormData(prev => ({ ...prev, [field]: value }))
     }
 
+    const previewProducts = products.slice(0, PREVIEW_COUNT)
+    const remainingProducts = products.slice(PREVIEW_COUNT)
+    const hasMoreProducts = remainingProducts.length > 0
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0" showCloseButton={false}>
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b">
+                <div className="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-amber-100 rounded-lg">
                             <ShoppingCart className="w-5 h-5 text-amber-600" />
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">Bulk Quote Request</h2>
-                            <p className="text-sm text-gray-500">Get pricing for {products.length} selected products</p>
+                            <p className="text-sm text-gray-500">Get pricing for {products.length} selected {products.length === 1 ? 'product' : 'products'}</p>
                         </div>
                     </div>
                     <button
@@ -145,34 +153,93 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                     </button>
                 </div>
 
-                {/* Products List */}
-                <div className="p-6 bg-gray-50 border-b max-h-64 overflow-y-auto">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                        <Package className="w-4 h-4" />
-                        Selected Products ({products.length})
-                    </h3>
-                    <div className="space-y-2">
-                        {products.map((product, index) => (
-                            <div key={product.id} className="flex gap-3 bg-white p-3 rounded-lg border">
-                                <Badge variant="secondary" className="h-6 w-6 flex items-center justify-center p-0">
-                                    {index + 1}
+                {/* Products Summary - Collapsible */}
+                <div className="border-b bg-gradient-to-br from-gray-50 to-amber-50/30">
+                    <Collapsible open={isProductListOpen} onOpenChange={setIsProductListOpen}>
+                        <div className="p-6 pb-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                    <Package className="w-4 h-4" />
+                                    Selected Products
+                                </h3>
+                                <Badge variant="secondary" className="bg-amber-600 text-white">
+                                    {products.length} {products.length === 1 ? 'item' : 'items'}
                                 </Badge>
-                                <Image
-                                    src={product.photos[0] || '/placeholder-product.jpg'}
-                                    alt={product.product_name}
-                                    width={48}
-                                    height={48}
-                                    className="w-12 h-12 object-cover rounded border"
-                                />
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
-                                    {product.model_number && (
-                                        <p className="text-xs text-gray-500">Model: {product.model_number}</p>
-                                    )}
-                                </div>
                             </div>
-                        ))}
-                    </div>
+
+                            {/* Preview - Always visible */}
+                            <div className="space-y-2">
+                                {previewProducts.map((product, index) => (
+                                    <div key={product.id} className="flex gap-3 bg-white p-2.5 rounded-lg border shadow-sm">
+                                        <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
+                                            {index + 1}
+                                        </Badge>
+                                        <Image
+                                            src={product.photos[0] || '/placeholder-product.jpg'}
+                                            alt={product.product_name}
+                                            width={40}
+                                            height={40}
+                                            className="w-10 h-10 object-cover rounded border shrink-0"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
+                                            {product.model_number && (
+                                                <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Collapsible Content - Remaining products */}
+                            {hasMoreProducts && (
+                                <>
+                                    <CollapsibleContent className="space-y-2 mt-2">
+                                        {remainingProducts.map((product, index) => (
+                                            <div key={product.id} className="flex gap-3 bg-white p-2.5 rounded-lg border shadow-sm">
+                                                <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
+                                                    {PREVIEW_COUNT + index + 1}
+                                                </Badge>
+                                                <Image
+                                                    src={product.photos[0] || '/placeholder-product.jpg'}
+                                                    alt={product.product_name}
+                                                    width={40}
+                                                    height={40}
+                                                    className="w-10 h-10 object-cover rounded border shrink-0"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
+                                                    {product.model_number && (
+                                                        <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </CollapsibleContent>
+
+                                    <CollapsibleTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full mt-2 text-amber-700 hover:text-amber-800 hover:bg-amber-100"
+                                        >
+                                            {isProductListOpen ? (
+                                                <>
+                                                    <ChevronUp className="w-4 h-4 mr-1" />
+                                                    Show Less
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ChevronDown className="w-4 h-4 mr-1" />
+                                                    Show {remainingProducts.length} More {remainingProducts.length === 1 ? 'Product' : 'Products'}
+                                                </>
+                                            )}
+                                        </Button>
+                                    </CollapsibleTrigger>
+                                </>
+                            )}
+                        </div>
+                    </Collapsible>
                 </div>
 
                 {/* Form */}
