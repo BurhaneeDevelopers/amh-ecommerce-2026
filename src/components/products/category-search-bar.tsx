@@ -12,6 +12,12 @@ interface CategorySearchBarProps {
   totalProducts: number
   filteredCount: number
   categoryName: string
+  products?: Array<{
+    id: string
+    product_name: string
+    model_number?: string
+    photos: string[]
+  }>
 }
 
 export default function CategorySearchBar({
@@ -20,6 +26,7 @@ export default function CategorySearchBar({
   totalProducts,
   filteredCount,
   categoryName,
+  products = [],
 }: CategorySearchBarProps) {
   const [isBulkQuoteOpen, setIsBulkQuoteOpen] = useState(false)
 
@@ -68,9 +75,9 @@ export default function CategorySearchBar({
 
       {/* Bulk Quote Modal */}
       <BulkQuoteModal
-        isOpen={isBulkQuoteOpen}
-        onClose={() => setIsBulkQuoteOpen(false)}
-        categoryName={categoryName}
+        open={isBulkQuoteOpen}
+        onOpenChange={setIsBulkQuoteOpen}
+        products={products}
       />
     </>
   )

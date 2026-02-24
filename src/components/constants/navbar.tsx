@@ -19,7 +19,7 @@ import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { current_user_auth_atom } from "@/jotai/store";
 import { useGetWishlistByUser } from "@/api/wishlist.service";
-import { useGetAllCategories } from "@/api/category.service";
+import { useGetAllBrands } from "@/api/brand.service";
 import { P } from "../typography/typography";
 
 export default function Navbar() {
@@ -28,12 +28,10 @@ export default function Navbar() {
   const user = useAtomValue(current_user_auth_atom);
   const { data: wishlistData } = useGetWishlistByUser(user?.id ?? "");
   const wishlistCount = wishlistData?.length || 0;
-  const { data: allCategories = [] } = useGetAllCategories();
+  const { data: allBrands = [] } = useGetAllBrands();
 
-  // Get top 5 featured categories
-  const featuredCategories = allCategories
-    .filter(cat => cat.is_featured && cat.type === 'main')
-    .slice(0, 5);
+  // Get top 5 brands (you can add a featured flag to Brand schema if needed)
+  const featuredBrands = allBrands.slice(0, 5);
 
   const navLinks = [
     { label: "Home", href: "/", icon: Home },
@@ -256,29 +254,25 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Right: Featured Categories - Responsive Layout */}
+            {/* Right: Featured Brands - Responsive Layout */}
             <div className="flex items-center overflow-x-auto scrollbar-hide max-w-[50%] lg:max-w-[60%] xl:max-w-none">
-              {featuredCategories.length > 0 ? (
-                featuredCategories.map((category) => (
+              {featuredBrands.length > 0 ? (
+                featuredBrands.map((brand) => (
                   <Link 
-                    key={category.id} 
-                    href={`/category/${category.id}`}
+                    key={brand.id} 
+                    href={`/category/all?brand=${brand.id}`}
                     className="group flex-shrink-0"
                   >
                     <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 px-2 lg:px-2.5 py-1.5 lg:py-2 rounded-xl hover:bg-white/10 transition-all duration-300 min-w-[60px] lg:min-w-0">
-                      {/* Image/Icon */}
-                      {category.icon && !category.icon.startsWith('http') ? (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
-                          <span className="text-lg lg:text-xl">{category.icon}</span>
-                        </div>
-                      ) : category.icon && category.icon.startsWith('http') ? (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-gray-700 group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
+                      {/* Brand Logo */}
+                      {brand.brand_logo ? (
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-white group-hover:bg-gray-100 transition-all duration-300 shadow-sm flex-shrink-0 flex items-center justify-center p-1">
                           <Image
-                            src={category.icon}
-                            alt={category.category_name}
+                            src={brand.brand_logo}
+                            alt={brand.brand_name}
                             width={36}
                             height={36}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
@@ -289,15 +283,15 @@ export default function Navbar() {
                           <Package className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 group-hover:text-[#f38b00]" />
                         </div>
                       )}
-                      {/* Label - Responsive sizing and wrapping */}
+                      {/* Brand Name - Responsive sizing and wrapping */}
                       <P className="text-[10px] xl:text-sm font-semibold text-gray-300 group-hover:text-[#f38b00] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
-                        {category.category_name}
+                        {brand.brand_name}
                       </P>
                     </div>
                   </Link>
                 ))
               ) : (
-                <div className="text-xs text-gray-500 px-4">No featured categories</div>
+                <div className="text-xs text-gray-500 px-4">No featured brands</div>
               )}
             </div>
           </div>

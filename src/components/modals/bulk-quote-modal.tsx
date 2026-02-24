@@ -127,8 +127,10 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         setFormData(prev => ({ ...prev, [field]: value }))
     }
 
-    const previewProducts = products.slice(0, PREVIEW_COUNT)
-    const remainingProducts = products.slice(PREVIEW_COUNT)
+    // Safety check for products
+    const safeProducts = products || []
+    const previewProducts = safeProducts.slice(0, PREVIEW_COUNT)
+    const remainingProducts = safeProducts.slice(PREVIEW_COUNT)
     const hasMoreProducts = remainingProducts.length > 0
 
     return (
