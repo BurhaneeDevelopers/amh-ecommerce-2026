@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useSearchProducts } from "@/api/search.service";
-import Image from "next/image";
 import { Product } from "@/supabase/schema/schema.type";
 import WishlistButton from "./wishlist-button";
 import GetQuoteModal from "../modals/get-quote-modal";
@@ -74,12 +73,10 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
         {/* Product Image */}
         <div className="relative w-16 h-16 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden flex items-center justify-center">
           {productImage ? (
-            <Image
+            <img
               src={productImage}
               alt={productName}
-              fill
-              className="object-contain p-1"
-              sizes="64px"
+              className="w-full h-full object-contain p-1"
             />
           ) : (
             <Package className="w-6 h-6 text-gray-400" />

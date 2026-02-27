@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import WishlistButton from "./wishlist-button";
@@ -73,9 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="flex flex-row gap-6 p-4">
           {/* Product Image Container */}
           <div className="relative flex-shrink-0 w-40 h-40 rounded-lg">
-            <Image
-              width={200}
-              height={200}
+            <img
               src={
                 photos[0] ??
                 "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
@@ -171,9 +168,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }`}>
       {/* Product Image Container */}
       <div className="relative aspect-square p-3">
-        <Image
-          width={300}
-          height={300}
+        <img
           src={
             photos[0] ??
             "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"

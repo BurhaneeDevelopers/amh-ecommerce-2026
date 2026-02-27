@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Star, Zap, ArrowRight, Loader2 } from 'lucide-react'
-import Image from 'next/image'
 import { useGetAdsByPlacement } from '@/api/ads.service'
 import { motion } from 'framer-motion'
 
@@ -97,12 +96,10 @@ export default function MobileDeals() {
                     >
                         <Card className="overflow-hidden bg-white hover:shadow-lg transition-all duration-300 group border-0 shadow-sm">
                             <div className="relative h-24">
-                                <Image
+                                <img
                                     src={deal.imageUrl}
                                     alt={deal.title}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                    sizes="100vw"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/20" />
                                 

@@ -1,7 +1,6 @@
 "use client";
 
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
 import { H2 } from "@/components/typography/typography";
 import { Container } from "../container";
 import { toast } from "sonner";
@@ -158,11 +157,9 @@ const TestimonialsSection = () => {
               {/* Client Info */}
               <div className="flex items-center justify-center gap-4 pt-6 border-t border-gray-100">
                 {testimonials[currentIndex].client_image ? (
-                  <Image
+                  <img
                     src={testimonials[currentIndex].client_image}
                     alt={testimonials[currentIndex].client_name}
-                    width={64}
-                    height={64}
                     className="w-16 h-16 rounded-full object-cover"
                   />
                 ) : (

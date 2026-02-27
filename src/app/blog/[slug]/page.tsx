@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation'
 import { Container } from '@/components/layout/container'
 import { useGetBlogBySlug, useGetRelatedBlogs } from '@/api/blogs.service'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -121,11 +120,9 @@ export default function BlogDetailPage() {
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200">
                         <div className="flex items-center gap-2">
                             {blog.author_image ? (
-                                <Image
+                                <img
                                     src={blog.author_image}
                                     alt={blog.author_name || 'Author'}
-                                    width={40}
-                                    height={40}
                                     className="w-10 h-10 rounded-full object-cover"
                                 />
                             ) : (
@@ -164,12 +161,10 @@ export default function BlogDetailPage() {
                             {blog.gallery_images.length === 1 ? (
                                 // Single image - full width
                                 <div className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden">
-                                    <Image
+                                    <img
                                         src={blog.gallery_images[0]}
                                         alt={blog.title}
-                                        fill
-                                        className="object-cover"
-                                        priority
+                                        className="w-full h-full object-cover"
                                     />
                                 </div>
                             ) : (
@@ -184,12 +179,10 @@ export default function BlogDetailPage() {
                                                     : 'h-[300px] md:h-[350px]'
                                             }`}
                                         >
-                                            <Image
+                                            <img
                                                 src={image}
                                                 alt={`${blog.title} - Image ${index + 1}`}
-                                                fill
-                                                className="object-cover"
-                                                priority={index === 0}
+                                                className="w-full h-full object-cover"
                                             />
                                         </div>
                                     ))}

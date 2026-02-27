@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useGetAdsByPlacement } from '@/api/ads.service';
@@ -47,12 +46,10 @@ const MobileDealsSection: React.FC = () => {
           className="relative h-32 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-r from-primary/5 to-secondary/5"
         >
           <div className="absolute inset-0">
-            <Image
+            <img
               src={ad.media_url}
               alt={ad.title}
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 640px) 100vw, 50vw"
+              className="w-full h-full object-cover object-center"
             />
           </div>
           

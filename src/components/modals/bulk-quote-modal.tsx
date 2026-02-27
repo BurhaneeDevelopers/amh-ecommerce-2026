@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { X, Package, User, Mail, Phone, MessageSquare, ShoppingCart, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -214,11 +213,9 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                         <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                             {index + 1}
                                         </Badge>
-                                        <Image
+                                        <img
                                             src={product.photos[0] || '/placeholder-product.jpg'}
                                             alt={product.product_name}
-                                            width={40}
-                                            height={40}
                                             className="w-10 h-10 object-cover rounded border shrink-0"
                                         />
                                         <div className="flex-1 min-w-0">
@@ -273,11 +270,9 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                 <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                                     {PREVIEW_COUNT + index + 1}
                                                 </Badge>
-                                                <Image
+                                                <img
                                                     src={product.photos[0] || '/placeholder-product.jpg'}
                                                     alt={product.product_name}
-                                                    width={40}
-                                                    height={40}
                                                     className="w-10 h-10 object-cover rounded border shrink-0"
                                                 />
                                                 <div className="flex-1 min-w-0">

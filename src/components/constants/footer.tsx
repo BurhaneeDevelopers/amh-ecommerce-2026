@@ -1,6 +1,5 @@
 import React from 'react'
 import { Container } from '../layout/container'
-import Image from 'next/image'
 import { P } from '../typography/typography'
 import { Mail, Phone, MapPin } from 'lucide-react'
 import Link from 'next/link'
@@ -14,7 +13,7 @@ const Footer = () => {
                     {/* Company Info */}
                     <div className="space-y-4">
                         <div className="bg-white p-3 w-fit rounded-lg shadow-lg">
-                            <Image alt="MSI Industries" src={"/logo.png"} width={500} height={500} className="object-cover w-40 h-12" />
+                            <img alt="MSI Industries" src={"/logo.png"} className="object-cover w-40 h-12" />
                         </div>
 
                         <p className="text-gray-300 text-sm leading-relaxed">

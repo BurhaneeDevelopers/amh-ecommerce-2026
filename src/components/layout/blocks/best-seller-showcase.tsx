@@ -1,7 +1,6 @@
 'use client'
 
 import { H5 } from '@/components/typography/typography'
-import Image from 'next/image'
 import React from 'react'
 import { useGetBestsellerProducts } from '@/api/bestseller.service'
 import { TrendingUp } from 'lucide-react'
@@ -60,9 +59,7 @@ const BestSellerShowcase: React.FC = () => {
                             className="flex gap-4 items-center p-3 hover:bg-gray-50 transition-colors duration-200"
                         >
                             <div className="relative flex-shrink-0">
-                                <Image
-                                    width={500}
-                                    height={500}
+                                <img
                                     src={product.photos?.[0] || 'https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg'}
                                     alt={product.product_name}
                                     className="w-20 h-16 object-contain rounded-lg border border-gray-100 group-hover:scale-105 transition-transform duration-200"

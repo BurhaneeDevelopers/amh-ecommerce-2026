@@ -1,6 +1,5 @@
 import { CreateAccountForm } from "@/components/forms/create-account-form"
 import Link from "next/link"
-import Image from "next/image"
 
 export default function CreateAccount() {
     return (

@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import Image from "next/image";
 import { Trash2, MessageSquare, ListChecks, ArrowLeft, ShoppingCart, Mail } from "lucide-react";
 import { H2, H6, P } from "@/components/typography/typography";
 import { useAtomValue } from "jotai";
@@ -281,11 +280,10 @@ const WishList = () => {
                     <TableCell>
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border">
                         {item.products?.photos?.[0] ? (
-                          <Image
+                          <img
                             src={item.products.photos[0]}
                             alt={item.products.product_name || "Product"}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <div className="flex items-center justify-center h-full text-xs text-gray-400">

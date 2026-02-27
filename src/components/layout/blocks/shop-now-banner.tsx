@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useGetTopAdByPlacement } from '@/api/ads.service';
 
@@ -21,12 +20,10 @@ const ShopNowBanner: React.FC = () => {
   return (
     <div className="relative w-full h-32 md:h-40 overflow-hidden rounded-xl shadow-sm bg-gradient-to-r from-primary/10 to-secondary/10">
       <div className="absolute inset-0">
-        <Image
+        <img
           src={ad.media_url}
           alt={ad.title}
-          fill
-          className="object-cover object-center"
-          sizes="100vw"
+          className="w-full h-full object-cover object-center"
         />
       </div>
       

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useGetTopAdByPlacement } from '@/api/ads.service';
 
@@ -20,12 +19,10 @@ const HomepageRightBanner2: React.FC = () => {
 
   return (
     <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-      <Image
+      <img
         src={ad.media_url}
         alt={ad.title}
-        fill
-        className="object-cover object-center"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="w-full h-full object-cover object-center"
       />
       {/* Overlay with title, description and button */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col items-center justify-center p-4 text-center">

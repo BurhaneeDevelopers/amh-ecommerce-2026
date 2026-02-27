@@ -3,7 +3,6 @@
 import { Phone, ShoppingCart } from "lucide-react"
 import { Container } from "../layout/container"
 import { H4, P } from "../typography/typography"
-import Image from "next/image"
 import Link from "next/link"
 import AccountMenu from "../layout/blocks/account-menu"
 import { Badge } from "@/components/ui/badge"
@@ -21,11 +20,9 @@ export default function Topbar() {
             <div className="flex items-center justify-between gap-2">
                 {/* Logo - Centered on mobile, left on desktop */}
                 <div className="bg-white p-1.5 md:p-2 w-fit rounded-lg order-2 md:order-2">
-                    <Image
+                    <img
                         alt="MSI"
                         src={"/logo.png"}
-                        width={500}
-                        height={500}
                         className="object-cover w-28 h-9 md:w-44 md:h-14"
                     />
                 </div>

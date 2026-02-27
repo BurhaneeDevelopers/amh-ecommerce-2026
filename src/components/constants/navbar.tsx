@@ -4,7 +4,6 @@ import { Menu, Search, Home, Package, BookOpen, Info, ShoppingCart } from "lucid
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -62,21 +61,15 @@ export default function Navbar() {
             {/* Left: Logo - Much Larger */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
               <div className="relative flex gap-4">
-                <Image
+                <img
                   alt="MSI Logo"
                   src="/msi-logo-white.png"
-                  width={500}
-                  height={500}
                   className="object-cover scale-150 h-20 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
-                  priority
                 />
-                <Image
+                <img
                   alt="MSI Logo"
                   src="/xlnt.png"
-                  width={500}
-                  height={500}
                   className="object-cover scale-150 h-20 p-2 w-full transition-transform duration-300 group-hover:scale-105"
-                  priority
                 />
               </div>
             </Link>
@@ -280,11 +273,9 @@ export default function Navbar() {
                       {/* Brand Logo */}
                       {brand.brand_logo ? (
                         <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-white group-hover:bg-gray-100 transition-all duration-300 shadow-sm flex-shrink-0 flex items-center justify-center p-1">
-                          <Image
+                          <img
                             src={brand.brand_logo}
                             alt={brand.brand_name}
-                            width={36}
-                            height={36}
                             className="w-full h-full object-contain"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';

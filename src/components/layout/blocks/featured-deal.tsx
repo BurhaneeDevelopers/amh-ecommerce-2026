@@ -3,7 +3,6 @@
 import { H3, H5, P } from '@/components/typography/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
 import React from 'react'
 import { useGetTopAdByPlacement } from '@/api/ads.service'
 import { Sparkles } from 'lucide-react'
@@ -32,9 +31,7 @@ const FeaturedDeal: React.FC = () => {
             </H5>
             <div className="flex flex-col justify-center items-center relative p-2">
                 <div className="relative w-full aspect-square max-w-[280px] mb-3">
-                    <Image
-                        width={500}
-                        height={500}
+                    <img
                         src={ad.media_url}
                         alt={ad.title}
                         className="w-full h-full object-contain rounded-lg"

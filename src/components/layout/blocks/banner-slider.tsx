@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGetAdsByPlacement } from '@/api/ads.service';
@@ -111,13 +110,10 @@ const BannerSlider: React.FC = () => {
             >
               {/* Responsive image container - contains full poster without cropping */}
               <div className="relative w-full h-full overflow-hidden rounded-2xl flex items-center justify-center">
-                <Image
+                <img
                   src={slide.src}
                   alt={slide.alt}
-                  fill
-                  className="object-contain select-none pointer-events-none rounded-2xl"
-                  priority={slideIndex === index}
-                  sizes="100vw"
+                  className="w-full h-full object-contain select-none pointer-events-none rounded-2xl"
                 />
               </div>
               

@@ -4,7 +4,6 @@ import { H2 } from '@/components/typography/typography'
 import { Container } from '../container'
 import { useGetAllMainCategories } from '@/api/category.service'
 import { Loader2, Package, ArrowRight, Sparkles } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
@@ -79,12 +78,10 @@ const CategoriesSection = () => {
                                 <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
                                     {category.icon ? (
                                         <>
-                                            <Image
+                                            <img
                                                 src={category.icon}
                                                 alt={category.category_name}
-                                                fill
-                                                className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 14vw"
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                                             />
                                             {/* Modern Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

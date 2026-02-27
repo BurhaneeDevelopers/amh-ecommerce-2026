@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { H3, P } from '@/components/typography/typography'
 import { ImageIcon } from 'lucide-react'
 
@@ -26,11 +25,9 @@ export default function RelatedItemCard({ name, images, category, type }: Relate
       {/* Main Image */}
       <div className="aspect-square mb-4 overflow-hidden rounded-xl bg-gray-50 border border-gray-100">
         {mainImage ? (
-          <Image
+          <img
             src={mainImage}
             alt={name}
-            width={200}
-            height={200}
             className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
@@ -68,11 +65,9 @@ export default function RelatedItemCard({ name, images, category, type }: Relate
           <div className="flex gap-1 mt-3">
             {additionalImages.map((img, idx) => (
               <div key={idx} className="w-8 h-8 rounded-md border border-gray-200 overflow-hidden bg-gray-50">
-                <Image
+                <img
                   src={img}
                   alt={`${name} ${idx + 2}`}
-                  width={32}
-                  height={32}
                   className="w-full h-full object-contain"
                 />
               </div>

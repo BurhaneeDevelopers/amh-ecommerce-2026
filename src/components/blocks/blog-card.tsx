@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { Blog } from '@/supabase/schema/schema.type'
 import { Card, CardContent } from '../ui/card'
@@ -26,11 +25,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
                     {/* Featured Image */}
                     <div className="relative h-48 overflow-hidden flex-shrink-0 border-b border-gray-100">
                         {blog.gallery_images && blog.gallery_images.length > 0 ? (
-                            <Image
+                            <img
                                 src={blog.gallery_images[0]}
                                 alt={blog.title}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                         ) : (
                             <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -94,11 +92,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
                             <div className="flex items-center gap-2">
                                 {blog.author_image ? (
-                                    <Image
+                                    <img
                                         src={blog.author_image}
                                         alt={blog.author_name || 'Author'}
-                                        width={24}
-                                        height={24}
                                         className="w-6 h-6 rounded-full object-cover"
                                     />
                                 ) : (

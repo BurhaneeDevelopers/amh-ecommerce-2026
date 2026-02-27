@@ -4,7 +4,6 @@
 import { H3, H5, P } from '@/components/typography/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
 import React from 'react'
 import { useGetTopAdByPlacement } from '@/api/ads.service'
 
@@ -22,9 +21,7 @@ const DealOfTheDay: React.FC = () => {
                 Dealer&apos;s Choice
             </H5>
             <div className="flex flex-col justify-center items-center relative">
-                <Image
-                    width={500}
-                    height={500}
+                <img
                     src={imageSrc}
                     alt={title}
                     className="w-64 h-full object-cover !rounded-lg"

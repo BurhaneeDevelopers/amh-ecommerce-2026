@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { X, Package, User, Mail, Phone, MessageSquare } from 'lucide-react'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -149,11 +148,9 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 {/* Product Info */}
                 <div className="p-6 bg-gray-50 border-b">
                     <div className="flex gap-4">
-                        <Image
+                        <img
                             src={product.photos[0] || '/placeholder-product.jpg'}
                             alt={product.product_name}
-                            width={64}
-                            height={64}
                             className="w-16 h-16 object-cover rounded-lg border"
                         />
                         <div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -35,12 +34,10 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
       {/* Main Image */}
       <div className="relative group">
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-300 shadow max-h-[36rem] w-full">
-          <Image
+          <img
             src={productImages[selectedImageIndex]}
             alt={productName}
-            fill
-            className="object-contain p-8 transition-transform duration-300 group-hover:scale-105"
-            priority
+            className="w-full h-full object-contain p-8 transition-transform duration-300 group-hover:scale-105"
           />
           
           {/* Badge */}
@@ -85,11 +82,9 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <Image
+              <img
                 src={image}
                 alt={`${productName} ${index + 1}`}
-                width={80}
-                height={80}
                 className="w-full h-full object-contain p-2 bg-white"
               />
             </button>
