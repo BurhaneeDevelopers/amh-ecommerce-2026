@@ -7,9 +7,10 @@ export const Use_auth = () => {
     return useQuery<User | null>({
         queryKey: ["auth", "user"],
         queryFn: async () => await users_service.get_current_user(),
-        staleTime: Infinity,
+        staleTime: 5 * 60 * 1000, // 5 minutes instead of Infinity
         refetchOnMount: false,
         refetchOnWindowFocus: false,
+        retry: 1,
     });
 };
 
@@ -34,7 +35,9 @@ export const Use_login = () => {
         mutationFn: async (payload: User_Profile) => {
             return await users_service.login_user(payload.email, payload.password)
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+            // Refetch immediately for instant UI update
+            await queryClient.refetchQueries({ queryKey: ["auth", "user"] })
             queryClient.invalidateQueries({ queryKey: ["users"] })
         },
     })
@@ -47,7 +50,10 @@ export const Use_logout = () => {
     mutationFn: async () => {
       return await users_service.sign_out()
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Clear the cache and refetch for instant UI update
+      queryClient.setQueryData(["auth", "user"], null)
+      await queryClient.refetchQueries({ queryKey: ["auth", "user"] })
       queryClient.invalidateQueries({ queryKey: ["users"] })
     },
   })

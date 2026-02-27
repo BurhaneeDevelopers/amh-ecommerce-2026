@@ -39,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const router = useRouter();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const canViewQuantity = useCanViewQuantity();
+  const { canViewQuantity, isLoading: isLoadingAuth } = useCanViewQuantity();
 
   // Determine badge based on product properties
   const badge: BadgeVariant =
@@ -107,14 +107,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   {model_number}
                 </p>
               )}
-              {canViewQuantity && (
+              {isLoadingAuth ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse" />
+                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                </div>
+              ) : canViewQuantity ? (
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
                   <p className="text-sm font-semibold text-gray-700">
                     {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
                   </p>
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Action Buttons */}
@@ -220,14 +225,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </p>
         )}
         
-        {canViewQuantity && (
+        {isLoadingAuth ? (
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" />
+            <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+          </div>
+        ) : canViewQuantity ? (
           <div className="flex items-center gap-1.5 mb-2">
             <div className={`w-1.5 h-1.5 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
             <p className="text-xs font-semibold text-gray-700">
               {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
             </p>
           </div>
-        )}
+        ) : null}
 
         {/* Get Quote Button */}
         <Button
