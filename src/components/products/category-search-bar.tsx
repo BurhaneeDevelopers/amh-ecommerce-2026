@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, FileText } from 'lucide-react'
+import { Search, FileText, Grid3x3, List } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
@@ -18,6 +18,8 @@ interface CategorySearchBarProps {
     model_number?: string
     photos: string[]
   }>
+  viewMode?: 'grid' | 'table'
+  onViewModeChange?: (mode: 'grid' | 'table') => void
 }
 
 export default function CategorySearchBar({
@@ -27,13 +29,15 @@ export default function CategorySearchBar({
   filteredCount,
   categoryName,
   products = [],
+  viewMode = 'grid',
+  onViewModeChange,
 }: CategorySearchBarProps) {
   const [isBulkQuoteOpen, setIsBulkQuoteOpen] = useState(false)
 
   return (
     <>
       <div className="mb-8">
-        {/* Search Bar and Bulk Quote Button */}
+        {/* Search Bar and Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -46,6 +50,36 @@ export default function CategorySearchBar({
               className="pl-11 pr-4 h-12 text-base border-2 focus:border-primary transition-colors shadow-sm"
             />
           </div>
+
+          {/* View Mode Toggle */}
+          {onViewModeChange && (
+            <div className="flex border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <button
+                onClick={() => onViewModeChange('grid')}
+                className={`h-12 px-4 flex items-center gap-2 transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+                title="Grid View"
+              >
+                <Grid3x3 className="w-5 h-5" />
+                <span className="hidden sm:inline font-medium">Grid</span>
+              </button>
+              <button
+                onClick={() => onViewModeChange('table')}
+                className={`h-12 px-4 flex items-center gap-2 transition-colors border-l-2 border-gray-200 ${
+                  viewMode === 'table'
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+                title="Table View"
+              >
+                <List className="w-5 h-5" />
+                <span className="hidden sm:inline font-medium">Table</span>
+              </button>
+            </div>
+          )}
 
           {/* Bulk Quote Button */}
           <Button

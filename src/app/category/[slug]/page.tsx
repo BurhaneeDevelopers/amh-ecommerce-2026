@@ -7,6 +7,7 @@ import { useGetSingleCategory, useGetSubCatBasedOnMainCatId } from "@/api/catego
 import CategorySearchBar from "@/components/products/category-search-bar";
 import CategoryFiltersSidebar from "@/components/products/category-filters-sidebar";
 import ProductsGrid from "@/components/products/products-grid";
+import CategoryTableView from "@/components/products/category-table-view";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategoryContent = () => {
@@ -21,7 +22,7 @@ const CategoryContent = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy] = useState("featured");
-  const [viewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
   // Get category by slug
   const { data: category, isLoading: categoryLoading } = useGetSingleCategory(categorySlug);
@@ -181,7 +182,7 @@ const CategoryContent = () => {
           </h1>
         </div>
 
-        {/* Simplified Search Bar with Bulk Quote */}
+        {/* Search Bar with View Toggle and Bulk Quote */}
         <CategorySearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -189,6 +190,8 @@ const CategoryContent = () => {
           filteredCount={displayedProductsCount}
           categoryName={displayCategoryName}
           products={allProducts}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
         <div className="flex flex-col lg:flex-row gap-8 relative">
@@ -204,17 +207,28 @@ const CategoryContent = () => {
             onClearFilters={clearFilters}
           />
 
-          {/* Products Grid */}
+          {/* Products Grid or Table */}
           <main className="flex-1">
-            <ProductsGrid
-              categoryGroups={categoryGroups}
-              viewMode={viewMode}
-              hasNextPage={hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              fetchNextPage={fetchNextPage}
-              onClearFilters={clearFilters}
-              isFiltering={isFetching && !isFetchingNextPage}
-            />
+            {viewMode === 'table' ? (
+              <CategoryTableView
+                categoryGroups={categoryGroups}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                fetchNextPage={fetchNextPage}
+                onClearFilters={clearFilters}
+                isFiltering={isFetching && !isFetchingNextPage}
+              />
+            ) : (
+              <ProductsGrid
+                categoryGroups={categoryGroups}
+                viewMode="grid"
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                fetchNextPage={fetchNextPage}
+                onClearFilters={clearFilters}
+                isFiltering={isFetching && !isFetchingNextPage}
+              />
+            )}
           </main>
         </div>
       </div>

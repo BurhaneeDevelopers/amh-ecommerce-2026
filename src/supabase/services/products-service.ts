@@ -5,12 +5,25 @@ class Products_Service {
     private table = "products";
 
     async getAllProducts(): Promise<Product[] | null> {
-        const { data, error } = await supabase.from(this.table)
-            .select('*')
+            const { data, error } = await supabase.from(this.table)
+                .select(`
+                    *,
+                    brand:brand_id (
+                        id,
+                        brand_name,
+                        brand_logo
+                    ),
+                    category:category_id (
+                        id,
+                        category_name,
+                        type
+                    )
+                `)
 
-        if (error) throw error;
-        return data;
-    }
+            if (error) throw error;
+            return data;
+        }
+
 
     async getFeaturedProducts(): Promise<Product[] | null> {
         const { data, error } = await supabase.from(this.table)
