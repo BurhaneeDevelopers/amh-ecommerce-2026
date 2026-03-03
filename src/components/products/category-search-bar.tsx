@@ -1,9 +1,12 @@
 'use client'
 
-import { Search, FileText, Grid3x3, List } from 'lucide-react'
+import { Search, FileText, Grid3x3, List, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useState } from 'react'
+import { useAtomValue } from 'jotai'
+import { current_user_auth_atom } from '@/jotai/store'
 import BulkQuoteModal from '@/components/modals/bulk-quote-modal'
 
 interface CategorySearchBarProps {
@@ -33,6 +36,10 @@ export default function CategorySearchBar({
   onViewModeChange,
 }: CategorySearchBarProps) {
   const [isBulkQuoteOpen, setIsBulkQuoteOpen] = useState(false)
+  const user = useAtomValue(current_user_auth_atom)
+  
+  // Check if user has permission to export (admin or dealer)
+  const canExport = user?.role === 'admin' || user?.role === 'dealer'
 
   return (
     <>
@@ -79,6 +86,30 @@ export default function CategorySearchBar({
                 <span className="hidden sm:inline font-medium">Table</span>
               </button>
             </div>
+          )}
+
+          {/* Export Pricelist Button - Only visible to admin and dealer */}
+          {canExport && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-12 px-6 font-semibold shadow-md hover:shadow-lg transition-all whitespace-nowrap"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Export Pricelist
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64">
+                <div className="text-center py-2">
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Coming Soon!</p>
+                  <p className="text-xs text-gray-600">
+                    Export pricelist feature will be available soon.
+                  </p>
+                </div>
+              </PopoverContent>
+            </Popover>
           )}
 
           {/* Bulk Quote Button */}
