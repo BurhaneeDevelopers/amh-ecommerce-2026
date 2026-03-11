@@ -4,11 +4,11 @@ import { User } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Use_auth = () => {
-    return useQuery<User | null>({
+    return useQuery<User & User_Profile | null>({
         queryKey: ["auth", "user"],
         queryFn: async () => await users_service.get_current_user(),
-        staleTime: 5 * 60 * 1000, // 5 minutes instead of Infinity
-        refetchOnMount: false,
+        staleTime: 0, // Always consider data stale so refetch works immediately
+        refetchOnMount: true, // Refetch when component mounts
         refetchOnWindowFocus: false,
         retry: 1,
     });

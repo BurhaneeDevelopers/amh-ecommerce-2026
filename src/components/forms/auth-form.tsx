@@ -7,9 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Use_login } from "@/api/user.service"
 import { toast } from "sonner"
-import { useSetAtom } from "jotai"
-import { current_user_auth_atom } from "@/jotai/store"
-import { users_service } from "@/supabase/services/user-service"
 
 const AuthSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
@@ -21,10 +18,8 @@ interface AuthModalProps {
 }
 
 const AuthForm: React.FC<AuthModalProps> = ({ setAuthModalOpen }) => {
-    const { mutate: login, isPending: is_logging } =
-        Use_login();
+    const { mutate: login, isPending: is_logging } = Use_login();
 
-    const set_current_user = useSetAtom(current_user_auth_atom)
     return (
         <Formik
             initialValues={{ email: "", password: "" }}
@@ -34,12 +29,7 @@ const AuthForm: React.FC<AuthModalProps> = ({ setAuthModalOpen }) => {
                     onSuccess: async () => {
                         toast.success("Logged In Successfully");
                         resetForm();
-
-                        const user = await users_service.get_current_user();
-                        if (user) {
-                            set_current_user(user)
-                            setAuthModalOpen(false)
-                        }
+                        setAuthModalOpen(false)
                     },
                     onError: (error) => {
                         toast.error(error.message || "Error logging in");

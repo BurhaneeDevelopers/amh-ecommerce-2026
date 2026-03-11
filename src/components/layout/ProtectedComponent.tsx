@@ -13,7 +13,6 @@ import { Providers } from "@/api/providers";
 import AnnouncementBanner from "../announcement/announcement-banner";
 
 const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
-  // const pathname = usePathname();
   const set_current_user_auth = useSetAtom(current_user_auth_atom);
   const [loading, setLoading] = useState(false);
 
@@ -23,25 +22,16 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
     const init = async () => {
       setLoading(true);
       try {
-        const [session, user] = await Promise.all([
-          users_service.get_session(),
-          users_service.get_current_user(),
-        ]);
+        const session = await users_service.get_session();
 
         if (!session) {
           set_current_user_auth(null);
+          setLoading(false);
           return;
         }
 
+        const user = await users_service.get_current_user();
         if (user) set_current_user_auth(user);
-
-        // if (user && pathname === "/") {
-        //   if (user.role === "agency") {
-        //     router.replace("/active-requests");
-        //   } else if (user.role === "admin") {
-        //     router.replace("/admin-dashboard");
-        //   }
-        // }
 
         const {
           data: { subscription },
@@ -49,6 +39,11 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
           if (event === "SIGNED_OUT" || !session) {
             toast.error("Session expired. Please login again.");
             set_current_user_auth(null);
+          } else if (event === "SIGNED_IN") {
+            // Refetch user data when signed in
+            users_service.get_current_user().then(user => {
+              if (user) set_current_user_auth(user);
+            });
           }
         });
 
