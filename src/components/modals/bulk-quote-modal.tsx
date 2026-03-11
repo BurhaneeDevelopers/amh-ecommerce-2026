@@ -13,6 +13,7 @@ import { useAtomValue } from 'jotai'
 import { current_user_auth_atom } from '@/jotai/store'
 import { useCreateNewEnquiry } from '@/api/enquiry.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
+import { sendEnquiryEmail } from '@/lib/email'
 
 interface BulkQuoteProduct {
     id: string
@@ -136,8 +137,31 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         }
 
         try {
-            await createEnquiryMutation.mutateAsync(enquiryPayload)
-            toast.success('Bulk quote request sent successfully!')
+            const result = await createEnquiryMutation.mutateAsync(enquiryPayload)
+            
+            // Send email notification (non-blocking)
+            sendEnquiryEmail({
+                userName: formData.name,
+                userEmail: formData.email,
+                userPhone: formData.phone,
+                companyName: formData.company,
+                city: formData.city,
+                products: localProducts.map(p => ({
+                    product_name: p.product_name,
+                    model_number: p.model_number,
+                    quantity: p.quantity || 1,
+                })),
+                message: formData.message,
+                isBulk: true,
+                enquiryId: result?.id,
+            }).catch(err => {
+                console.error('Failed to send bulk enquiry email:', err)
+                // Don't show error to user, just log it
+            })
+            
+            toast.success('Bulk quote request sent successfully!', {
+                description: 'Check your email for confirmation.',
+            })
             onOpenChange(false)
 
             // Reset form

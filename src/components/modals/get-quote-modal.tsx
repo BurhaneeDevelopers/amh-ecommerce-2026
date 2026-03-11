@@ -11,6 +11,7 @@ import { useAtomValue, useAtom } from 'jotai'
 import { current_user_auth_atom, productQuantityAtom } from '@/jotai/store'
 import { useCreateNewEnquiry } from '@/api/enquiry.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
+import { sendEnquiryEmail } from '@/lib/email'
 
 interface GetQuoteModalProps {
     open: boolean
@@ -92,8 +93,31 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
         }
 
         try {
-            await createEnquiryMutation.mutateAsync(enquiryPayload)
-            toast.success('Quote request sent successfully!')
+            const result = await createEnquiryMutation.mutateAsync(enquiryPayload)
+            
+            // Send email notification (non-blocking)
+            sendEnquiryEmail({
+                userName: formData.name,
+                userEmail: formData.email,
+                userPhone: formData.phone,
+                companyName: formData.company,
+                city: formData.city,
+                products: [{
+                    product_name: product.product_name,
+                    model_number: product.model_number,
+                    quantity: quantity,
+                }],
+                message: formData.message,
+                isBulk: false,
+                enquiryId: result?.id,
+            }).catch(err => {
+                console.error('Failed to send enquiry email:', err)
+                // Don't show error to user, just log it
+            })
+            
+            toast.success('Quote request sent successfully!', {
+                description: 'Check your email for confirmation.',
+            })
             onOpenChange(false)
 
             // Reset form

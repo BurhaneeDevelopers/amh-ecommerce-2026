@@ -13,6 +13,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { autoFetchLocation } from "@/lib/geolocation"
+import { sendWelcomeEmail } from "@/lib/email"
 import { User, Building2, Phone, Mail, Lock, MapPin, AlertCircle } from "lucide-react"
 
 interface FormValues {
@@ -66,8 +67,17 @@ export function CreateAccountForm({
                 setErrorMessage(null)
                 await createUserMutation.mutateAsync(values)
                 
+                // Send welcome email (non-blocking)
+                sendWelcomeEmail({
+                    userName: values.full_name,
+                    userEmail: values.email,
+                }).catch(err => {
+                    console.error('Failed to send welcome email:', err)
+                    // Don't show error to user, just log it
+                })
+                
                 toast.success("Account created successfully!", {
-                    description: "Welcome to MSI E-commerce. Redirecting to home...",
+                    description: "Welcome to MSI E-commerce. Check your email for confirmation!",
                 })
                 
                 // Redirect to home page after successful signup
