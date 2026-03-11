@@ -1,17 +1,18 @@
 'use client'
 
-import { useState } from 'react'
 import { X, Package, User, Mail, Phone, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { toast } from 'sonner'
-import { useAtomValue, useAtom } from 'jotai'
-import { current_user_auth_atom, productQuantityAtom } from '@/jotai/store'
+import { useAtom } from 'jotai'
+import { productQuantityAtom } from '@/jotai/store'
 import { useCreateNewEnquiry } from '@/api/enquiry.service'
+import { Use_auth } from '@/api/user.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
 import { sendEnquiryEmail } from '@/lib/email'
+import { Formik, Form, Field } from 'formik'
 
 interface GetQuoteModalProps {
     open: boolean
@@ -25,39 +26,46 @@ interface GetQuoteModalProps {
     onSuccess?: () => void
 }
 
+interface FormValues {
+    name: string
+    email: string
+    phone: string
+    company: string
+    city: string
+    message: string
+}
+
 export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }: GetQuoteModalProps) {
-    const user = useAtomValue(current_user_auth_atom)
+    const { data: user } = Use_auth()
     const [quantity, setQuantity] = useAtom(productQuantityAtom)
     const createEnquiryMutation = useCreateNewEnquiry()
     
-    const [formData, setFormData] = useState({
+    const initialValues: FormValues = {
         name: user?.full_name || '',
         email: user?.email || '',
         phone: user?.phone || '',
-        company: '',
-        city: '',
+        company: user?.company_name || '',
+        city: user?.city || '',
         message: ''
-    })
+    }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
+    const handleSubmit = async (values: FormValues) => {
         // Validation
-        if (!formData.name || !formData.email || !formData.phone) {
+        if (!values.name || !values.email || !values.phone) {
             toast.error('Please fill in all required fields')
             return
         }
 
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(formData.email)) {
+        if (!emailRegex.test(values.email)) {
             toast.error('Please enter a valid email address')
             return
         }
 
         // Phone validation
         const phoneRegex = /^[+]?[0-9\s\-\(\)]{10,}$/
-        if (!phoneRegex.test(formData.phone)) {
+        if (!phoneRegex.test(values.phone)) {
             toast.error('Please enter a valid phone number (minimum 10 digits)')
             return
         }
@@ -81,14 +89,14 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
         const enquiryPayload: Enquiry = {
             user_id: user.id,
             products: [product.id],
-            full_name: formData.name,
-            email: formData.email,
-            phone_number: formData.phone,
+            full_name: values.name,
+            email: values.email,
+            phone_number: values.phone,
             quantity: quantity.toString(),
-            city: formData.city,
-            company_name: formData.company,
+            city: values.city,
+            company_name: values.company,
             message: `Quantity: ${quantity}${
-                formData.message ? `\n\nAdditional Message: ${formData.message}` : ''
+                values.message ? `\n\nAdditional Message: ${values.message}` : ''
             }`,
         }
 
@@ -97,43 +105,29 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
             
             // Send email notification (non-blocking)
             sendEnquiryEmail({
-                userName: formData.name,
-                userEmail: formData.email,
-                userPhone: formData.phone,
-                companyName: formData.company,
-                city: formData.city,
+                userName: values.name,
+                userEmail: values.email,
+                userPhone: values.phone,
+                companyName: values.company,
+                city: values.city,
                 products: [{
                     product_name: product.product_name,
                     model_number: product.model_number,
                     quantity: quantity,
                 }],
-                message: formData.message,
+                message: values.message,
                 isBulk: false,
                 enquiryId: result?.id,
             }).catch(err => {
                 console.error('Failed to send enquiry email:', err)
-                // Don't show error to user, just log it
             })
             
             toast.success('Quote request sent successfully!', {
                 description: 'Check your email for confirmation.',
             })
             onOpenChange(false)
-
-            // Reset form
-            setFormData({
-                name: user?.full_name || '',
-                email: user?.email || '',
-                phone: user?.phone || '',
-                company: '',
-                city: '',
-                message: ''
-            })
-            
-            // Reset quantity to 1
             setQuantity(1)
 
-            // Call success callback
             if (onSuccess) {
                 onSuccess()
             }
@@ -141,10 +135,6 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
             const errorMessage = error instanceof Error ? error.message : 'Failed to send quote request. Please try again.'
             toast.error(errorMessage)
         }
-    }
-
-    const handleInputChange = (field: string, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
     }
 
     return (
@@ -187,124 +177,144 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <User className="w-4 h-4 inline mr-1" />
-                                Full Name *
-                            </label>
-                            <Input
-                                required
-                                value={formData.name}
-                                onChange={(e) => handleInputChange('name', e.target.value)}
-                                placeholder="Enter your full name"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <Mail className="w-4 h-4 inline mr-1" />
-                                Email Address *
-                            </label>
-                            <Input
-                                type="email"
-                                required
-                                value={formData.email}
-                                onChange={(e) => handleInputChange('email', e.target.value)}
-                                placeholder="Enter your email"
-                            />
-                        </div>
-                    </div>
+                <Formik
+                    initialValues={initialValues}
+                    enableReinitialize={true}
+                    onSubmit={handleSubmit}
+                >
+                    {({ values, handleChange, handleBlur }) => (
+                        <Form className="p-6 space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <User className="w-4 h-4 inline mr-1" />
+                                        Full Name *
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        name="name"
+                                        required
+                                        placeholder="Enter your full name"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <Mail className="w-4 h-4 inline mr-1" />
+                                        Email Address *
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        type="email"
+                                        name="email"
+                                        required
+                                        placeholder="Enter your email"
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <Phone className="w-4 h-4 inline mr-1" />
-                                Phone Number
-                            </label>
-                            <Input
-                                value={formData.phone}
-                                onChange={(e) => handleInputChange('phone', e.target.value)}
-                                placeholder="Enter your phone number"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Company Name
-                            </label>
-                            <Input
-                                value={formData.company}
-                                onChange={(e) => handleInputChange('company', e.target.value)}
-                                placeholder="Enter company name (optional)"
-                            />
-                        </div>
-                    </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <Phone className="w-4 h-4 inline mr-1" />
+                                        Phone Number *
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        name="phone"
+                                        required
+                                        placeholder="Enter your phone number"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Company Name
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        name="company"
+                                        placeholder="Enter company name (optional)"
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Quantity *
-                        </label>
-                        <Input
-                            type="number"
-                            min="1"
-                            value={quantity === 0 ? '' : quantity}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (value === '') {
-                                    setQuantity(0);
-                                } else {
-                                    const numValue = parseInt(value);
-                                    if (!isNaN(numValue) && numValue >= 0) {
-                                        setQuantity(numValue);
-                                    }
-                                }
-                            }}
-                            onBlur={() => {
-                                if (quantity < 1) {
-                                    setQuantity(1);
-                                }
-                            }}
-                            placeholder="Enter quantity needed"
-                            className={quantity < 1 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}
-                        />
-                        {quantity < 1 && (
-                            <p className="text-xs text-red-600 mt-1">Quantity must be at least 1</p>
-                        )}
-                    </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    City
+                                </label>
+                                <Field
+                                    as={Input}
+                                    name="city"
+                                    placeholder="Enter your city (optional)"
+                                />
+                            </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            <MessageSquare className="w-4 h-4 inline mr-1" />
-                            Additional Message
-                        </label>
-                        <Textarea
-                            value={formData.message}
-                            onChange={(e) => handleInputChange('message', e.target.value)}
-                            placeholder="Any specific requirements or questions..."
-                            rows={3}
-                        />
-                    </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Quantity *
+                                </label>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    value={quantity === 0 ? '' : quantity}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === '') {
+                                            setQuantity(0);
+                                        } else {
+                                            const numValue = parseInt(value);
+                                            if (!isNaN(numValue) && numValue >= 0) {
+                                                setQuantity(numValue);
+                                            }
+                                        }
+                                    }}
+                                    onBlur={() => {
+                                        if (quantity < 1) {
+                                            setQuantity(1);
+                                        }
+                                    }}
+                                    placeholder="Enter quantity needed"
+                                    className={quantity < 1 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}
+                                />
+                                {quantity < 1 && (
+                                    <p className="text-xs text-red-600 mt-1">Quantity must be at least 1</p>
+                                )}
+                            </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-3 pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => onOpenChange(false)}
-                            className="flex-1"
-                            disabled={createEnquiryMutation.isPending}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
-                            disabled={createEnquiryMutation.isPending}
-                        >
-                            {createEnquiryMutation.isPending ? 'Submitting...' : 'Request Quote'}
-                        </Button>
-                    </div>
-                </form>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <MessageSquare className="w-4 h-4 inline mr-1" />
+                                    Additional Message
+                                </label>
+                                <Field
+                                    as={Textarea}
+                                    name="message"
+                                    placeholder="Any specific requirements or questions..."
+                                    rows={3}
+                                />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-3 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => onOpenChange(false)}
+                                    className="flex-1"
+                                    disabled={createEnquiryMutation.isPending}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
+                                    disabled={createEnquiryMutation.isPending}
+                                >
+                                    {createEnquiryMutation.isPending ? 'Submitting...' : 'Request Quote'}
+                                </Button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
             </DialogContent>
         </Dialog>
     )
