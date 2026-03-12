@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import { Container } from '@/components/layout/container'
-import { useGetBlogBySlug, useGetRelatedBlogs } from '@/api/blogs.service'
+import { useGetBlogBySlug, useGetRelatedBlogs, useGetRecentBlogs } from '@/api/blogs.service'
 import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -20,6 +20,7 @@ export default function BlogDetailPage() {
         blog?.category_id || '',
         3
     )
+    const { data: otherBlogs = [] } = useGetRecentBlogs(6)
 
     useEffect(() => {
         if (error) toast.error("Error loading blog post")
@@ -171,13 +172,12 @@ export default function BlogDetailPage() {
                                 // Multiple images - grid layout
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {blog.gallery_images.map((image, index) => (
-                                        <div 
-                                            key={index} 
-                                            className={`relative rounded-xl overflow-hidden ${
-                                                index === 0 && blog.gallery_images!.length % 2 !== 0 
-                                                    ? 'md:col-span-2 h-[400px] md:h-[500px]' 
+                                        <div
+                                            key={index}
+                                            className={`relative rounded-xl overflow-hidden ${index === 0 && blog.gallery_images!.length % 2 !== 0
+                                                    ? 'md:col-span-2 h-[400px] md:h-[500px]'
                                                     : 'h-[300px] md:h-[350px]'
-                                            }`}
+                                                }`}
                                         >
                                             <img
                                                 src={image}
@@ -192,7 +192,7 @@ export default function BlogDetailPage() {
                     )}
 
                     {/* Content */}
-                    <div 
+                    <div
                         className="prose prose-lg max-w-none mb-8"
                         dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
@@ -222,6 +222,28 @@ export default function BlogDetailPage() {
                             {relatedBlogs.map((relatedBlog) => (
                                 <BlogCard key={relatedBlog.id} blog={relatedBlog} />
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Other Blogs */}
+                {otherBlogs.length > 0 && (
+                    <div className="mt-16 pt-8 border-t border-gray-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900">Other Blogs</h2>
+                            <Link href="/blog">
+                                <Button variant="outline" size="sm">
+                                    View All Blogs
+                                </Button>
+                            </Link>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {otherBlogs
+                                .filter((otherBlog) => otherBlog.id !== blog?.id)
+                                .slice(0, 6)
+                                .map((otherBlog) => (
+                                    <BlogCard key={otherBlog.id} blog={otherBlog} variant='horizontal' />
+                                ))}
                         </div>
                     </div>
                 )}

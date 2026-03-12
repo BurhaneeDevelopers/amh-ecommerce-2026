@@ -24,7 +24,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
     if (variant === 'horizontal') {
         return (
             <Link href={`/blog/${blog.slug}`} className="block group max-w-xl">
-                <article className="flex flex-col sm:flex-row gap-5 p-4 rounded-2xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-500/5 transition-all duration-300">
+                <article className="flex flex-col sm:flex-row gap-5 p-4 rounded-2xl bg-white border border-gray-100 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
                     {/* Image */}
                     <div className="relative w-full sm:w-48 h-48 sm:h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
                         {imageUrl ? (
@@ -34,8 +34,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-                                <span className="text-orange-300 text-xs font-medium">No Image</span>
+                            <div className="w-full h-full bg-gradient-to-br from-primary to-amber-50 flex items-center justify-center">
+                                <span className="text-primary text-xs font-medium">No Image</span>
                             </div>
                         )}
                         {blog.category && (
@@ -60,7 +60,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                             )}
                         </div>
 
-                        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 group-hover:text-orange-500 transition-colors line-clamp-2">
+                        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
                             {blog.title}
                         </h3>
 
@@ -78,8 +78,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                                     className="w-5 h-5 rounded-full object-cover"
                                 />
                             ) : (
-                                <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
-                                    <User className="w-3 h-3 text-orange-500" />
+                                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                    <User className="w-3 h-3 text-primary" />
                                 </div>
                             )}
                             <span className="text-xs text-gray-500">{blog.author_name || 'Anonymous'}</span>
@@ -94,18 +94,18 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
     if (variant === 'minimal') {
         return (
             <Link href={`/blog/${blog.slug}`} className="block group">
-                <article className="relative pl-4 border-l-2 border-gray-200 hover:border-orange-400 transition-colors duration-300 py-1">
+                <article className="relative pl-4 border-l-2 border-gray-200 hover:border-primary transition-colors duration-300 py-1">
                     <div className="flex items-center gap-2 text-[11px] text-gray-400 mb-1.5">
                         <span>{formatDate(blog.publish_date || blog.created_at || '')}</span>
                         {blog.category && (
                             <>
                                 <span className="w-1 h-1 rounded-full bg-gray-300" />
-                                <span className="text-orange-500 font-medium">{blog.category.category_name}</span>
+                                <span className="text-primary font-medium">{blog.category.category_name}</span>
                             </>
                         )}
                     </div>
 
-                    <h3 className="font-semibold text-gray-900 text-sm leading-snug group-hover:text-orange-500 transition-colors line-clamp-2">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">
                         {blog.title}
                     </h3>
 
@@ -143,7 +143,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                     {/* Category Badge */}
                     {blog.category && (
                         <div className="absolute top-4 left-4">
-                            <span className="inline-flex items-center gap-1 bg-orange-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                            <span className="inline-flex items-center gap-1 bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
                                 {blog.category.category_name}
                             </span>
                         </div>
@@ -151,7 +151,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
 
                     {/* Arrow Icon - Top Right */}
                     <div className="absolute top-4 right-4">
-                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-orange-500 group-hover:scale-110 transition-all duration-300">
+                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
                             <ArrowUpRight className="w-4 h-4 text-white" />
                         </div>
                     </div>
@@ -171,7 +171,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-bold text-white text-lg leading-snug mb-3 group-hover:text-orange-300 transition-colors line-clamp-2">
+                    <h3 className="font-bold text-white text-lg leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
                         {blog.title}
                     </h3>
 
@@ -192,7 +192,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                                     className="w-6 h-6 rounded-full object-cover ring-2 ring-white/20"
                                 />
                             ) : (
-                                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-[10px] font-bold">
+                                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-[10px] font-bold">
                                     {(blog.author_name || 'A').charAt(0).toUpperCase()}
                                 </div>
                             )}
