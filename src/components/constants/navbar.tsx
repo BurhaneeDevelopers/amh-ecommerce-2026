@@ -29,8 +29,10 @@ export default function Navbar() {
   const wishlistCount = wishlistData?.length || 0;
   const { data: allBrands = [] } = useGetAllBrands();
 
-  // Get top 5 brands (you can add a featured flag to Brand schema if needed)
-  const featuredBrands = allBrands.slice(0, 5);
+  // Get top 5 brands sorted by order (lowest first)
+  const featuredBrands = allBrands
+    .sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity))
+    .slice(0, 5);
 
   // Keyboard shortcut for search (Ctrl+K)
   useEffect(() => {

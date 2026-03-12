@@ -7,6 +7,7 @@ class Brands_Service {
     async getAllBrands(): Promise<Brand[] | null> {
         const { data, error } = await supabase.from(this.table)
             .select('*')
+            .order('order', { ascending: true })
 
         if (error) throw error;
         return data;

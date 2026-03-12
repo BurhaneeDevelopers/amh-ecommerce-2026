@@ -20,6 +20,7 @@ export interface Brand {
   slug: string;
   created_at?: Date | string;
   updated_at?: Date | string | null;
+  order?: number;
 }
 
 export interface Product {
