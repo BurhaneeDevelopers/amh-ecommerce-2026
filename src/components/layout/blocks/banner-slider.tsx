@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
 import { useGetAdsByPlacement } from '@/api/ads.service';
 
 // Fallback images if no ads are available
@@ -117,28 +117,34 @@ const BannerSlider: React.FC = () => {
                 />
               </div>
               
-              {/* Content overlay - Bottom left with better styling */}
+              {/* Content overlay - Bottom left with industrial theme styling */}
               {slideIndex === index && (slide?.title || slide?.description || slide?.clickUrl) && (
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="absolute inset-0 flex items-end justify-start p-6 sm:p-8 lg:p-12 pointer-events-none"
+                  className="absolute inset-0 flex items-end justify-start p-4 sm:p-6 lg:p-10 pointer-events-none"
                 >
-                  {/* Content card */}
+                  {/* Content card with theme colors */}
                   <motion.div 
                     initial={{ opacity: 0, x: -30, y: 30 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="max-w-md space-y-4"
+                    className="max-w-md sm:max-w-lg md:max-w-2xl space-y-3 sm:space-y-4 bg-[#2d2d2d]/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 lg:p-8 border-l-4 border-[#f38b00] shadow-2xl"
                   >
                     {slide?.title && (
-                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight drop-shadow-lg">
+                      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight uppercase" 
+                          style={{ 
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(243,139,0,0.3)' 
+                          }}>
                         {slide.title}
                       </h2>
                     )}
                     {slide?.description && (
-                      <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed drop-shadow-md">
+                      <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 leading-relaxed font-medium max-w-xl"
+                         style={{ 
+                           textShadow: '1px 1px 3px rgba(0,0,0,0.8)' 
+                         }}>
                         {slide.description}
                       </p>
                     )}
@@ -148,12 +154,13 @@ const BannerSlider: React.FC = () => {
                         target="_blank" 
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="pointer-events-auto inline-block"
+                        className="pointer-events-auto inline-block pt-2"
                       >
                         <Button 
                           size="lg"
-                          className="bg-gradient-to-r from-[#f38b00] to-[#ffed05] hover:from-[#e07a00] hover:to-[#ffd700] text-white font-bold shadow-2xl transition-all duration-300 hover:scale-110 rounded-xl px-10 py-7 text-lg"
+                          className="bg-gradient-to-r from-[#f38b00] via-[#ff9500] to-[#ffed05] hover:from-[#e07a00] hover:via-[#ff8800] hover:to-[#ffd700] text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 rounded-xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 text-sm sm:text-base lg:text-lg"
                         >
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                           Get a Quote
                         </Button>
                       </a>
