@@ -1,14 +1,14 @@
 import React from 'react'
 import Link from 'next/link'
-import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, ArrowUpRight, User } from 'lucide-react'
 import { Blog } from '@/supabase/schema/schema.type'
-import { Card, CardContent } from '../ui/card'
 
 interface BlogCardProps {
     blog: Blog
+    variant?: 'default' | 'horizontal' | 'minimal'
 }
 
-const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
+const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
         return date.toLocaleDateString('en-US', {
@@ -18,103 +18,195 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
         })
     }
 
-    return (
-        <Link href={`/blog/${blog.slug}`} className="block h-full">
-            <Card className="group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl h-full flex flex-col hover:-translate-y-1">
-                <CardContent className="p-0 h-full flex flex-col">
-                    {/* Featured Image */}
-                    <div className="relative h-48 overflow-hidden flex-shrink-0 border-b border-gray-100">
-                        {blog.gallery_images && blog.gallery_images.length > 0 ? (
+    const imageUrl = blog.featured_image || blog.gallery_images?.[0]
+
+    // Horizontal layout - image left, content right
+    if (variant === 'horizontal') {
+        return (
+            <Link href={`/blog/${blog.slug}`} className="block group max-w-xl">
+                <article className="flex flex-col sm:flex-row gap-5 p-4 rounded-2xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-500/5 transition-all duration-300">
+                    {/* Image */}
+                    <div className="relative w-full sm:w-48 h-48 sm:h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
+                        {imageUrl ? (
                             <img
-                                src={blog.gallery_images[0]}
+                                src={imageUrl}
                                 alt={blog.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                                <span className="text-gray-500 text-sm">No Image</span>
+                            <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
+                                <span className="text-orange-300 text-xs font-medium">No Image</span>
                             </div>
                         )}
-                        
-                        {/* Category Badge */}
                         {blog.category && (
-                            <div className="absolute top-3 left-3">
-                                <span className="bg-[#272727] text-white text-xs px-2 py-1 rounded-full">
-                                    {blog.category.category_name}
-                                </span>
-                            </div>
+                            <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-gray-800 text-[10px] font-semibold px-2 py-1 rounded-md">
+                                {blog.category.category_name}
+                            </span>
                         )}
                     </div>
 
                     {/* Content */}
-                    <div className="p-4 sm:p-6 flex flex-col flex-grow">
-                        {/* Meta Info */}
-                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
-                            <div className="flex items-center gap-1">
-                                <Calendar size={12} />
-                                <span>{formatDate(blog.publish_date || blog.created_at || '')}</span>
-                            </div>
+                    <div className="flex flex-col justify-center flex-grow min-w-0">
+                        <div className="flex items-center gap-3 text-[11px] text-gray-400 mb-2">
+                            <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {formatDate(blog.publish_date || blog.created_at || '')}
+                            </span>
                             {blog.read_time && (
-                                <div className="flex items-center gap-1">
-                                    <Clock size={12} />
-                                    <span>{blog.read_time} min read</span>
-                                </div>
+                                <span className="flex items-center gap-1">
+                                    <Clock className="w-3 h-3" />
+                                    {blog.read_time} min read
+                                </span>
                             )}
                         </div>
 
-                        {/* Title */}
-                        <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-3 line-clamp-2 group-hover:text-[#272727] transition-colors">
+                        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 group-hover:text-orange-500 transition-colors line-clamp-2">
                             {blog.title}
                         </h3>
 
-                        {/* Excerpt */}
                         {blog.excerpt && (
-                            <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
+                            <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">
                                 {blog.excerpt}
                             </p>
                         )}
 
-                        {/* Tags */}
-                        {blog.tags && blog.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                                {blog.tags.slice(0, 3).map((tag) => (
-                                    <span 
-                                        key={tag} 
-                                        className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Author */}
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                            <div className="flex items-center gap-2">
-                                {blog.author_image ? (
-                                    <img
-                                        src={blog.author_image}
-                                        alt={blog.author_name || 'Author'}
-                                        className="w-6 h-6 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-                                        <span className="text-gray-500 text-xs font-medium">
-                                            {blog.author_name?.charAt(0).toUpperCase() || 'A'}
-                                        </span>
-                                    </div>
-                                )}
-                                <span className="text-xs text-gray-600">{blog.author_name || 'Anonymous'}</span>
-                            </div>
-                            
-                            <ArrowRight 
-                                size={16} 
-                                className="text-gray-400 group-hover:text-[#272727] group-hover:translate-x-1 transition-all" 
-                            />
+                        <div className="flex items-center gap-2 mt-auto">
+                            {blog.author_image ? (
+                                <img
+                                    src={blog.author_image}
+                                    alt={blog.author_name}
+                                    className="w-5 h-5 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
+                                    <User className="w-3 h-3 text-orange-500" />
+                                </div>
+                            )}
+                            <span className="text-xs text-gray-500">{blog.author_name || 'Anonymous'}</span>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                </article>
+            </Link>
+        )
+    }
+
+    // Minimal layout - compact, text-focused
+    if (variant === 'minimal') {
+        return (
+            <Link href={`/blog/${blog.slug}`} className="block group">
+                <article className="relative pl-4 border-l-2 border-gray-200 hover:border-orange-400 transition-colors duration-300 py-1">
+                    <div className="flex items-center gap-2 text-[11px] text-gray-400 mb-1.5">
+                        <span>{formatDate(blog.publish_date || blog.created_at || '')}</span>
+                        {blog.category && (
+                            <>
+                                <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                <span className="text-orange-500 font-medium">{blog.category.category_name}</span>
+                            </>
+                        )}
+                    </div>
+
+                    <h3 className="font-semibold text-gray-900 text-sm leading-snug group-hover:text-orange-500 transition-colors line-clamp-2">
+                        {blog.title}
+                    </h3>
+
+                    {blog.read_time && (
+                        <span className="text-[10px] text-gray-400 mt-1.5 block">
+                            {blog.read_time} min read
+                        </span>
+                    )}
+                </article>
+            </Link>
+        )
+    }
+
+    // Default layout - modern card with overlay style
+    return (
+        <Link href={`/blog/${blog.slug}`} className="block group h-full max-w-sm!">
+            <article className="relative h-full rounded-2xl overflow-hidden bg-gray-900">
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={blog.title}
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500"
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+                    )}
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                </div>
+
+                {/* Content */}
+                <div className="relative h-full flex flex-col justify-end p-5 min-h-[320px]">
+                    {/* Category Badge */}
+                    {blog.category && (
+                        <div className="absolute top-4 left-4">
+                            <span className="inline-flex items-center gap-1 bg-orange-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                                {blog.category.category_name}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Arrow Icon - Top Right */}
+                    <div className="absolute top-4 right-4">
+                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-orange-500 group-hover:scale-110 transition-all duration-300">
+                            <ArrowUpRight className="w-4 h-4 text-white" />
+                        </div>
+                    </div>
+
+                    {/* Meta Info */}
+                    <div className="flex items-center gap-3 text-xs text-white/70 mb-3">
+                        <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {formatDate(blog.publish_date || blog.created_at || '')}
+                        </span>
+                        {blog.read_time && (
+                            <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {blog.read_time} min read
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-bold text-white text-lg leading-snug mb-3 group-hover:text-orange-300 transition-colors line-clamp-2">
+                        {blog.title}
+                    </h3>
+
+                    {/* Excerpt */}
+                    {blog.excerpt && (
+                        <p className="text-white/70 text-sm leading-relaxed line-clamp-2 mb-4">
+                            {blog.excerpt}
+                        </p>
+                    )}
+
+                    {/* Author & Tags */}
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div className="flex items-center gap-2">
+                            {blog.author_image ? (
+                                <img
+                                    src={blog.author_image}
+                                    alt={blog.author_name}
+                                    className="w-6 h-6 rounded-full object-cover ring-2 ring-white/20"
+                                />
+                            ) : (
+                                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-[10px] font-bold">
+                                    {(blog.author_name || 'A').charAt(0).toUpperCase()}
+                                </div>
+                            )}
+                            <span className="text-xs text-white/80 font-medium">{blog.author_name || 'Anonymous'}</span>
+                        </div>
+
+                        {blog.tags && blog.tags.length > 0 && (
+                            <span className="text-[10px] text-white/50 bg-white/10 px-2 py-0.5 rounded">
+                                {blog.tags[0]}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            </article>
         </Link>
     )
 }

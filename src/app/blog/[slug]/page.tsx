@@ -160,7 +160,7 @@ export default function BlogDetailPage() {
                         <div className="mb-8">
                             {blog.gallery_images.length === 1 ? (
                                 // Single image - full width
-                                <div className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden">
+                                <div className="relative w-full rounded-xl overflow-hidden!">
                                     <img
                                         src={blog.gallery_images[0]}
                                         alt={blog.title}

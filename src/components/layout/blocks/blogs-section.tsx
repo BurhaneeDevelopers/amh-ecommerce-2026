@@ -51,9 +51,9 @@ const BlogsSection = () => {
             </div>
 
             {/* Blogs Grid - Horizontal scroll on mobile, grid on desktop */}
-            <div className="flex gap-4 sm:gap-6 overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide">
+            <div className="flex gap-4 sm:gap-6 flex-wrap">
                 {blogs.slice(0, 4).map((blog) => (
-                    <div key={blog.id} className="!w-72 2xl:w-80! md:w-auto snap-start flex-shrink-0">
+                    <div key={blog.id} className="flex-shrink-0">
                         <BlogCard blog={blog} />
                     </div>
                 ))}
