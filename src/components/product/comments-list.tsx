@@ -14,6 +14,7 @@ import { ProductComment } from '@/supabase/schema/schema.type'
 import { formatDistanceToNow } from 'date-fns'
 import { ThumbsUp, ThumbsDown, User, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 interface CommentsListProps {
   productId: string
@@ -73,7 +74,9 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                 {comment.user?.profile_image ? (
-                  <img
+                  <Image
+                    width={500}
+                    height={500}
                     src={comment.user.profile_image}
                     alt={comment.user.full_name || 'User'}
                     className="w-10 h-10 rounded-full object-cover"
@@ -134,7 +137,7 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
                   </ul>
                 </div>
               )}
-              
+
               {comment.cons && comment.cons.length > 0 && (
                 <div className="space-y-2">
                   <h5 className="font-medium text-red-700 flex items-center gap-1">
@@ -203,7 +206,7 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
                 Not Helpful
               </Button>
             </div>
-            
+
             {comment.helpful_count && comment.helpful_count > 0 && (
               <span className="text-sm text-muted-foreground">
                 {comment.helpful_count} people found this helpful
@@ -243,7 +246,7 @@ function CommentSkeleton() {
 export default function CommentsList({ productId }: CommentsListProps) {
   const [currentUser] = useAtom(current_user_auth_atom)
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'rating_high' | 'rating_low'>('newest')
-  
+
   const { data: comments = [], isLoading, error } = useGetProductComments(productId)
 
   if (isLoading) {

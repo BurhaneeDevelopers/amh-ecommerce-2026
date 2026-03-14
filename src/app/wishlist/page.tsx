@@ -30,6 +30,7 @@ import BulkQuoteModal from "@/components/modals/bulk-quote-modal";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -48,7 +49,7 @@ const WishList = () => {
     model_number?: string;
     photos: string[];
   } | null>(null);
-  
+
   const user = useAtomValue(current_user_auth_atom);
   const {
     data: wishlistData,
@@ -64,7 +65,7 @@ const WishList = () => {
   const paginatedItems =
     wishlistData?.slice(start, start + ITEMS_PER_PAGE) || [];
   const totalPages = Math.ceil((wishlistData?.length || 0) / ITEMS_PER_PAGE);
-  
+
   // Filter out items with null products for selection
   const selectableItems = paginatedItems.filter(item => item.products && item.product_id);
 
@@ -75,10 +76,10 @@ const WishList = () => {
   };
 
   const handleBulkEnquiry = () => {
-    const selectedItems = wishlistData?.filter((i) => 
+    const selectedItems = wishlistData?.filter((i) =>
       selected.includes(i.id || "") && i.products && i.product_id
     ) || [];
-    
+
     if (selectedItems.length === 0) {
       toast.error('No valid products selected');
       return;
@@ -119,7 +120,7 @@ const WishList = () => {
 
   const handleDeleteItem = async (item: WishlistWithProduct) => {
     if (!user) return;
-    
+
     try {
       if (item.product_id) {
         // Normal deletion with product_id
@@ -139,14 +140,14 @@ const WishList = () => {
     <Container className="py-8">
       {/* Header Section */}
       <div className="mb-8">
-        <Link 
-          href="/products" 
+        <Link
+          href="/products"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
           <ArrowLeft size={18} />
           <span className="text-sm font-medium">Continue Shopping</span>
         </Link>
-        
+
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary)]/80 p-3 rounded-xl shadow-lg">
@@ -256,17 +257,16 @@ const WishList = () => {
             <TableBody>
               {paginatedItems.map((item, index) => {
                 const hasNullProduct = !item.products || !item.product_id;
-                
+
                 return (
-                  <TableRow 
+                  <TableRow
                     key={item.id}
-                    className={`transition-colors ${
-                      hasNullProduct 
-                        ? "bg-red-50 hover:bg-red-100 border-l-4 border-l-red-400" 
-                        : selected.includes(item.id || "") 
-                          ? "bg-amber-50 hover:bg-amber-100" 
+                    className={`transition-colors ${hasNullProduct
+                        ? "bg-red-50 hover:bg-red-100 border-l-4 border-l-red-400"
+                        : selected.includes(item.id || "")
+                          ? "bg-amber-50 hover:bg-amber-100"
                           : "hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     <TableCell>
                       {!hasNullProduct && (
@@ -280,7 +280,9 @@ const WishList = () => {
                     <TableCell>
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 border">
                         {item.products?.photos?.[0] ? (
-                          <img
+                          <Image
+                            width={500}
+                            height={500}
                             src={item.products.photos[0]}
                             alt={item.products.product_name || "Product"}
                             className="w-full h-full object-cover"
@@ -309,7 +311,7 @@ const WishList = () => {
                               {item.products?.product_name || "N/A"}
                             </span>
                             {item.products?.product_name && (
-                              <Link 
+                              <Link
                                 href={`/products/${item.product_id}`}
                                 className="text-xs text-[var(--color-primary)] hover:underline"
                               >

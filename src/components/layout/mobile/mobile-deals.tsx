@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge'
 import { Clock, Star, Zap, ArrowRight, Loader2 } from 'lucide-react'
 import { useGetAdsByPlacement } from '@/api/ads.service'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export default function MobileDeals() {
     const { data: ads = [], isLoading } = useGetAdsByPlacement('mobile_deals');
-    
+
     // Fallback deals if no ads are available
     const fallbackDeals = [
         {
@@ -42,7 +43,7 @@ export default function MobileDeals() {
     ];
 
     // Use ads if available, otherwise use fallback
-    const deals = ads.length > 0 
+    const deals = ads.length > 0
         ? ads.slice(0, 3).map((ad, index) => ({
             title: ad.title,
             description: ad.description || "Special offer",
@@ -85,7 +86,7 @@ export default function MobileDeals() {
                     </Badge>
                 )}
             </div>
-            
+
             <div className="grid grid-cols-1 gap-3">
                 {deals.map((deal, index) => (
                     <motion.div
@@ -96,13 +97,15 @@ export default function MobileDeals() {
                     >
                         <Card className="overflow-hidden bg-white hover:shadow-lg transition-all duration-300 group border-0 shadow-sm">
                             <div className="relative h-24">
-                                <img
+                                <Image
+                                    width={500}
+                                    height={500}
                                     src={deal.imageUrl}
                                     alt={deal.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/20" />
-                                
+
                                 {/* Icon and Badge */}
                                 <div className="absolute top-2 left-2 flex items-center gap-2">
                                     <div className={`p-1.5 rounded-full ${deal.color} text-white shadow-lg`}>
@@ -113,7 +116,7 @@ export default function MobileDeals() {
                                     </Badge>
                                 </div>
                             </div>
-                            
+
                             <div className="p-3">
                                 <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -125,11 +128,11 @@ export default function MobileDeals() {
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 {deal.clickUrl ? (
                                     <a href={deal.clickUrl} target="_blank" rel="noopener noreferrer" className="block">
-                                        <Button 
-                                            size="sm" 
+                                        <Button
+                                            size="sm"
                                             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs font-medium group-hover:shadow-md transition-all duration-300"
                                         >
                                             <span>Shop Now</span>
@@ -137,9 +140,9 @@ export default function MobileDeals() {
                                         </Button>
                                     </a>
                                 ) : (
-                                    <Button 
-                                        size="sm" 
-                                        className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white text-xs font-medium cursor-not-allowed" 
+                                    <Button
+                                        size="sm"
+                                        className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white text-xs font-medium cursor-not-allowed"
                                         disabled
                                     >
                                         Coming Soon
@@ -150,18 +153,18 @@ export default function MobileDeals() {
                     </motion.div>
                 ))}
             </div>
-            
+
             {/* View All Deals Link */}
             {deals.length > 0 && (
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.3 }}
                     className="mt-4 text-center"
                 >
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-xs font-medium"
                     >
                         View All Deals

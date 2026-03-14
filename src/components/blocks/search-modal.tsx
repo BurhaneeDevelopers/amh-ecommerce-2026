@@ -10,6 +10,7 @@ import { useSearchProducts } from "@/api/search.service";
 import { Product } from "@/supabase/schema/schema.type";
 import WishlistButton from "./wishlist-button";
 import GetQuoteModal from "../modals/get-quote-modal";
+import Image from "next/image";
 
 interface SearchModalProps {
   open: boolean;
@@ -73,7 +74,9 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
         {/* Product Image */}
         <div className="relative w-16 h-16 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden flex items-center justify-center">
           {productImage ? (
-            <img
+            <Image
+              width={500}
+              height={500}
               src={productImage}
               alt={productName}
               className="w-full h-full object-contain p-1"
@@ -121,11 +124,10 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
           <Button
             onClick={handleGetQuote}
             size="sm"
-            className={`h-9 px-4 text-xs font-medium whitespace-nowrap ${
-              isOutOfStock
+            className={`h-9 px-4 text-xs font-medium whitespace-nowrap ${isOutOfStock
                 ? "bg-indigo-600 hover:bg-indigo-700"
                 : "bg-gradient-to-r from-[#f38b00] to-[#ffed05] hover:opacity-90 text-gray-900"
-            }`}
+              }`}
           >
             {isOutOfStock ? "Pre-Order" : "Get Quote"}
           </Button>

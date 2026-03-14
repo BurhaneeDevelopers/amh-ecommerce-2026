@@ -5,6 +5,8 @@ import { motion, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
 import { useGetAdsByPlacement } from '@/api/ads.service';
+import Image from 'next/image';
+import { getOptimizedImageUrl } from '@/lib/supabase-image';
 
 // Fallback images if no ads are available
 const fallbackImages = [
@@ -20,26 +22,26 @@ const BannerSlider: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Fetch banner ads
   const { data: bannerAds = [] } = useGetAdsByPlacement('banner_slider');
-  
+
   // Use ads if available, otherwise fallback to static images
-  const slides = bannerAds.length > 0 
-    ? bannerAds.map(ad => ({ 
-        src: ad.media_url, 
-        alt: ad.title, 
-        clickUrl: ad.click_url,
-        title: ad.title,
-        description: ad.description 
-      }))
-    : fallbackImages.map((img, idx) => ({ 
-        src: img, 
-        alt: `Banner ${idx + 1}`, 
-        clickUrl: null,
-        title: null,
-        description: null 
-      }));
+  const slides = bannerAds.length > 0
+    ? bannerAds.map(ad => ({
+      src: ad.media_url,
+      alt: ad.title,
+      clickUrl: ad.click_url,
+      title: ad.title,
+      description: ad.description
+    }))
+    : fallbackImages.map((img, idx) => ({
+      src: img,
+      alt: `Banner ${idx + 1}`,
+      clickUrl: null,
+      title: null,
+      description: null
+    }));
 
   const paginate = useCallback((direction: number) => {
     setIndex((prev) => {
@@ -99,7 +101,7 @@ const BannerSlider: React.FC = () => {
               dragElastic={0.1}
               onDragStart={() => setIsDragging(true)}
               onDragEnd={handleDragEnd}
-              whileDrag={{ 
+              whileDrag={{
                 scale: 0.98,
                 transition: { duration: 0.2 }
               }}
@@ -110,53 +112,56 @@ const BannerSlider: React.FC = () => {
             >
               {/* Responsive image container - contains full poster without cropping */}
               <div className="relative w-full h-full overflow-hidden rounded-2xl flex items-center justify-center">
-                <img
-                  src={slide.src}
+                <Image
+                  width={1080}
+                  height={720}
+                  src={getOptimizedImageUrl(slide.src, 1080, 80)}
                   alt={slide.alt}
+                  priority={slideIndex === 0}
                   className="w-full h-full object-contain select-none pointer-events-none rounded-2xl"
                 />
               </div>
-              
+
               {/* Content overlay - Bottom left with industrial theme styling */}
               {slideIndex === index && (slide?.title || slide?.description || slide?.clickUrl) && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                   className="absolute inset-0 flex items-end justify-start p-4 sm:p-6 lg:p-10 pointer-events-none"
                 >
                   {/* Content card with theme colors */}
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: -30, y: 30 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
                     className="max-w-md sm:max-w-lg md:max-w-2xl space-y-3 sm:space-y-4 bg-[#2d2d2d]/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 lg:p-8 border-l-4 border-[#f38b00] shadow-2xl"
                   >
                     {slide?.title && (
-                      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight uppercase" 
-                          style={{ 
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(243,139,0,0.3)' 
-                          }}>
+                      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight uppercase"
+                        style={{
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(243,139,0,0.3)'
+                        }}>
                         {slide.title}
                       </h2>
                     )}
                     {slide?.description && (
                       <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 leading-relaxed font-medium max-w-xl"
-                         style={{ 
-                           textShadow: '1px 1px 3px rgba(0,0,0,0.8)' 
-                         }}>
+                        style={{
+                          textShadow: '1px 1px 3px rgba(0,0,0,0.8)'
+                        }}>
                         {slide.description}
                       </p>
                     )}
                     {slide?.clickUrl && (
-                      <a 
-                        href={slide.clickUrl} 
-                        target="_blank" 
+                      <a
+                        href={slide.clickUrl}
+                        target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="pointer-events-auto inline-block pt-2"
                       >
-                        <Button 
+                        <Button
                           size="lg"
                           className="bg-gradient-to-r from-[#f38b00] via-[#ff9500] to-[#ffed05] hover:from-[#e07a00] hover:via-[#ff8800] hover:to-[#ffd700] text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 rounded-xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 text-sm sm:text-base lg:text-lg"
                         >
@@ -198,11 +203,10 @@ const BannerSlider: React.FC = () => {
                 <button
                   key={slideIndex}
                   onClick={() => goToSlide(slideIndex)}
-                  className={`transition-all duration-300 rounded-full ${
-                    slideIndex === index
+                  className={`transition-all duration-300 rounded-full ${slideIndex === index
                       ? 'w-8 h-2 bg-white shadow-lg'
                       : 'w-2 h-2 bg-white/50 hover:bg-white/70'
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${slideIndex + 1}`}
                 />
               ))}

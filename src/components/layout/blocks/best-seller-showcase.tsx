@@ -5,6 +5,7 @@ import React from 'react'
 import { useGetBestsellerProducts } from '@/api/bestseller.service'
 import { TrendingUp } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const BestSellerShowcase: React.FC = () => {
     const { data: bestSellers = [], isLoading } = useGetBestsellerProducts(4)
@@ -54,12 +55,14 @@ const BestSellerShowcase: React.FC = () => {
             <ul className="divide-y divide-gray-100">
                 {bestSellers.map((product, index) => (
                     <li key={product.id} className="group">
-                        <Link 
+                        <Link
                             href={`/products/${product.id}`}
                             className="flex gap-4 items-center p-3 hover:bg-gray-50 transition-colors duration-200"
                         >
                             <div className="relative flex-shrink-0">
-                                <img
+                                <Image
+                                    width={500}
+                                    height={500}
                                     src={product.photos?.[0] || 'https://images.pexels.com/photos/5974301/pexels-photo-5974301.jpeg'}
                                     alt={product.product_name}
                                     className="w-20 h-16 object-contain rounded-lg border border-gray-100 group-hover:scale-105 transition-transform duration-200"

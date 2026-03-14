@@ -20,6 +20,7 @@ import { current_user_auth_atom } from "@/jotai/store";
 import { useGetWishlistByUser } from "@/api/wishlist.service";
 import { useGetAllBrands } from "@/api/brand.service";
 import { P } from "../typography/typography";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,14 +64,20 @@ export default function Navbar() {
             {/* Left: Logo - Much Larger */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
               <div className="relative flex gap-4">
-                <img
+                <Image
+                  width={500}
+                  height={500}
                   alt="MSI Logo"
                   src="/msi-logo-white.png"
+                  unoptimized
                   className="object-cover scale-150 h-20 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
                 />
-                <img
+                <Image
+                  width={500}
+                  height={500}
                   alt="MSI Logo"
                   src="/xlnt.png"
+                  unoptimized
                   className="object-cover scale-150 h-20 p-2 w-full transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
@@ -119,7 +126,7 @@ export default function Navbar() {
 
               {/* My Cart Button - Prominent */}
               <Link href="/wishlist">
-                <Button 
+                <Button
                   size="lg"
                   className="relative gap-2.5 rounded-2xl bg-gradient-to-r from-[#f38b00] via-[#ff9500] to-[#ffed05] 
                            hover:from-[#e07a00] hover:via-[#ff8800] hover:to-[#ffd700] 
@@ -130,7 +137,7 @@ export default function Navbar() {
                   <ShoppingCart className="w-5 h-5" />
                   <span className="hidden sm:inline">My Cart</span>
                   {wishlistCount > 0 && (
-                    <Badge 
+                    <Badge
                       className="absolute -top-2 -right-2 min-w-[24px] h-[24px] text-xs font-bold 
                                bg-red-500 hover:bg-red-600 flex items-center justify-center 
                                rounded-full px-1.5 shadow-lg animate-pulse"
@@ -266,8 +273,8 @@ export default function Navbar() {
             <div className="flex items-center overflow-x-auto scrollbar-hide max-w-[50%] lg:max-w-[60%] xl:max-w-none">
               {featuredBrands.length > 0 ? (
                 featuredBrands.map((brand) => (
-                  <Link 
-                    key={brand.id} 
+                  <Link
+                    key={brand.id}
                     href={`/category/all?brand=${brand.id}`}
                     className="group flex-shrink-0"
                   >
@@ -275,7 +282,9 @@ export default function Navbar() {
                       {/* Brand Logo */}
                       {brand.brand_logo ? (
                         <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg overflow-hidden bg-white group-hover:bg-gray-100 transition-all duration-300 shadow-sm flex-shrink-0 flex items-center justify-center p-1">
-                          <img
+                          <Image
+                            width={500}
+                            height={500}
                             src={brand.brand_logo}
                             alt={brand.brand_name}
                             className="w-full h-full object-contain"

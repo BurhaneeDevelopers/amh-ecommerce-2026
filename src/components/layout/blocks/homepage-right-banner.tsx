@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useGetTopAdByPlacement } from '@/api/ads.service';
+import Image from 'next/image';
 
 const HomepageRightBanner: React.FC = () => {
   const { data: ad, isLoading } = useGetTopAdByPlacement('homepage_right_banner');
@@ -19,7 +20,9 @@ const HomepageRightBanner: React.FC = () => {
 
   return (
     <div className="relative w-full h-48 md:h-64 lg:h-80 overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-      <img
+      <Image
+        width={500}
+        height={500}
         src={ad.media_url}
         alt={ad.title}
         className="w-full h-full object-cover object-center"
@@ -34,8 +37,8 @@ const HomepageRightBanner: React.FC = () => {
         )}
         {ad.click_url && (
           <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold"
             >
               Learn More

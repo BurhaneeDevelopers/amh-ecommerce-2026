@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useGetTopAdByPlacement } from '@/api/ads.service'
+import Image from 'next/image'
 
 const DealOfTheDay: React.FC = () => {
     const { data: ad } = useGetTopAdByPlacement('deal_of_the_day')
@@ -21,7 +22,9 @@ const DealOfTheDay: React.FC = () => {
                 Dealer&apos;s Choice
             </H5>
             <div className="flex flex-col justify-center items-center relative">
-                <img
+                <Image
+                    width={500}
+                    height={500}
                     src={imageSrc}
                     alt={title}
                     className="w-64 h-full object-cover !rounded-lg"

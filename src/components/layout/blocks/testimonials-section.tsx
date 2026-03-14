@@ -9,6 +9,7 @@ import { Testimonial } from "@/supabase/schema/schema.type";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const TestimonialsSection = () => {
   const {
@@ -52,9 +53,8 @@ const TestimonialsSection = () => {
       <Star
         key={index}
         size={16}
-        className={`${
-          index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-        }`}
+        className={`${index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+          }`}
       />
     ));
   };
@@ -157,7 +157,9 @@ const TestimonialsSection = () => {
               {/* Client Info */}
               <div className="flex items-center justify-center gap-4 pt-6 border-t border-gray-100">
                 {testimonials[currentIndex].client_image ? (
-                  <img
+                  <Image
+                    width={500}
+                    height={500}
                     src={testimonials[currentIndex].client_image}
                     alt={testimonials[currentIndex].client_name}
                     className="w-16 h-16 rounded-full object-cover"
@@ -197,11 +199,10 @@ const TestimonialsSection = () => {
                 setDirection(index > currentIndex ? 1 : -1);
                 setCurrentIndex(index);
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex
+              className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
                   ? "w-8 bg-primary"
                   : "w-2 bg-gray-300 hover:bg-gray-400"
-              }`}
+                }`}
               aria-label={`Go to testimonial ${index + 1}`}
             />
           ))}

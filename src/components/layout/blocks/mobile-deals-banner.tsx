@@ -4,6 +4,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useGetAdsByPlacement } from '@/api/ads.service';
+import Image from 'next/image';
 
 const MobileDealsSection: React.FC = () => {
   const { data: ads = [], isLoading } = useGetAdsByPlacement('mobile_deals');
@@ -28,7 +29,7 @@ const MobileDealsSection: React.FC = () => {
       click_url: null
     },
     {
-      id: 'fallback-2', 
+      id: 'fallback-2',
       title: 'New Arrivals',
       description: 'Discover our newest products',
       media_url: 'https://images.pexels.com/photos/4889065/pexels-photo-4889065.jpeg',
@@ -41,18 +42,20 @@ const MobileDealsSection: React.FC = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
       {displayAds.map((ad, index) => (
-        <div 
+        <div
           key={ad.id || index}
           className="relative h-32 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 bg-gradient-to-r from-primary/5 to-secondary/5"
         >
           <div className="absolute inset-0">
-            <img
+            <Image
+              width={500}
+              height={500}
               src={ad.media_url}
               alt={ad.title}
               className="w-full h-full object-cover object-center"
             />
           </div>
-          
+
           {/* Content overlay */}
           <div className="relative z-10 flex flex-col justify-between h-full p-3 bg-black/30">
             <div className="flex items-start justify-between">
@@ -68,17 +71,17 @@ const MobileDealsSection: React.FC = () => {
                   </p>
                 )}
               </div>
-              
+
               <Badge variant="secondary" className="bg-white/90 text-primary font-semibold ml-2">
                 Deal
               </Badge>
             </div>
-            
+
             {ad.click_url && (
               <div className="mt-2">
                 <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold w-full"
                   >
                     Shop Now

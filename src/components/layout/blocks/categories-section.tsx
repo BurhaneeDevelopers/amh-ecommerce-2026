@@ -6,6 +6,7 @@ import { useGetAllMainCategories } from '@/api/category.service'
 import { Loader2, Package, ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 const CategoriesSection = () => {
     const { data: categories = [], isLoading } = useGetAllMainCategories()
@@ -33,7 +34,7 @@ const CategoriesSection = () => {
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -z-0" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-3xl -z-0" />
-                
+
                 <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="space-y-2">
                         <div className="flex items-center gap-2">
@@ -46,8 +47,8 @@ const CategoriesSection = () => {
                             Discover our comprehensive range of professional tools and equipment
                         </p>
                     </div>
-                    <Link 
-                        href="/products" 
+                    <Link
+                        href="/products"
                         className="group flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                         View All
@@ -63,13 +64,13 @@ const CategoriesSection = () => {
                         key={category.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ 
-                            duration: 0.4, 
+                        transition={{
+                            duration: 0.4,
                             delay: index * 0.03,
                             ease: [0.34, 1.56, 0.64, 1]
                         }}
                     >
-                        <Link 
+                        <Link
                             href={`/category/${category.id}`}
                             className="group block h-full"
                         >
@@ -78,14 +79,16 @@ const CategoriesSection = () => {
                                 <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
                                     {category.icon ? (
                                         <>
-                                            <img
+                                            <Image
+                                                width={500}
+                                                height={500}
                                                 src={category.icon}
                                                 alt={category.category_name}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                                             />
                                             {/* Modern Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                            
+
                                             {/* Animated Shine Effect */}
                                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -99,7 +102,7 @@ const CategoriesSection = () => {
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {/* Floating Badge */}
                                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                                         <div className="bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1 shadow-lg">
@@ -113,7 +116,7 @@ const CategoriesSection = () => {
                                     <h3 className="font-semibold text-xs sm:text-sm text-gray-800 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-tight">
                                         {category.category_name}
                                     </h3>
-                                    
+
                                     {/* Bottom Accent Line */}
                                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 group-hover:w-3/4 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent transition-all duration-500" />
                                 </div>

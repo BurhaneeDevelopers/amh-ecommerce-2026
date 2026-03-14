@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // ✅ disables type checking at build time
   },
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   images: {
     remotePatterns: [
       {
@@ -22,6 +19,7 @@ const nextConfig: NextConfig = {
         hostname: "ujfnvcsnaeadenlwhqid.supabase.co",
       },
     ],
+    // unoptimized: true
   },
 };
 

@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useGetTopAdByPlacement } from '@/api/ads.service';
+import Image from 'next/image';
 
 const ShopNowBanner: React.FC = () => {
   const { data: ad, isLoading } = useGetTopAdByPlacement('shop_now');
@@ -20,13 +21,15 @@ const ShopNowBanner: React.FC = () => {
   return (
     <div className="relative w-full h-32 md:h-40 overflow-hidden rounded-xl shadow-sm bg-gradient-to-r from-primary/10 to-secondary/10">
       <div className="absolute inset-0">
-        <img
+        <Image
+          width={500}
+          height={500}
           src={ad.media_url}
           alt={ad.title}
           className="w-full h-full object-cover object-center"
         />
       </div>
-      
+
       {/* Content overlay */}
       <div className="relative z-10 flex items-center justify-center h-full p-4 md:p-6 bg-black/20">
         <div className="flex flex-col items-center justify-center text-center">
@@ -42,8 +45,8 @@ const ShopNowBanner: React.FC = () => {
           )}
           {ad.click_url && (
             <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-gradient-to-r from-primary to-secondary text-gray-900 hover:opacity-90 font-semibold shadow-lg"
               >
                 Shop Now

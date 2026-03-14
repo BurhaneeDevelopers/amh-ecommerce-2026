@@ -2,6 +2,7 @@ import { H3, H5, } from '@/components/typography/typography'
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useGetTopAdByPlacement } from '@/api/ads.service'
+import Image from 'next/image'
 
 const OffProductBanner = () => {
     const { data: ad } = useGetTopAdByPlacement('off_product');
@@ -14,7 +15,9 @@ const OffProductBanner = () => {
 
     return (
         <div className='relative rounded-3xl overflow-hidden'>
-            <img alt='Shop Now' src={imageSrc} className='w-full object-cover shadow-xl h-[32rem] object-center' />
+            <Image
+                width={500}
+                height={500} alt='Shop Now' src={imageSrc} className='w-full object-cover shadow-xl h-[32rem] object-center' />
             <div className="bg-black/60 absolute inset-0 flex flex-col justify-center items-center gap-1">
                 <H5 className='text-white font-semibold leading-none w-fit text-center uppercase'>
                     {description}

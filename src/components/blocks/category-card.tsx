@@ -4,17 +4,19 @@ import Link from 'next/link'
 import { Category } from '@/supabase/schema/schema.type'
 import { ArrowRight, Package } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import Image from 'next/image'
+import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface CategoryCardProps extends Category {
   product_count?: number
 }
 
-export default function CategoryCard({ 
-  id, 
-  category_name, 
+export default function CategoryCard({
+  id,
+  category_name,
   icon,
   product_count = 0,
-  is_featured 
+  is_featured
 }: CategoryCardProps) {
   return (
     <Link href={`/category/${id}`}>
@@ -32,8 +34,10 @@ export default function CategoryCard({
         <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15">
           {icon ? (
             <>
-              <img
-                src={icon}
+              <Image
+                width={400}
+                height={208}
+                src={getOptimizedImageUrl(icon, 400)}
                 alt={category_name}
                 className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
               />
@@ -45,14 +49,14 @@ export default function CategoryCard({
               <Package className="w-24 h-24 text-primary/40 transition-all duration-300 group-hover:scale-110 group-hover:text-primary" />
             </div>
           )}
-          
+
           {/* Decorative Corner Element */}
           <div className="absolute top-0 left-0 w-20 h-20 bg-primary/10 rounded-br-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
 
         {/* Animated Background for Content */}
         <div className="absolute inset-0 top-52 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+
         {/* Content */}
         <div className="relative p-6 flex flex-col bg-white">
           {/* Category Name */}

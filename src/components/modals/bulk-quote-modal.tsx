@@ -14,6 +14,7 @@ import { Use_auth } from '@/api/user.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
 import { sendEnquiryEmail } from '@/lib/email'
 import { Formik, Form, Field } from 'formik'
+import Image from 'next/image'
 
 interface BulkQuoteProduct {
     id: string
@@ -68,7 +69,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
     }, [open, products])
 
     const handleQuantityChange = (productId: string, newQuantity: number) => {
-        setLocalProducts(prev => 
+        setLocalProducts(prev =>
             prev.map(p => p.id === productId ? { ...p, quantity: newQuantity } : p)
         )
     }
@@ -78,14 +79,14 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
             toast.error('At least one product must remain in the quote request')
             return
         }
-        
+
         const updatedProducts = localProducts.filter(p => p.id !== productId)
         setLocalProducts(updatedProducts)
-        
+
         if (onRemoveProduct) {
             onRemoveProduct(productId)
         }
-        
+
         toast.success('Product removed from quote request')
     }
 
@@ -121,7 +122,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         }
 
         // Prepare product list for message
-        const productList = localProducts.map((p, idx) => 
+        const productList = localProducts.map((p, idx) =>
             `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''} - Quantity: ${p.quantity || 1}`
         ).join('\n')
 
@@ -137,14 +138,13 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
             quantity: totalQuantity.toString(),
             city: values.city,
             company_name: values.company,
-            message: `Bulk Quote Request for ${localProducts.length} products:\n\n${productList}${
-                values.message ? `\n\nAdditional Message: ${values.message}` : ''
-            }`,
+            message: `Bulk Quote Request for ${localProducts.length} products:\n\n${productList}${values.message ? `\n\nAdditional Message: ${values.message}` : ''
+                }`,
         }
 
         try {
             const result = await createEnquiryMutation.mutateAsync(enquiryPayload)
-            
+
             // Send email notification (non-blocking)
             sendEnquiryEmail({
                 userName: values.name,
@@ -163,7 +163,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
             }).catch(err => {
                 console.error('Failed to send bulk enquiry email:', err)
             })
-            
+
             toast.success('Bulk quote request sent successfully!', {
                 description: 'Check your email for confirmation.',
             })
@@ -227,7 +227,9 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                         <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                             {index + 1}
                                         </Badge>
-                                        <img
+                                        <Image
+                                            width={500}
+                                            height={500}
                                             src={product.photos[0] || '/placeholder-product.jpg'}
                                             alt={product.product_name}
                                             className="w-10 h-10 object-cover rounded border shrink-0"
@@ -284,7 +286,9 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                 <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                                     {PREVIEW_COUNT + index + 1}
                                                 </Badge>
-                                                <img
+                                                <Image
+                                                    width={500}
+                                                    height={500}
                                                     src={product.photos[0] || '/placeholder-product.jpg'}
                                                     alt={product.product_name}
                                                     className="w-10 h-10 object-cover rounded border shrink-0"

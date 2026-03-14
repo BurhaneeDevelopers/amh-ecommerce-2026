@@ -13,6 +13,7 @@ import { Use_auth } from '@/api/user.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
 import { sendEnquiryEmail } from '@/lib/email'
 import { Formik, Form, Field } from 'formik'
+import Image from 'next/image'
 
 interface GetQuoteModalProps {
     open: boolean
@@ -39,7 +40,7 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
     const { data: user } = Use_auth()
     const [quantity, setQuantity] = useAtom(productQuantityAtom)
     const createEnquiryMutation = useCreateNewEnquiry()
-    
+
     const initialValues: FormValues = {
         name: user?.full_name || '',
         email: user?.email || '',
@@ -95,14 +96,13 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
             quantity: quantity.toString(),
             city: values.city,
             company_name: values.company,
-            message: `Quantity: ${quantity}${
-                values.message ? `\n\nAdditional Message: ${values.message}` : ''
-            }`,
+            message: `Quantity: ${quantity}${values.message ? `\n\nAdditional Message: ${values.message}` : ''
+                }`,
         }
 
         try {
             const result = await createEnquiryMutation.mutateAsync(enquiryPayload)
-            
+
             // Send email notification (non-blocking)
             sendEnquiryEmail({
                 userName: values.name,
@@ -121,7 +121,7 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
             }).catch(err => {
                 console.error('Failed to send enquiry email:', err)
             })
-            
+
             toast.success('Quote request sent successfully!', {
                 description: 'Check your email for confirmation.',
             })
@@ -162,7 +162,9 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 {/* Product Info */}
                 <div className="p-6 bg-gray-50 border-b">
                     <div className="flex gap-4">
-                        <img
+                        <Image
+                            width={500}
+                            height={500}
                             src={product.photos[0] || '/placeholder-product.jpg'}
                             alt={product.product_name}
                             className="w-16 h-16 object-cover rounded-lg border"

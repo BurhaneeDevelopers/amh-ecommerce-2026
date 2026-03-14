@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import WishlistButton from '@/components/blocks/wishlist-button'
 import GetQuoteModal from '@/components/modals/get-quote-modal'
 import { useCanViewQuantity } from '@/hooks/useCanViewQuantity'
+import Image from 'next/image'
 
 interface CategoryGroup {
   categoryId: string
@@ -42,10 +43,10 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
     !product.stock_status || product.on_hand_qty <= 0
       ? 'out of stock'
       : product.is_on_sale
-      ? 'on sale'
-      : product.is_featured
-      ? 'featured'
-      : null
+        ? 'on sale'
+        : product.is_featured
+          ? 'featured'
+          : null
 
   const handleViewProduct = () => {
     if (product.id) {
@@ -59,7 +60,9 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
         {/* Image */}
         <td className="py-3 px-4">
           <div className="relative w-16 h-16 flex-shrink-0">
-            <img
+            <Image
+              width={500}
+              height={500}
               src={
                 product.photos[0] ??
                 'https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg'
@@ -83,13 +86,12 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
             </h3>
             {badge && (
               <span
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium w-fit ${
-                  badge === 'featured'
+                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium w-fit ${badge === 'featured'
                     ? 'bg-yellow-100 text-yellow-800'
                     : badge === 'on sale'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
               >
                 {badge === 'featured' ? '⭐ Featured' : badge === 'on sale' ? '🔥 Sale' : 'Out of Stock'}
               </span>
@@ -127,13 +129,12 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
           <td className="py-3 px-4">
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  product.on_hand_qty > 10
+                className={`w-2 h-2 rounded-full ${product.on_hand_qty > 10
                     ? 'bg-green-500'
                     : product.on_hand_qty > 0
-                    ? 'bg-yellow-500'
-                    : 'bg-red-500'
-                }`}
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                  }`}
               />
               <span className="text-sm font-medium text-gray-700">
                 {product.on_hand_qty > 0 ? `${product.on_hand_qty} in stock` : 'Out of stock'}
@@ -148,11 +149,10 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
             <Button
               onClick={() => setIsQuoteModalOpen(true)}
               size="sm"
-              className={`h-9 px-3 text-xs font-semibold ${
-                badge === 'out of stock'
+              className={`h-9 px-3 text-xs font-semibold ${badge === 'out of stock'
                   ? 'bg-indigo-600 hover:bg-indigo-700'
                   : 'bg-primary hover:bg-primary/90'
-              }`}
+                }`}
             >
               <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
               {badge === 'out of stock' ? 'Pre-Order' : 'Quote'}
@@ -284,9 +284,8 @@ export default function CategoryTableView({
 
       {/* Single Unified Table */}
       <div
-        className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden ${
-          isFiltering ? 'opacity-60 pointer-events-none' : ''
-        }`}
+        className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden ${isFiltering ? 'opacity-60 pointer-events-none' : ''
+          }`}
       >
         <div className="overflow-x-auto">
           <table className="w-full">

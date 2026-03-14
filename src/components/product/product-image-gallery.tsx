@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
+import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface ProductImageGalleryProps {
   images: string[]
@@ -16,9 +18,9 @@ interface ProductImageGalleryProps {
 
 export default function ProductImageGallery({ images, productName, badge }: ProductImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  
-  const productImages = images && images.length > 0 
-    ? images 
+
+  const productImages = images && images.length > 0
+    ? images
     : ["/api/placeholder/600/600"]
 
   const nextImage = () => {
@@ -34,12 +36,14 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
       {/* Main Image */}
       <div className="relative group">
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-300 shadow max-h-[36rem] w-full">
-          <img
-            src={productImages[selectedImageIndex]}
+          <Image
+            width={600}
+            height={600}
+            src={getOptimizedImageUrl(productImages[selectedImageIndex], 600)}
             alt={productName}
             className="w-full h-full object-contain p-8 transition-transform duration-300 group-hover:scale-105"
           />
-          
+
           {/* Badge */}
           {badge && (
             <Badge className={`${badge.className} absolute top-4 right-4 shadow-md`}>
@@ -76,14 +80,15 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
             <button
               key={index}
               onClick={() => setSelectedImageIndex(index)}
-              className={`flex-shrink-0 aspect-square w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                selectedImageIndex === index 
-                  ? 'border-blue-500 ring-2 ring-blue-200' 
+              className={`flex-shrink-0 aspect-square w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${selectedImageIndex === index
+                  ? 'border-blue-500 ring-2 ring-blue-200'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
-              <img
-                src={image}
+              <Image
+                width={80}
+                height={80}
+                src={getOptimizedImageUrl(image, 160)}
                 alt={`${productName} ${index + 1}`}
                 className="w-full h-full object-contain p-2 bg-white"
               />
@@ -91,7 +96,7 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
           ))}
         </div>
       )}
-      
+
       {/* Image counter */}
       <div className="text-center">
         <p className="text-sm text-gray-500">

@@ -1,5 +1,6 @@
 import { LoginForm } from "@/components/forms/login-form"
 import { GalleryVerticalEnd } from "lucide-react"
+import Image from "next/image"
 
 export default function Login() {
     return (
@@ -20,9 +21,12 @@ export default function Login() {
                 </div>
             </div>
             <div className="bg-muted relative hidden lg:block">
-                <img
+                <Image
+                    width={500}
+                    height={500}
                     src="/placeholder.svg"
                     alt="Image"
+                    unoptimized
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                 />
             </div>

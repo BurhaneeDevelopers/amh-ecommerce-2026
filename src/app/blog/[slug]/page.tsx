@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import BlogCard from '@/components/blocks/blog-card'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
+import Image from 'next/image'
 
 export default function BlogDetailPage() {
     const params = useParams()
@@ -121,7 +122,9 @@ export default function BlogDetailPage() {
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200">
                         <div className="flex items-center gap-2">
                             {blog.author_image ? (
-                                <img
+                                <Image
+                                    width={500}
+                                    height={500}
                                     src={blog.author_image}
                                     alt={blog.author_name || 'Author'}
                                     className="w-10 h-10 rounded-full object-cover"
@@ -162,7 +165,9 @@ export default function BlogDetailPage() {
                             {blog.gallery_images.length === 1 ? (
                                 // Single image - full width
                                 <div className="relative w-full rounded-xl overflow-hidden!">
-                                    <img
+                                    <Image
+                                        width={500}
+                                        height={500}
                                         src={blog.gallery_images[0]}
                                         alt={blog.title}
                                         className="w-full h-full object-cover"
@@ -175,11 +180,13 @@ export default function BlogDetailPage() {
                                         <div
                                             key={index}
                                             className={`relative rounded-xl overflow-hidden ${index === 0 && blog.gallery_images!.length % 2 !== 0
-                                                    ? 'md:col-span-2 h-[400px] md:h-[500px]'
-                                                    : 'h-[300px] md:h-[350px]'
+                                                ? 'md:col-span-2 h-[400px] md:h-[500px]'
+                                                : 'h-[300px] md:h-[350px]'
                                                 }`}
                                         >
-                                            <img
+                                            <Image
+                                                width={500}
+                                                height={500}
                                                 src={image}
                                                 alt={`${blog.title} - Image ${index + 1}`}
                                                 className="w-full h-full object-cover"

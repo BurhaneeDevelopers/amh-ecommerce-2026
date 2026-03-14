@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { Calendar, Clock, ArrowUpRight, User } from 'lucide-react'
 import { Blog } from '@/supabase/schema/schema.type'
+import Image from 'next/image'
+import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface BlogCardProps {
     blog: Blog
@@ -28,8 +30,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                     {/* Image */}
                     <div className="relative w-full sm:w-48 h-48 sm:h-36 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
                         {imageUrl ? (
-                            <img
-                                src={imageUrl}
+                            <Image
+                                width={192}
+                                height={144}
+                                src={getOptimizedImageUrl(imageUrl, 400)}
                                 alt={blog.title}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
@@ -72,8 +76,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
 
                         <div className="flex items-center gap-2 mt-auto">
                             {blog.author_image ? (
-                                <img
-                                    src={blog.author_image}
+                                <Image
+                                    width={20}
+                                    height={20}
+                                    src={getOptimizedImageUrl(blog.author_image, 40)}
                                     alt={blog.author_name}
                                     className="w-5 h-5 rounded-full object-cover"
                                 />
@@ -126,8 +132,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                 {/* Background Image */}
                 <div className="absolute inset-0">
                     {imageUrl ? (
-                        <img
-                            src={imageUrl}
+                        <Image
+                            width={500}
+                            height={500}
+                            src={getOptimizedImageUrl(imageUrl, 600)}
                             alt={blog.title}
                             className="w-full h-full object-cover opacity-60 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500"
                         />
@@ -186,8 +194,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                     <div className="flex items-center justify-between pt-4 border-t border-white/10">
                         <div className="flex items-center gap-2">
                             {blog.author_image ? (
-                                <img
-                                    src={blog.author_image}
+                                <Image
+                                    width={24}
+                                    height={24}
+                                    src={getOptimizedImageUrl(blog.author_image, 48)}
                                     alt={blog.author_name}
                                     className="w-6 h-6 rounded-full object-cover ring-2 ring-white/20"
                                 />

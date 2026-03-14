@@ -6,6 +6,8 @@ import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
 import GetQuoteModal from "../modals/get-quote-modal";
 import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
+import Image from "next/image";
+import { getOptimizedImageUrl } from "@/lib/supabase-image";
 
 // Define badge variants based on `tag`
 type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
@@ -46,17 +48,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
     !stock_status || on_hand_qty <= 0
       ? "out of stock"
       : is_on_sale
-      ? "on sale"
-      : is_featured
-      ? "featured"
-      : null;
+        ? "on sale"
+        : is_featured
+          ? "featured"
+          : null;
 
   const handleViewProduct = () => {
     if (id) {
       router.push(`/products/${id}`);
     }
   };
-  
+
   const handleGetQuote = () => {
     setIsQuoteModalOpen(true);
   };
@@ -64,19 +66,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // List view layout
   if (viewMode === 'list') {
     return (
-      <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
-        badge === "featured" 
-          ? "border-yellow-400 shadow-lg hover:shadow-2xl" 
+      <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${badge === "featured"
+          ? "border-yellow-400 shadow-lg hover:shadow-2xl"
           : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
-      }`}>
+        }`}>
         <div className="flex flex-row gap-6 p-4">
           {/* Product Image Container */}
           <div className="relative flex-shrink-0 w-40 h-40 rounded-lg">
-            <img
-              src={
+            <Image
+              width={400}
+              height={400}
+              src={getOptimizedImageUrl(
                 photos[0] ??
                 "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-              }
+              )}
               alt={product_name}
               className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
             />
@@ -127,11 +130,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Button
                 onClick={handleGetQuote}
                 size="lg"
-                className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
-                  badge === "out of stock"
+                className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${badge === "out of stock"
                     ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
                     : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
-                } hover:scale-105 active:scale-95`}
+                  } hover:scale-105 active:scale-95`}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
@@ -166,18 +168,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Grid view layout (default) - Compact and clean
   return (
-    <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
-      badge === "featured" 
-        ? "border-yellow-400 shadow-lg hover:shadow-2xl" 
+    <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${badge === "featured"
+        ? "border-yellow-400 shadow-lg hover:shadow-2xl"
         : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
-    }`}>
+      }`}>
       {/* Product Image Container */}
       <div className="relative aspect-square p-3">
-        <img
-          src={
+        <Image
+          width={400}
+          height={400}
+          src={getOptimizedImageUrl(
             photos[0] ??
             "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-          }
+          )}
           alt={product_name}
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
         />
@@ -218,13 +221,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200 min-h-[2.5rem] mb-2">
           {product_name}
         </h3>
-        
+
         {model_number && (
           <p className="text-xs text-gray-600 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block mb-2">
             {model_number}
           </p>
         )}
-        
+
         {isLoadingAuth ? (
           <div className="flex items-center gap-1.5 mb-2">
             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" />
@@ -242,11 +245,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Get Quote Button */}
         <Button
           onClick={handleGetQuote}
-          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
-            badge === "out of stock"
+          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${badge === "out of stock"
               ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
               : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
-          } hover:scale-105 active:scale-95`}
+            } hover:scale-105 active:scale-95`}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
           {badge === "out of stock" ? "Pre-Order" : "Get Quote"}

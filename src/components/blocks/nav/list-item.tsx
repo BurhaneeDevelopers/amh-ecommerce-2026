@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 
 import { H6 } from "@/components/typography/typography"
+import Image from "next/image"
 
 interface SubCategory {
     id: string
@@ -33,7 +34,9 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
             {/* Category Image/Icon */}
             <div className="relative w-16 h-16 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg overflow-hidden bg-white shadow-sm">
                 {icon && !imageError ? (
-                    <img
+                    <Image
+                        width={500}
+                        height={500}
                         src={icon}
                         alt={title}
                         className="w-full h-full object-cover"
@@ -45,12 +48,12 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                     </div>
                 )}
             </div>
-            
+
             {/* Category Name */}
             <H6 className="font-semibold text-gray-800 group-hover:text-orange-700 transition-colors text-center sm:text-left text-sm leading-tight line-clamp-2 flex-1">
                 {title}
             </H6>
-            
+
             {/* Indicator for subcategories */}
             {subcategories && subcategories.length > 0 && (
                 <div className="flex items-center gap-1">
@@ -92,8 +95,8 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                             {categoryContent}
                         </div>
                     </HoverCardTrigger>
-                    <HoverCardContent 
-                        side="right" 
+                    <HoverCardContent
+                        side="right"
                         align="start"
                         className="w-80 p-3 max-h-[400px] overflow-y-auto"
                         sideOffset={8}
@@ -110,7 +113,9 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 transition-all duration-200 group/sub"
                                 >
                                     {sub.icon ? (
-                                        <img
+                                        <Image
+                                            width={500}
+                                            height={500}
                                             src={sub.icon}
                                             alt={sub.name}
                                             className="w-10 h-10 object-cover rounded-lg flex-shrink-0 border border-gray-100"
@@ -141,8 +146,8 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                             {categoryContent}
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent 
-                        side="bottom" 
+                    <PopoverContent
+                        side="bottom"
                         align="start"
                         className="w-[calc(100vw-2rem)] max-w-sm p-3 max-h-[60vh] overflow-y-auto"
                         sideOffset={4}
@@ -162,7 +167,9 @@ export function ListItem({ title, href, icon, subcategories, onClick }: ListItem
                                     className="flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-orange-50 to-yellow-50 hover:from-orange-100 hover:to-yellow-100 transition-all duration-200 border border-orange-200"
                                 >
                                     {sub.icon ? (
-                                        <img
+                                        <Image
+                                            width={500}
+                                            height={500}
                                             src={sub.icon}
                                             alt={sub.name}
                                             className="w-10 h-10 object-cover rounded-lg flex-shrink-0 border border-gray-100"
