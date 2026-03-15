@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface ProductImageGalleryProps {
   images: string[]
@@ -39,7 +38,7 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
           <Image
             width={600}
             height={600}
-            src={getOptimizedImageUrl(productImages[selectedImageIndex], 600)}
+            src={productImages[selectedImageIndex]}
             alt={productName}
             className="w-full h-full object-contain p-8 transition-transform duration-300 group-hover:scale-105"
           />
@@ -81,14 +80,14 @@ export default function ProductImageGallery({ images, productName, badge }: Prod
               key={index}
               onClick={() => setSelectedImageIndex(index)}
               className={`flex-shrink-0 aspect-square w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${selectedImageIndex === index
-                  ? 'border-blue-500 ring-2 ring-blue-200'
-                  : 'border-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 ring-2 ring-blue-200'
+                : 'border-gray-200 hover:border-gray-300'
                 }`}
             >
               <Image
                 width={80}
                 height={80}
-                src={getOptimizedImageUrl(image, 160)}
+                src={image}
                 alt={`${productName} ${index + 1}`}
                 className="w-full h-full object-contain p-2 bg-white"
               />

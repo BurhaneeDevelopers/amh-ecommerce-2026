@@ -78,7 +78,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                                 <Image
                                     width={20}
                                     height={20}
-                                    src={getOptimizedImageUrl(blog.author_image, 40)}
+                                    src={blog.author_image}
                                     alt={blog.author_name}
                                     className="w-5 h-5 rounded-full object-cover"
                                 />
@@ -196,7 +196,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                                 <Image
                                     width={24}
                                     height={24}
-                                    src={getOptimizedImageUrl(blog.author_image, 48)}
+                                    src={blog.author_image}
                                     alt={blog.author_name}
                                     className="w-6 h-6 rounded-full object-cover ring-2 ring-white/20"
                                 />

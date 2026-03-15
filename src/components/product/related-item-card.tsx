@@ -3,7 +3,6 @@
 import { H3, P } from '@/components/typography/typography'
 import { ImageIcon } from 'lucide-react'
 import Image from 'next/image'
-import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface RelatedItemCardProps {
   id: string
@@ -30,7 +29,7 @@ export default function RelatedItemCard({ name, images, category, type }: Relate
           <Image
             width={300}
             height={300}
-            src={getOptimizedImageUrl(mainImage, 300)}
+            src={mainImage}
             alt={name}
             className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
           />
@@ -71,7 +70,7 @@ export default function RelatedItemCard({ name, images, category, type }: Relate
                 <Image
                   width={32}
                   height={32}
-                  src={getOptimizedImageUrl(img, 64)}
+                  src={img}
                   alt={`${name} ${idx + 2}`}
                   className="w-full h-full object-contain"
                 />

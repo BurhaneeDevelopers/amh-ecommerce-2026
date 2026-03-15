@@ -5,7 +5,6 @@ import { Category } from '@/supabase/schema/schema.type'
 import { ArrowRight, Package } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
-import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface CategoryCardProps extends Category {
   product_count?: number
@@ -37,7 +36,7 @@ export default function CategoryCard({
               <Image
                 width={400}
                 height={208}
-                src={getOptimizedImageUrl(icon, 400)}
+                src={icon}
                 alt={category_name}
                 className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
               />
