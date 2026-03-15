@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
 import { useGetAdsByPlacement } from '@/api/ads.service';
 import Image from 'next/image';
-import { getOptimizedImageUrl } from '@/lib/supabase-image';
 
 // Fallback images if no ads are available
 const fallbackImages = [
@@ -115,7 +114,7 @@ const BannerSlider: React.FC = () => {
                 <Image
                   width={1080}
                   height={720}
-                  src={getOptimizedImageUrl(slide.src, 1080, 80)}
+                  src={slide.src}
                   alt={slide.alt}
                   priority={slideIndex === 0}
                   className="w-full h-full object-contain select-none pointer-events-none rounded-2xl"

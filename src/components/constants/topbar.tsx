@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { useAtomValue } from "jotai"
 import { current_user_auth_atom } from "@/jotai/store"
 import { useGetWishlistByUser } from "@/api/wishlist.service"
-import Image from "next/image";
 
 export default function Topbar() {
     const user = useAtomValue(current_user_auth_atom);
@@ -21,12 +20,11 @@ export default function Topbar() {
             <div className="flex items-center justify-between gap-2">
                 {/* Logo - Centered on mobile, left on desktop */}
                 <div className="bg-white p-1.5 md:p-2 w-fit rounded-lg order-2 md:order-2">
-                    <Image
-                        width={500}
-                        height={500}
+                    <img
                         alt="MSI"
                         src={"/logo.png"}
                         className="object-cover w-28 h-9 md:w-44 md:h-14"
+                        loading="lazy" decoding="async" width={500} height={300}
                     />
                 </div>
 
@@ -53,7 +51,7 @@ export default function Topbar() {
                             <div className="bg-[var(--color-primary)] p-2 md:p-3 rounded-full relative">
                                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 fill-white" />
                                 {wishlistCount > 0 && (
-                                    <Badge
+                                    <Badge 
                                         variant="destructive"
                                         className="absolute -top-1 -right-1 min-w-[18px] h-[18px] text-[10px] font-bold bg-red-500 hover:bg-red-600 flex items-center justify-center rounded-full px-1"
                                     >

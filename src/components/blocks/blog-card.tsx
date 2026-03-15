@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { Calendar, Clock, ArrowUpRight, User } from 'lucide-react'
 import { Blog } from '@/supabase/schema/schema.type'
 import Image from 'next/image'
-import { getOptimizedImageUrl } from '@/lib/supabase-image'
 
 interface BlogCardProps {
     blog: Blog
@@ -33,7 +32,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                             <Image
                                 width={192}
                                 height={144}
-                                src={getOptimizedImageUrl(imageUrl, 400)}
+                                src={imageUrl}
                                 alt={blog.title}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
@@ -135,7 +134,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ blog, variant = 'default' }) => {
                         <Image
                             width={500}
                             height={500}
-                            src={getOptimizedImageUrl(imageUrl, 600)}
+                            src={imageUrl}
                             alt={blog.title}
                             className="w-full h-full object-cover opacity-60 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500"
                         />

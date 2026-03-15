@@ -4,7 +4,6 @@ import { P } from '../typography/typography'
 import { Mail, Phone, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa'
-import Image from 'next/image'
 
 const Footer = () => {
     return (
@@ -14,9 +13,7 @@ const Footer = () => {
                     {/* Company Info */}
                     <div className="space-y-4">
                         <div className="bg-white p-3 w-fit rounded-lg shadow-lg">
-                            <Image
-                                width={500}
-                                height={500} alt="MSI Industries" src={"/logo.png"} className="object-cover w-40 h-12" />
+                            <img alt="MSI Industries" src={"/logo.png"} className="object-cover w-40 h-12" loading="lazy" decoding="async" width={500} height={300} />
                         </div>
 
                         <p className="text-gray-300 text-sm leading-relaxed">
