@@ -6,8 +6,6 @@ import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
 import GetQuoteModal from "../modals/get-quote-modal";
 import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
-import Image from "next/image";
-import { getOptimizedImageUrl } from "@/lib/supabase-image";
 
 // Define badge variants based on `tag`
 type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
@@ -73,15 +71,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="flex flex-row gap-6 p-4">
           {/* Product Image Container */}
           <div className="relative flex-shrink-0 w-40 h-40 rounded-lg">
-            <Image
-              width={400}
-              height={400}
-              src={getOptimizedImageUrl(
+            <img
+              src={
                 photos[0] ??
                 "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-              )}
+              }
               alt={product_name}
               className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+              loading="lazy" decoding="async" width={160} height={160}
             />
 
             {/* Badge */}
@@ -174,15 +171,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }`}>
       {/* Product Image Container */}
       <div className="relative aspect-square p-3">
-        <Image
-          width={400}
-          height={400}
-          src={getOptimizedImageUrl(
+        <img
+          src={
             photos[0] ??
             "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-          )}
+          }
           alt={product_name}
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+          loading="lazy" decoding="async" width={500} height={300}
         />
 
         {/* Action Buttons - Always Visible */}
@@ -199,7 +195,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* View Button - Always Visible on Mobile, Center on Desktop Hover */}
-        <div className="absolute bottom-2 right-2 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-2 right-2 md:bottom-0 md:right-0 md:top-0 md:left-0 md:flex md:items-center md:justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleViewProduct}
             className="h-10 w-10 md:h-14 md:w-14 rounded-full bg-white shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center border-2 border-gray-200 hover:border-primary"
