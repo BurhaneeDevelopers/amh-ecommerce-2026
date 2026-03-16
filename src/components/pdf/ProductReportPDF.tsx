@@ -8,6 +8,9 @@ import {
 } from '@react-pdf/renderer';
 import { ReportProduct, ReportMeta } from '@/types/report';
 
+// Fallback placeholder — a tiny 1×1 transparent PNG as base64
+const PLACEHOLDER_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
 const BRAND_PRIMARY = '#f38b00';
 const BRAND_SECONDARY = '#ffed05';
 
@@ -105,6 +108,7 @@ const styles = StyleSheet.create({
   // Table
   tableHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: BRAND_PRIMARY,
     paddingVertical: 5,
     paddingHorizontal: 4,
@@ -113,6 +117,7 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 4,
     paddingHorizontal: 4,
   },
@@ -122,33 +127,31 @@ const styles = StyleSheet.create({
   tableRowOdd: {
     backgroundColor: '#FFFFFF',
   },
-  colProduct:     { width: '26%' },
-  colSku:         { width: '14%' },
-  colCategory:    { width: '18%' },
-  colPrice:       { width: '11%' },
-  colPcsPerCarton:{ width: '9%'  },
-  colStock:       { width: '10%' },
-  colStatus:      { width: '12%' },
+  colImage:       { width: 44 },   // fixed px — thumbnail only
+  colProduct:     { flex: 3 },
+  colSku:         { flex: 2 },
+  colCategory:    { flex: 2.5 },
+  colPrice:       { flex: 1.5 },
+  colPcsPerCarton:{ flex: 1 },
+  colStock:       { flex: 1 },
   headerCell: {
     fontSize: 8,
     fontFamily: 'Helvetica-Bold',
     color: '#FFFFFF',
+    paddingRight: 4,
   },
   cell: {
     fontSize: 8,
     color: '#374151',
+    paddingRight: 4,
   },
 
-  // Status badge
-  badge: {
-    borderRadius: 3,
-    paddingVertical: 1,
-    paddingHorizontal: 4,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
+  // Product thumbnail
+  productImage: {
+    width: 32,
+    height: 32,
+    objectFit: 'contain',
+    borderRadius: 2,
   },
 
   // Page number (bottom right, above footer)
@@ -161,17 +164,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const statusStyle = (status: ReportProduct['status']) => {
-  switch (status) {
-    case 'in_stock':
-      return { bg: '#D1FAE5', text: '#065F46', label: 'In Stock' };
-    case 'low_stock':
-      return { bg: '#FEF3C7', text: '#92400E', label: 'Low Stock' };
-    case 'out_of_stock':
-      return { bg: '#FEE2E2', text: '#991B1B', label: 'Out of Stock' };
-  }
-};
-
 const formatCurrency = (val: number) =>
   `R ${val.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -182,8 +174,8 @@ interface Props {
 }
 
 export default function ProductReportPDF({ products, meta, letterheadImagePath }: Props) {
-  const inStockCount = products.filter(p => p.status === 'in_stock').length;
-  const lowOutCount  = products.filter(p => p.status !== 'in_stock').length;
+  const inStockCount = products.filter(p => p.stock > 5).length;
+  const lowOutCount  = products.filter(p => p.stock <= 5).length;
 
   return (
     <Document>
@@ -235,38 +227,36 @@ export default function ProductReportPDF({ products, meta, letterheadImagePath }
 
           {/* Table header — repeats on every page via fixed */}
           <View style={styles.tableHeader} fixed>
+            <Text style={[styles.headerCell, styles.colImage]}>Image</Text>
             <Text style={[styles.headerCell, styles.colProduct]}>Product</Text>
             <Text style={[styles.headerCell, styles.colSku]}>SKU</Text>
             <Text style={[styles.headerCell, styles.colCategory]}>Category</Text>
             <Text style={[styles.headerCell, styles.colPrice]}>Price</Text>
             <Text style={[styles.headerCell, styles.colPcsPerCarton]}>Pcs/Ctn</Text>
             <Text style={[styles.headerCell, styles.colStock]}>Stock</Text>
-            <Text style={[styles.headerCell, styles.colStatus]}>Status</Text>
           </View>
 
           {/* Table rows */}
-          {products.map((product, i) => {
-            const s = statusStyle(product.status);
-            return (
-              <View
-                key={product.id}
-                style={[styles.tableRow, i % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd]}
-                wrap={false}
-              >
-                <Text style={[styles.cell, styles.colProduct]}>{product.name}</Text>
-                <Text style={[styles.cell, styles.colSku]}>{product.sku}</Text>
-                <Text style={[styles.cell, styles.colCategory]}>{product.category}</Text>
-                <Text style={[styles.cell, styles.colPrice]}>{formatCurrency(product.price)}</Text>
-                <Text style={[styles.cell, styles.colPcsPerCarton]}>{product.pcsPerCarton}</Text>
-                <Text style={[styles.cell, styles.colStock]}>{product.stock}</Text>
-                <View style={styles.colStatus}>
-                  <View style={[styles.badge, { backgroundColor: s.bg }]}>
-                    <Text style={[styles.badgeText, { color: s.text }]}>{s.label}</Text>
-                  </View>
-                </View>
+          {products.map((product, i) => (
+            <View
+              key={product.id}
+              style={[styles.tableRow, i % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd]}
+              wrap={false}
+            >
+              <View style={styles.colImage}>
+                <Image
+                  src={product.image || PLACEHOLDER_IMAGE}
+                  style={styles.productImage}
+                />
               </View>
-            );
-          })}
+              <Text style={[styles.cell, styles.colProduct]}>{product.name}</Text>
+              <Text style={[styles.cell, styles.colSku]}>{product.sku}</Text>
+              <Text style={[styles.cell, styles.colCategory]}>{product.category}</Text>
+              <Text style={[styles.cell, styles.colPrice]}>{formatCurrency(product.price)}</Text>
+              <Text style={[styles.cell, styles.colPcsPerCarton]}>{product.pcsPerCarton}</Text>
+              <Text style={[styles.cell, styles.colStock]}>{product.stock}</Text>
+            </View>
+          ))}
 
         </View>
 

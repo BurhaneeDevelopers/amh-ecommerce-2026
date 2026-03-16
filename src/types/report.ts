@@ -6,7 +6,7 @@ export interface ReportProduct {
   price: number;
   pcsPerCarton: number;
   stock: number;
-  status: 'in_stock' | 'low_stock' | 'out_of_stock';
+  image?: string;
 }
 
 export interface ReportMeta {
