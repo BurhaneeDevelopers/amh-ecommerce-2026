@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { useGetProductsByCategoryInfinite, ProductFilters } from "@/api/products.service";
 import { useGetSingleCategory, useGetSubCatBasedOnMainCatId } from "@/api/category.service";
+import { Use_auth } from "@/api/user.service";
 import CategorySearchBar from "@/components/products/category-search-bar";
 import CategoryFiltersSidebar from "@/components/products/category-filters-sidebar";
 import ProductsGrid from "@/components/products/products-grid";
@@ -15,6 +16,10 @@ const CategoryContent = () => {
   const searchParams = useSearchParams();
   const categorySlug = params.slug as string;
   const brandFromUrl = searchParams.get('brand');
+
+  // Current user for dealer code
+  const { data: currentUser } = Use_auth();
+  const dealerCode = currentUser?.company_name ?? currentUser?.email ?? undefined;
   
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -141,6 +146,11 @@ const CategoryContent = () => {
     );
   }, [categoryGroups]);
 
+  // Flatten all full Product objects for export
+  const allFullProducts = useMemo(() => {
+    return categoryGroups.flatMap(group => group.products);
+  }, [categoryGroups]);
+
   const clearFilters = () => {
     setSelectedSubcategories([]);
     setSelectedBrands([]);
@@ -189,7 +199,10 @@ const CategoryContent = () => {
           totalProducts={totalCount}
           filteredCount={displayedProductsCount}
           categoryName={displayCategoryName}
+          dealerCode={dealerCode}
+          dealerName={currentUser?.full_name}
           products={allProducts}
+          filteredProducts={allFullProducts}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />

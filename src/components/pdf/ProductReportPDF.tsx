@@ -1,0 +1,286 @@
+import {
+  Document,
+  Page,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+} from '@react-pdf/renderer';
+import { ReportProduct, ReportMeta } from '@/types/report';
+
+const BRAND_PRIMARY = '#f38b00';
+const BRAND_SECONDARY = '#ffed05';
+
+// ── Adjust these to match your letterhead's actual header/footer height ──────
+const HEADER_HEIGHT = 110;
+const FOOTER_HEIGHT = 80;
+const SIDE_MARGIN   = 40;
+
+const styles = StyleSheet.create({
+  page: {
+    fontFamily: 'Helvetica',
+    fontSize: 9,
+    color: '#111827',
+    // NO margin/padding here — we handle spacing with fixed spacers below
+  },
+
+  // Letterhead fills the whole page on every page
+  letterhead: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  },
+
+  // Fixed spacer at the top — reserves header space on EVERY page
+  headerSpacer: {
+    height: HEADER_HEIGHT,
+  },
+
+  // Fixed spacer at the bottom — reserves footer space on EVERY page
+  footerSpacer: {
+    height: FOOTER_HEIGHT,
+  },
+
+  // Scrollable content area — sits between the two fixed spacers
+  content: {
+    flex: 1,
+    marginLeft: SIDE_MARGIN,
+    marginRight: SIDE_MARGIN,
+  },
+
+  // Title row
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  titleLeft: {
+    flexDirection: 'column',
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: 'Helvetica-Bold',
+    color: BRAND_PRIMARY,
+    marginBottom: 2,
+  },
+  dealerInfo: {
+    fontSize: 9,
+    color: '#6B7280',
+  },
+  generatedDate: {
+    fontSize: 8,
+    color: '#6B7280',
+    textAlign: 'right',
+  },
+
+  // Summary chips
+  chipsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 14,
+  },
+  chip: {
+    backgroundColor: BRAND_PRIMARY,
+    borderRadius: 4,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+    minWidth: 80,
+  },
+  chipValue: {
+    fontSize: 13,
+    fontFamily: 'Helvetica-Bold',
+    color: '#FFFFFF',
+  },
+  chipLabel: {
+    fontSize: 7,
+    color: '#FFEDD5',
+    marginTop: 1,
+  },
+
+  // Table
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: BRAND_PRIMARY,
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    borderRadius: 2,
+    marginBottom: 1,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  tableRowEven: {
+    backgroundColor: '#F3F4F6',
+  },
+  tableRowOdd: {
+    backgroundColor: '#FFFFFF',
+  },
+  colProduct:     { width: '26%' },
+  colSku:         { width: '14%' },
+  colCategory:    { width: '18%' },
+  colPrice:       { width: '11%' },
+  colPcsPerCarton:{ width: '9%'  },
+  colStock:       { width: '10%' },
+  colStatus:      { width: '12%' },
+  headerCell: {
+    fontSize: 8,
+    fontFamily: 'Helvetica-Bold',
+    color: '#FFFFFF',
+  },
+  cell: {
+    fontSize: 8,
+    color: '#374151',
+  },
+
+  // Status badge
+  badge: {
+    borderRadius: 3,
+    paddingVertical: 1,
+    paddingHorizontal: 4,
+    alignSelf: 'flex-start',
+  },
+  badgeText: {
+    fontSize: 7,
+    fontFamily: 'Helvetica-Bold',
+  },
+
+  // Page number (bottom right, above footer)
+  pageNumber: {
+    fontSize: 7,
+    color: '#9CA3AF',
+    textAlign: 'right',
+    marginRight: SIDE_MARGIN,
+    marginBottom: 4,
+  },
+});
+
+const statusStyle = (status: ReportProduct['status']) => {
+  switch (status) {
+    case 'in_stock':
+      return { bg: '#D1FAE5', text: '#065F46', label: 'In Stock' };
+    case 'low_stock':
+      return { bg: '#FEF3C7', text: '#92400E', label: 'Low Stock' };
+    case 'out_of_stock':
+      return { bg: '#FEE2E2', text: '#991B1B', label: 'Out of Stock' };
+  }
+};
+
+const formatCurrency = (val: number) =>
+  `R ${val.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+interface Props {
+  products: ReportProduct[];
+  meta: ReportMeta;
+  letterheadImagePath: string;
+}
+
+export default function ProductReportPDF({ products, meta, letterheadImagePath }: Props) {
+  const inStockCount = products.filter(p => p.status === 'in_stock').length;
+  const lowOutCount  = products.filter(p => p.status !== 'in_stock').length;
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+
+        {/* ── Letterhead: repeats on every page via fixed ── */}
+        {letterheadImagePath && (
+          <Image src={letterheadImagePath} style={styles.letterhead} fixed />
+        )}
+
+        {/* ── Header spacer: fixed, pushes content below letterhead header ── */}
+        <View style={styles.headerSpacer} fixed />
+
+        {/* ── Scrollable content ── */}
+        <View style={styles.content}>
+
+          {/* Title row */}
+          <View style={styles.titleRow}>
+            <View style={styles.titleLeft}>
+              <Text style={styles.title}>Product Price List</Text>
+              <Text style={styles.dealerInfo}>
+                {meta.dealerName}  ·  {meta.dealerCode}
+              </Text>
+            </View>
+            <Text style={styles.generatedDate}>
+              Generated: {meta.generatedAt}
+            </Text>
+          </View>
+
+          {/* Summary chips — only on first page */}
+          <View style={styles.chipsRow}>
+            <View style={styles.chip}>
+              <Text style={styles.chipValue}>{meta.totalProducts}</Text>
+              <Text style={styles.chipLabel}>Total Products</Text>
+            </View>
+            <View style={styles.chip}>
+              <Text style={styles.chipValue}>{formatCurrency(meta.totalValue)}</Text>
+              <Text style={styles.chipLabel}>Total Stock Value</Text>
+            </View>
+            <View style={styles.chip}>
+              <Text style={styles.chipValue}>{inStockCount}</Text>
+              <Text style={styles.chipLabel}>In Stock</Text>
+            </View>
+            <View style={styles.chip}>
+              <Text style={styles.chipValue}>{lowOutCount}</Text>
+              <Text style={styles.chipLabel}>Low / Out of Stock</Text>
+            </View>
+          </View>
+
+          {/* Table header — repeats on every page via fixed */}
+          <View style={styles.tableHeader} fixed>
+            <Text style={[styles.headerCell, styles.colProduct]}>Product</Text>
+            <Text style={[styles.headerCell, styles.colSku]}>SKU</Text>
+            <Text style={[styles.headerCell, styles.colCategory]}>Category</Text>
+            <Text style={[styles.headerCell, styles.colPrice]}>Price</Text>
+            <Text style={[styles.headerCell, styles.colPcsPerCarton]}>Pcs/Ctn</Text>
+            <Text style={[styles.headerCell, styles.colStock]}>Stock</Text>
+            <Text style={[styles.headerCell, styles.colStatus]}>Status</Text>
+          </View>
+
+          {/* Table rows */}
+          {products.map((product, i) => {
+            const s = statusStyle(product.status);
+            return (
+              <View
+                key={product.id}
+                style={[styles.tableRow, i % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd]}
+                wrap={false}
+              >
+                <Text style={[styles.cell, styles.colProduct]}>{product.name}</Text>
+                <Text style={[styles.cell, styles.colSku]}>{product.sku}</Text>
+                <Text style={[styles.cell, styles.colCategory]}>{product.category}</Text>
+                <Text style={[styles.cell, styles.colPrice]}>{formatCurrency(product.price)}</Text>
+                <Text style={[styles.cell, styles.colPcsPerCarton]}>{product.pcsPerCarton}</Text>
+                <Text style={[styles.cell, styles.colStock]}>{product.stock}</Text>
+                <View style={styles.colStatus}>
+                  <View style={[styles.badge, { backgroundColor: s.bg }]}>
+                    <Text style={[styles.badgeText, { color: s.text }]}>{s.label}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+
+        </View>
+
+        {/* ── Page number: sits just above the footer spacer ── */}
+        <Text
+          style={styles.pageNumber}
+          render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`}
+          fixed
+        />
+
+        {/* ── Footer spacer: fixed, keeps content above letterhead footer ── */}
+        <View style={styles.footerSpacer} fixed />
+
+      </Page>
+    </Document>
+  );
+}

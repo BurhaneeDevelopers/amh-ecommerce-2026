@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 import BulkQuoteModal from '@/components/modals/bulk-quote-modal'
 import ExportButton from '@/components/products/export-button'
+import { Product } from '@/supabase/schema/schema.type'
 
 interface CategorySearchBarProps {
   searchQuery: string
@@ -13,12 +14,15 @@ interface CategorySearchBarProps {
   totalProducts: number
   filteredCount: number
   categoryName: string
+  dealerCode?: string
+  dealerName?: string
   products?: Array<{
     id: string
     product_name: string
     model_number?: string
     photos: string[]
   }>
+  filteredProducts?: Product[]
   viewMode?: 'grid' | 'table'
   onViewModeChange?: (mode: 'grid' | 'table') => void
 }
@@ -29,7 +33,10 @@ export default function CategorySearchBar({
   totalProducts,
   filteredCount,
   categoryName,
+  dealerCode,
+  dealerName,
   products = [],
+  filteredProducts = [],
   viewMode = 'grid',
   onViewModeChange,
 }: CategorySearchBarProps) {
@@ -83,7 +90,11 @@ export default function CategorySearchBar({
           )}
 
           {/* Export Button */}
-          <ExportButton />
+          <ExportButton 
+            dealerCode={dealerCode} 
+            dealerName={dealerName}
+            products={filteredProducts}
+          />
 
           {/* Bulk Quote Button */}
           <Button
