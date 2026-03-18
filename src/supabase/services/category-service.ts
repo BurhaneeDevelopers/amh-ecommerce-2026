@@ -83,6 +83,19 @@ class Categories_Service {
     return data;
   }
 
+  async getSingleCategoryBySlug(slug: string | null): Promise<Category | null> {
+    if (!slug) return null;
+    
+    const { data, error } = await supabase
+      .from(this.table)
+      .select("*")
+      .eq("slug", slug)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   async deleteCategoryById(id: string): Promise<Category[] | null> {
     const { data, error } = await supabase
       .from(this.table)

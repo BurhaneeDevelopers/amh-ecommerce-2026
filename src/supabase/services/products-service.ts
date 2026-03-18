@@ -217,6 +217,80 @@ class Products_Service {
         // Fetch all products for these categories
         return this.getProductsByCategoryIds(Array.from(allCategoryIds));
     }
+
+    async getProductsWithFilters(params: {
+        categoryIds?: string[];
+        brandIds?: string[];
+        search?: string;
+        sortBy?: string;
+        limit?: number;
+        offset?: number;
+    }): Promise<{ products: Product[]; totalCount: number }> {
+        let query = supabase
+            .from(this.table)
+            .select(`
+                *,
+                brand:brand_id (
+                    id,
+                    brand_name,
+                    brand_logo
+                ),
+                category:category_id (
+                    id,
+                    category_name,
+                    type,
+                    parent_id,
+                    is_featured,
+                    order
+                )
+            `, { count: 'exact' });
+
+        // Apply category filter
+        if (params.categoryIds && params.categoryIds.length > 0) {
+            query = query.in('category_id', params.categoryIds);
+        }
+
+        // Apply brand filter
+        if (params.brandIds && params.brandIds.length > 0) {
+            query = query.in('brand_id', params.brandIds);
+        }
+
+        // Apply search filter
+        if (params.search) {
+            query = query.or(`product_name.ilike.%${params.search}%,model_number.ilike.%${params.search}%`);
+        }
+
+        // Apply sorting
+        switch (params.sortBy) {
+            case 'newest':
+                query = query.order('created_at', { ascending: false });
+                break;
+            case 'name_asc':
+                query = query.order('product_name', { ascending: true });
+                break;
+            case 'name_desc':
+                query = query.order('product_name', { ascending: false });
+                break;
+            default:
+                // Default sorting by category order and product name
+                query = query.order('product_name', { ascending: true });
+                break;
+        }
+
+        // Apply pagination
+        if (params.limit) {
+            query = query.range(params.offset || 0, (params.offset || 0) + params.limit - 1);
+        }
+
+        const { data, error, count } = await query;
+
+        if (error) throw error;
+
+        return {
+            products: data || [],
+            totalCount: count || 0
+        };
+    }
 }
 
 export const products_service = new Products_Service();

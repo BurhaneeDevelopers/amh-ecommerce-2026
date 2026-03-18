@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { useGetProductsByCategoryInfinite, ProductFilters } from "@/api/products.service";
-import { useGetSingleCategory, useGetSubCatBasedOnMainCatId } from "@/api/category.service";
+import { useGetSingleCategoryBySlug, useGetSubCatBasedOnMainCatId } from "@/api/category.service";
 import { Use_auth } from "@/api/user.service";
 import CategorySearchBar from "@/components/products/category-search-bar";
 import CategoryFiltersSidebar from "@/components/products/category-filters-sidebar";
@@ -30,7 +30,7 @@ const CategoryContent = () => {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
   // Get category by slug
-  const { data: category, isLoading: categoryLoading } = useGetSingleCategory(categorySlug);
+  const { data: category, isLoading: categoryLoading } = useGetSingleCategoryBySlug(categorySlug);
   const { data: subcategories = [] } = useGetSubCatBasedOnMainCatId(category?.id);
 
   // Check if this is the "all" category (special case for showing all products)

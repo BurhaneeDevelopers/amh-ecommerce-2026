@@ -11,14 +11,15 @@ interface CategoryCardProps extends Category {
 }
 
 export default function CategoryCard({
-  id,
+  // id,
+  slug,
   category_name,
   icon,
   product_count = 0,
   is_featured
 }: CategoryCardProps) {
   return (
-    <Link href={`/category/${id}`}>
+    <Link href={`/category/${slug}`}>
       <Card className="group relative overflow-hidden h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer border-2 hover:border-primary">
         {/* Featured Badge */}
         {is_featured && (

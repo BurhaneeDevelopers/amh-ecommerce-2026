@@ -82,6 +82,17 @@ export const useGetSingleCategory = (id: string | null) => {
   });
 };
 
+export const useGetSingleCategoryBySlug = (slug: string | null) => {
+  return useQuery<Category | null, Error>({
+    queryKey: ["category_by_slug", slug],
+    queryFn: async () => await categories_service.getSingleCategoryBySlug(slug),
+    enabled: !!slug,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useCreateNewCategory = () => {
   const queryClient = useQueryClient();
 

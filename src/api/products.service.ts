@@ -1,6 +1,5 @@
 import { Product, Accessories, Spares } from '@/supabase/schema/schema.type';
 import { products_service } from '@/supabase/services/products-service';
-import { supabase } from '@/supabase/client';
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
 export const useGetAllProducts = () => {
@@ -124,67 +123,22 @@ export const useGetProductsInfinite = (filters: ProductFilters = {}) => {
     return useInfiniteQuery({
         queryKey: ['products_infinite', JSON.stringify(filters)],
         queryFn: async ({ pageParam = 0 }) => {
-            const allProducts = await products_service.getAllProducts() ?? [];
+            const pageSize = 24;
             
-            // Apply filters
-            let filteredProducts = allProducts;
-            
-            if (filters.search) {
-                filteredProducts = filteredProducts.filter(product =>
-                    product.product_name?.toLowerCase().includes(filters.search!.toLowerCase()) ||
-                    product.model_number?.toLowerCase().includes(filters.search!.toLowerCase())
-                );
-            }
-            
-            // Use expandedCategories if available (includes subcategories), otherwise use categories
-            const categoriesToFilter = filters.expandedCategories || filters.categories;
-            if (categoriesToFilter && categoriesToFilter.length > 0) {
-                filteredProducts = filteredProducts.filter(product =>
-                    categoriesToFilter!.includes(product.category_id || '')
-                );
-            }
-            
-            if (filters.brands && filters.brands.length > 0) {
-                filteredProducts = filteredProducts.filter(product =>
-                    filters.brands!.includes(product.brand_id || '')
-                );
-            }
-            
-            // Apply sorting
-            if (filters.sortBy) {
-                switch (filters.sortBy) {
-                    case 'newest':
-                        filteredProducts.sort((a, b) => 
-                            new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()
-                        );
-                        break;
-                    case 'name_asc':
-                        filteredProducts.sort((a, b) => 
-                            (a.product_name || '').localeCompare(b.product_name || '')
-                        );
-                        break;
-                    case 'name_desc':
-                        filteredProducts.sort((a, b) => 
-                            (b.product_name || '').localeCompare(a.product_name || '')
-                        );
-                        break;
-                    default:
-                        // Featured - no sorting needed
-                        break;
-                }
-            }
-            
-            // Group products by category - this will be done in the component
-            // For now, just return paginated products
-            const pageSize = 12;
-            const start = pageParam * pageSize;
-            const end = start + pageSize;
-            const paginatedProducts = filteredProducts.slice(start, end);
+            // Server-side filtering and pagination
+            const { products, totalCount } = await products_service.getProductsWithFilters({
+                categoryIds: filters.expandedCategories || filters.categories,
+                brandIds: filters.brands,
+                search: filters.search,
+                sortBy: filters.sortBy,
+                limit: pageSize,
+                offset: pageParam * pageSize
+            });
             
             return {
-                products: paginatedProducts,
-                nextPage: end < filteredProducts.length ? pageParam + 1 : undefined,
-                totalCount: filteredProducts.length,
+                products,
+                nextPage: (pageParam + 1) * pageSize < totalCount ? pageParam + 1 : undefined,
+                totalCount,
             };
         },
         getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -196,188 +150,73 @@ export const useGetProductsInfinite = (filters: ProductFilters = {}) => {
     });
 };
 
-// New hook for category-based infinite loading
+// New hook for category-based infinite loading with server-side filtering
 export const useGetProductsByCategoryInfinite = (filters: ProductFilters = {}) => {
     return useInfiniteQuery({
         queryKey: ['products_by_category_infinite', JSON.stringify(filters)],
-        queryFn: async ({ pageParam }) => {
-            // pageParam structure: { featuredDone: boolean, categoryIndex: number }
-            const initialPageParam = { featuredDone: false, categoryIndex: 0 };
-            const currentParam = pageParam || initialPageParam;
+        queryFn: async ({ pageParam = 0 }) => {
+            const pageSize = 24; // Load 24 products per page
             
-            const allProducts = await products_service.getAllProducts() ?? [];
-            
-            // Apply filters
-            let filteredProducts = allProducts;
-            
-            if (filters.search) {
-                filteredProducts = filteredProducts.filter(product =>
-                    product.product_name?.toLowerCase().includes(filters.search!.toLowerCase()) ||
-                    product.model_number?.toLowerCase().includes(filters.search!.toLowerCase())
-                );
-            }
-            
-            const categoriesToFilter = filters.expandedCategories || filters.categories;
-            if (categoriesToFilter && categoriesToFilter.length > 0) {
-                filteredProducts = filteredProducts.filter(product =>
-                    categoriesToFilter!.includes(product.category_id || '')
-                );
-            }
-            
-            if (filters.brands && filters.brands.length > 0) {
-                filteredProducts = filteredProducts.filter(product =>
-                    filters.brands!.includes(product.brand_id || '')
-                );
-            }
-            
-            // Apply sorting
-            if (filters.sortBy) {
-                switch (filters.sortBy) {
-                    case 'newest':
-                        filteredProducts.sort((a, b) => 
-                            new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()
-                        );
-                        break;
-                    case 'name_asc':
-                        filteredProducts.sort((a, b) => 
-                            (a.product_name || '').localeCompare(b.product_name || '')
-                        );
-                        break;
-                    case 'name_desc':
-                        filteredProducts.sort((a, b) => 
-                            (b.product_name || '').localeCompare(a.product_name || '')
-                        );
-                        break;
-                }
-            }
-
-            // Get all categories
-            const { data: allCategories } = await supabase.from('category').select('*');
-            const categories = allCategories || [];
-
-            // Group products by category
-            const categoryProductMap = new Map<string, Product[]>();
-            filteredProducts.forEach(product => {
-                const catId = product.category_id;
-                if (!catId) return;
-                
-                if (!categoryProductMap.has(catId)) {
-                    categoryProductMap.set(catId, []);
-                }
-                categoryProductMap.get(catId)!.push(product);
+            // Server-side filtering and pagination
+            const { products, totalCount } = await products_service.getProductsWithFilters({
+                categoryIds: filters.expandedCategories || filters.categories,
+                brandIds: filters.brands,
+                search: filters.search,
+                sortBy: filters.sortBy,
+                limit: pageSize,
+                offset: pageParam * pageSize
             });
 
-            // Separate featured and non-featured categories that have products
-            const featuredCategories = categories
-                .filter(cat => cat.is_featured === true && categoryProductMap.has(cat.id!))
-                .sort((a, b) => (a.order || 0) - (b.order || 0));
-            
-            const nonFeaturedCategories = categories
-                .filter(cat => cat.is_featured !== true && categoryProductMap.has(cat.id!))
-                .sort((a, b) => a.category_name.localeCompare(b.category_name));
-
+            // Group products by category for display
             const categoryGroups: CategoryGroup[] = [];
-            let nextPageParam = null;
+            const categoryMap = new Map<string, CategoryGroup>();
 
-            // First load: return all featured categories with ALL their products
-            // If no featured categories, start with first 3 non-featured categories
-            if (!currentParam.featuredDone) {
-                if (featuredCategories.length > 0) {
-                    // Load all featured categories
-                    featuredCategories.forEach(cat => {
-                        const products = categoryProductMap.get(cat.id!) || [];
-                        if (products.length > 0) {
-                            const parentCategory = cat.parent_id 
-                                ? categories.find(c => c.id === cat.parent_id)
-                                : null;
-                            
-                            categoryGroups.push({
-                                categoryId: cat.id!,
-                                categoryName: cat.category_name,
-                                categoryType: cat.type,
-                                parentId: cat.parent_id,
-                                parentName: parentCategory?.category_name || null,
-                                isFeatured: true,
-                                order: cat.order || 0,
-                                products: products
-                            });
-                        }
-                    });
+            products.forEach(product => {
+                const catId = product.category_id;
+                if (!catId) return;
 
-                    // Set next page to start loading non-featured categories
-                    if (nonFeaturedCategories.length > 0) {
-                        nextPageParam = { featuredDone: true, categoryIndex: 0 };
-                    }
-                } else {
-                    // No featured categories, load first 3 non-featured categories
-                    const initialLoadCount = Math.min(3, nonFeaturedCategories.length);
-                    for (let i = 0; i < initialLoadCount; i++) {
-                        const cat = nonFeaturedCategories[i];
-                        const products = categoryProductMap.get(cat.id!) || [];
-                        
-                        if (products.length > 0) {
-                            const parentCategory = cat.parent_id 
-                                ? categories.find(c => c.id === cat.parent_id)
-                                : null;
-                            
-                            categoryGroups.push({
-                                categoryId: cat.id!,
-                                categoryName: cat.category_name,
-                                categoryType: cat.type,
-                                parentId: cat.parent_id,
-                                parentName: parentCategory?.category_name || null,
-                                isFeatured: false,
-                                order: 0,
-                                products: products
-                            });
-                        }
-                    }
-
-                    // Set next page if there are more categories
-                    if (nonFeaturedCategories.length > initialLoadCount) {
-                        nextPageParam = { featuredDone: true, categoryIndex: initialLoadCount };
-                    }
-                }
-            } 
-            // Subsequent loads: return one non-featured category at a time with ALL its products
-            else {
-                const categoryIndex = currentParam.categoryIndex;
-                if (categoryIndex < nonFeaturedCategories.length) {
-                    const cat = nonFeaturedCategories[categoryIndex];
-                    const products = categoryProductMap.get(cat.id!) || [];
+                if (!categoryMap.has(catId)) {
+                    const category = product.category as { 
+                        id?: string; 
+                        category_name?: string; 
+                        type?: 'main' | 'sub'; 
+                        parent_id?: string | null;
+                        is_featured?: boolean;
+                        order?: number;
+                    } | null;
                     
-                    if (products.length > 0) {
-                        const parentCategory = cat.parent_id 
-                            ? categories.find(c => c.id === cat.parent_id)
-                            : null;
-                        
-                        categoryGroups.push({
-                            categoryId: cat.id!,
-                            categoryName: cat.category_name,
-                            categoryType: cat.type,
-                            parentId: cat.parent_id,
-                            parentName: parentCategory?.category_name || null,
-                            isFeatured: false,
-                            order: 0,
-                            products: products
-                        });
-                    }
-
-                    // Set next page if there are more categories
-                    if (categoryIndex + 1 < nonFeaturedCategories.length) {
-                        nextPageParam = { featuredDone: true, categoryIndex: categoryIndex + 1 };
-                    }
+                    categoryGroups.push({
+                        categoryId: catId,
+                        categoryName: category?.category_name || 'Unknown',
+                        categoryType: category?.type || 'main',
+                        parentId: category?.parent_id || null,
+                        parentName: null,
+                        isFeatured: category?.is_featured || false,
+                        order: category?.order || 0,
+                        products: []
+                    });
+                    categoryMap.set(catId, categoryGroups[categoryGroups.length - 1]);
                 }
-            }
+
+                categoryMap.get(catId)!.products.push(product);
+            });
+
+            // Sort category groups by featured status and order
+            categoryGroups.sort((a, b) => {
+                if (a.isFeatured && !b.isFeatured) return -1;
+                if (!a.isFeatured && b.isFeatured) return 1;
+                if (a.isFeatured && b.isFeatured) return a.order - b.order;
+                return a.categoryName.localeCompare(b.categoryName);
+            });
 
             return {
                 categoryGroups,
-                nextPage: nextPageParam,
-                totalCount: filteredProducts.length,
+                nextPage: (pageParam + 1) * pageSize < totalCount ? pageParam + 1 : undefined,
+                totalCount,
             };
         },
         getNextPageParam: (lastPage) => lastPage.nextPage,
-        initialPageParam: { featuredDone: false, categoryIndex: 0 },
+        initialPageParam: 0,
         refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData,
