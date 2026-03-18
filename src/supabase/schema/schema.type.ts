@@ -41,6 +41,7 @@ export interface Product {
   is_featured: boolean;
   on_hand_qty: number;
   stock_status?: boolean;
+  price?: number | null;
   created_at?: Date | string;
   updated_at?: Date | string;
 

@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   tableRowOdd: {
     backgroundColor: '#FFFFFF',
   },
-  colImage:       { width: 44 },   // fixed px — thumbnail only
+  colImage:       { width: 44 },
   colProduct:     { flex: 3 },
   colSku:         { flex: 2 },
   colCategory:    { flex: 2.5 },
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
 });
 
 const formatCurrency = (val: number) =>
-  `R ${val.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  `RS ${val.toLocaleString('en-IN')}`;
 
 interface Props {
   products: ReportProduct[];
@@ -174,9 +174,6 @@ interface Props {
 }
 
 export default function ProductReportPDF({ products, meta, letterheadImagePath }: Props) {
-  const inStockCount = products.filter(p => p.stock > 5).length;
-  const lowOutCount  = products.filter(p => p.stock <= 5).length;
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -214,14 +211,6 @@ export default function ProductReportPDF({ products, meta, letterheadImagePath }
             <View style={styles.chip}>
               <Text style={styles.chipValue}>{formatCurrency(meta.totalValue)}</Text>
               <Text style={styles.chipLabel}>Total Stock Value</Text>
-            </View>
-            <View style={styles.chip}>
-              <Text style={styles.chipValue}>{inStockCount}</Text>
-              <Text style={styles.chipLabel}>In Stock</Text>
-            </View>
-            <View style={styles.chip}>
-              <Text style={styles.chipValue}>{lowOutCount}</Text>
-              <Text style={styles.chipLabel}>Low / Out of Stock</Text>
             </View>
           </View>
 

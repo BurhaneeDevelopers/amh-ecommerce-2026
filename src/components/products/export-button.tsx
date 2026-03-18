@@ -8,7 +8,7 @@ import { Product } from '@/supabase/schema/schema.type'
 interface ExportButtonProps {
   dealerCode?: string
   dealerName?: string
-  products: Product[]
+  products: (Product & { price?: number | null })[]
 }
 
 type ExportState = 'idle' | 'loading' | 'error'
