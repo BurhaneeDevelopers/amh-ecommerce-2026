@@ -79,10 +79,10 @@ const BannerSlider: React.FC = () => {
   }, [paginate]);
 
   return (
-    <div className="relative w-full bg-gray-100 py-8">
+    <div className="relative w-full bg-orange-50 py-8">
       <div className="w-full px-4 lg:px-6">
-        {/* Main slider container with 3:2 aspect ratio (1080x720) - no cropping */}
-        <div className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl shadow-lg group bg-gradient-to-br from-gray-200 to-gray-300">
+        {/* Main slider container - aspect ratio capped to viewport height */}
+        <div className="relative w-full aspect-[16/9] max-h-[70vh] overflow-hidden group bg-gradient-to-r from-orange-50 to-orange-100 rounded-3xl">
           {/* Render all slides but only show current one */}
           {slides.map((slide, slideIndex) => (
             <motion.div
@@ -104,7 +104,7 @@ const BannerSlider: React.FC = () => {
                 scale: 0.98,
                 transition: { duration: 0.2 }
               }}
-              className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"
+              className="absolute w-full h-full cursor-grab active:cursor-grabbing rounded-2xl!"
               style={{
                 pointerEvents: slideIndex === index ? 'auto' : 'none'
               }}
@@ -117,7 +117,7 @@ const BannerSlider: React.FC = () => {
                   src={slide.src}
                   alt={slide.alt}
                   priority={slideIndex === 0}
-                  className="w-full h-full object-contain select-none pointer-events-none rounded-2xl"
+                  className="w-fit h-full object-contain select-none pointer-events-none rounded-2xl!"
                 />
               </div>
 
