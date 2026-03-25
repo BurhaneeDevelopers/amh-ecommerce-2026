@@ -224,13 +224,6 @@ export default function Navbar() {
 
               <div className="h-6 w-px bg-gray-600" />
 
-              {/* Categories */}
-              <div className="flex items-center">
-                <ToggleCategories />
-              </div>
-
-              <div className="h-6 w-px bg-gray-600" />
-
               {/* Products */}
               <Link href="/products">
                 <Button

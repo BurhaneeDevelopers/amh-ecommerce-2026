@@ -71,7 +71,7 @@ const CategoriesSection = () => {
                         }}
                     >
                         <Link
-                            href={`/category/${category.id}`}
+                            href={`/category/${category.slug}`}
                             className="group block h-full"
                         >
                             <div className="relative bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 h-full flex flex-col border border-gray-200/60 hover:border-primary/60 hover:-translate-y-2">
