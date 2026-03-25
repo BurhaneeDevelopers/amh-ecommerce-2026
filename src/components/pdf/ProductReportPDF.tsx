@@ -127,13 +127,13 @@ const styles = StyleSheet.create({
   tableRowOdd: {
     backgroundColor: '#FFFFFF',
   },
-  colImage:       { width: 44 },
+  colImage:       { width: 64 },
   colProduct:     { flex: 3 },
   colSku:         { flex: 2 },
   colCategory:    { flex: 2.5 },
-  colPrice:       { flex: 1.5 },
+  colPrice:       { flex: 1 },
   colPcsPerCarton:{ flex: 1 },
-  colStock:       { flex: 1 },
+  colStock:       { flex: 0.7 },
   headerCell: {
     fontSize: 8,
     fontFamily: 'Helvetica-Bold',
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
 
   // Product thumbnail
   productImage: {
-    width: 32,
-    height: 32,
+    width: 52,
+    height: 52,
     objectFit: 'contain',
     borderRadius: 2,
   },
@@ -200,18 +200,6 @@ export default function ProductReportPDF({ products, meta, letterheadImagePath }
             <Text style={styles.generatedDate}>
               Generated: {meta.generatedAt}
             </Text>
-          </View>
-
-          {/* Summary chips — only on first page */}
-          <View style={styles.chipsRow}>
-            <View style={styles.chip}>
-              <Text style={styles.chipValue}>{meta.totalProducts}</Text>
-              <Text style={styles.chipLabel}>Total Products</Text>
-            </View>
-            <View style={styles.chip}>
-              <Text style={styles.chipValue}>{formatCurrency(meta.totalValue)}</Text>
-              <Text style={styles.chipLabel}>Total Stock Value</Text>
-            </View>
           </View>
 
           {/* Table header — repeats on every page via fixed */}
