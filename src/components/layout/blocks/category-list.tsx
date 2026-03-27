@@ -56,7 +56,7 @@ export default function CategoryBox() {
                     transition={{ duration: 0.4, ease: 'easeInOut' }}
                     style={{ overflow: 'hidden' }}
                 >
-                    <Card className="w-full max-w-xs rounded-2xl bg-gradient-to-bl from-[#f38b00] to-[#ffeD05] shadow-md p-1 transition-transform duration-500 ease-linear">
+                    <Card className="w-full max-w-xs rounded-2xl bg-gradient-to-bl from-[#ff6b35] to-[#8b5cf6] shadow-md p-1 transition-transform duration-500 ease-linear">
                         <div className="rounded-xl bg-white">
                             <CardContent className="p-4">
                                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Categories</h3>

@@ -34,7 +34,7 @@ const AccountMenu = () => {
                     variant="ghost"
                     className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl 
                              hover:bg-white/10
-                             transition-all duration-300 border-2 border-transparent hover:border-[#f38b00]/20"
+                             transition-all duration-300 border-2 border-transparent hover:border-[#ff6b35]/20"
                 >
                     <div className="p-2 rounded-lg bg-gray-700">
                         <User className="w-5 h-5 text-gray-300" />
@@ -78,8 +78,8 @@ const AccountMenu = () => {
                             setShowAuthModal(true)
                             setShowDropdown(false)
                         }}
-                        className="px-3 py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-[#f38b00] to-[#ffed05] 
-                                 text-white font-bold hover:from-[#e07a00] hover:to-[#ffd700]"
+                        className="px-3 py-2.5 rounded-lg cursor-pointer bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] 
+                                 text-white font-bold hover:from-[#e55a25] hover:to-[#7c3aed]"
                     >
                         Login / Register
                     </DropdownMenuItem>

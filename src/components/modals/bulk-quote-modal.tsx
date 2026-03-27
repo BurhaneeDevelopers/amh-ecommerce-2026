@@ -459,7 +459,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                                    className="flex-1 bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] hover:from-[#e55a25] hover:to-[#7c3aed]"
                                     disabled={createEnquiryMutation.isPending}
                                 >
                                     {createEnquiryMutation.isPending ? 'Submitting...' : 'Send Bulk Quote Request'}

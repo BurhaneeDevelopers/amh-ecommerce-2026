@@ -11,8 +11,8 @@ import { ReportProduct, ReportMeta } from '@/types/report';
 // Fallback placeholder — a tiny 1×1 transparent PNG as base64
 const PLACEHOLDER_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
-const BRAND_PRIMARY = '#f38b00';
-const BRAND_SECONDARY = '#ffed05';
+const BRAND_PRIMARY = '#ff6b35';
+const BRAND_SECONDARY = '#8b5cf6';
 
 // ── Adjust these to match your letterhead's actual header/footer height ──────
 const HEADER_HEIGHT = 110;

@@ -143,8 +143,8 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-100 rounded-lg">
-                            <Package className="w-5 h-5 text-orange-600" />
+                        <div className="p-2 bg-[#ff6b35]/10 rounded-lg">
+                            <Package className="w-5 h-5 text-[#ff6b35]" />
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">Request Quote</h2>
@@ -308,7 +308,7 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
+                                    className="flex-1 bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] hover:from-[#e55a25] hover:to-[#7c3aed]"
                                     disabled={createEnquiryMutation.isPending}
                                 >
                                     {createEnquiryMutation.isPending ? 'Submitting...' : 'Request Quote'}

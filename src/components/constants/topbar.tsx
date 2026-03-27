@@ -16,27 +16,24 @@ export default function Topbar() {
     const wishlistCount = wishlistData?.length || 0;
 
     return (
-        <Container className="bg-[#272727] text-white text-sm border-b border-gray-600 !py-2 md:!py-4">
+        <Container className="bg-white text-[#2d2d2d] text-sm border-b border-[#e0d4f7] !py-2 md:!py-4">
             <div className="flex items-center justify-between gap-2">
-                {/* Logo - Centered on mobile, left on desktop */}
-                <div className="bg-white p-1.5 md:p-2 w-fit rounded-lg order-2 md:order-2">
-                    <img
-                        alt="MSI"
-                        src={"/logo.png"}
-                        className="object-cover w-28 h-9 md:w-44 md:h-14"
-                        loading="lazy" decoding="async" width={500} height={300}
-                    />
+                {/* Company Name */}
+                <div className="bg-[#ff6b35] p-1.5 md:p-3 w-fit rounded-lg order-2 md:order-2 shadow-md">
+                    <h2 className="text-white font-bold text-base md:text-xl px-2">
+                        A.M. Hydraulics
+                    </h2>
                 </div>
 
                 {/* Customer Support - Hidden on mobile, shown on desktop */}
                 <div className="hidden md:flex items-center gap-2 order-1">
-                    <div className="bg-[var(--color-primary)] p-3 rounded-full">
+                    <div className="bg-[#ff6b35] p-3 rounded-full">
                         <Phone className="w-5 h-5 fill-white" />
                     </div>
                     <div>
                         <H4 className="font-semibold text-sm">Customer Support</H4>
-                        <P className="text-xs">+91 86088 18555</P>
-                        <P className="text-xs">+91 82489 27038</P>
+                        <P className="text-xs">+91 98843 69751</P>
+                        <P className="text-xs">044 42161198</P>
                     </div>
                 </div>
 
@@ -48,7 +45,7 @@ export default function Topbar() {
                     {/* Wishlist - Icon only on mobile */}
                     <Link href={"/wishlist"}>
                         <div className="flex items-center gap-2 relative">
-                            <div className="bg-[var(--color-primary)] p-2 md:p-3 rounded-full relative">
+                            <div className="bg-[#ff6b35] p-2 md:p-3 rounded-full relative">
                                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 fill-white" />
                                 {wishlistCount > 0 && (
                                     <Badge 

@@ -11,18 +11,18 @@ export const WelcomeEmailTemplate = ({ userName, userEmail }: WelcomeEmailProps)
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to MSI E-commerce</title>
+  <title>Welcome to A.M. Hydraulics</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(135deg, #f97316 0%, #eab308 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-    <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to MSI E-commerce!</h1>
+  <div style="background: linear-gradient(135deg, #ff6b35 0%, #8b5cf6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to A.M. Hydraulics!</h1>
   </div>
   
   <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
     <h2 style="color: #1f2937; margin-top: 0;">Hello ${userName}!</h2>
     
     <p style="font-size: 16px; color: #4b5563;">
-      Thank you for creating an account with MSI E-commerce. We're excited to have you on board!
+      Thank you for creating an account with A.M. Hydraulics. We're excited to have you on board!
     </p>
     
     <p style="font-size: 16px; color: #4b5563;">
@@ -41,7 +41,7 @@ export const WelcomeEmailTemplate = ({ userName, userEmail }: WelcomeEmailProps)
     
     <div style="text-align: center; margin: 30px 0;">
       <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}" 
-         style="background: linear-gradient(135deg, #f97316 0%, #eab308 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
+         style="background: linear-gradient(135deg, #ff6b35 0%, #8b5cf6 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
         Start Shopping
       </a>
     </div>
@@ -274,7 +274,7 @@ export const AdminEnquiryNotificationTemplate = ({
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
     
     <p style="font-size: 12px; color: #9ca3af; text-align: center;">
-      This is an automated notification from MSI E-commerce system.
+      This is an automated notification from A.M. Hydraulics system.
     </p>
   </div>
 </body>

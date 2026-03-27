@@ -26,13 +26,13 @@ export default function AISearchBar() {
 
   return (
     <div className="relative w-full max-w-2xl group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#f38b00] to-[#ffed05] rounded-full opacity-30 group-hover:opacity-50 blur transition duration-300"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] rounded-full opacity-30 group-hover:opacity-50 blur transition duration-300"></div>
       <div className="relative flex items-center bg-white rounded-full shadow-md overflow-hidden h-10 border-2 border-transparent bg-clip-padding" style={{
-        backgroundImage: 'linear-gradient(white, white), linear-gradient(to right, #f38b00, #ffed05)',
+        backgroundImage: 'linear-gradient(white, white), linear-gradient(to right, #ff6b35, #8b5cf6)',
         backgroundOrigin: 'border-box',
         backgroundClip: 'padding-box, border-box'
       }}>
-        <Sparkles className="!w-4 !h-4 text-[#f38b00] ml-4 flex-shrink-0" />
+        <Sparkles className="!w-4 !h-4 text-[#ff6b35] ml-4 flex-shrink-0" />
         <div className="flex-1 relative px-3 h-10 flex items-center">
           {!value && (
             <div className="absolute inset-0 flex items-center pointer-events-none text-sm text-gray-400 left-2">

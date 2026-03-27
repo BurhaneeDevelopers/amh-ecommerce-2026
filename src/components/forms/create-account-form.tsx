@@ -77,7 +77,7 @@ export function CreateAccountForm({
                 })
                 
                 toast.success("Account created successfully!", {
-                    description: "Welcome to MSI E-commerce. Check your email for confirmation!",
+                    description: "Welcome to A.M. Hydraulics. Check your email for confirmation!",
                 })
                 
                 // Redirect to home page after successful signup

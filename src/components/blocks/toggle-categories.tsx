@@ -76,8 +76,8 @@ export default function ToggleCategories() {
                                      hover:bg-white/10
                                      transition-all duration-300 group"
                         >
-                            <LayoutDashboard className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
-                            <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
+                            <LayoutDashboard className="w-5 h-5 text-gray-300 group-hover:text-[#ff6b35] transition-colors" />
+                            <span className="text-sm font-semibold text-gray-300 group-hover:text-[#ff6b35]">
                                 Categories
                             </span>
                         </Button>
@@ -90,8 +90,8 @@ export default function ToggleCategories() {
                         collisionPadding={16}
                         avoidCollisions={true}
                     >
-                        <div className="mb-4 pb-3 border-b-2 border-gradient-to-r from-[#f38b00] to-[#ffed05]">
-                            <h3 className="text-xl font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+                        <div className="mb-4 pb-3 border-b-2 border-gradient-to-r from-[#ff6b35] to-[#8b5cf6]">
+                            <h3 className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] bg-clip-text text-transparent">
                                 Browse All Categories
                             </h3>
                             <p className="text-sm text-gray-500 mt-1">Explore our wide range of products</p>
@@ -105,7 +105,7 @@ export default function ToggleCategories() {
             <div className="md:hidden">
                 <Button 
                     onClick={() => setMobileOpen(true)}
-                    className="bg-gradient-to-br from-[#f38b00] to-[#ffed05] text-white hover:from-[#e07a00] hover:to-[#ffd700] 
+                    className="bg-gradient-to-br from-[#ff6b35] to-[#8b5cf6] text-white hover:from-[#e55a25] hover:to-[#7c3aed] 
                              !py-5 flex gap-2 justify-between items-center w-full rounded-xl shadow-md hover:shadow-lg transition-all"
                 >
                     <span className="flex gap-2 items-center">
@@ -117,7 +117,7 @@ export default function ToggleCategories() {
                 <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
                     <DialogContent className="max-w-[95vw] max-h-[85vh] p-0 gap-0 rounded-2xl">
                         <DialogHeader className="p-4 pb-3 border-b sticky top-0 bg-white z-10">
-                            <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+                            <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] bg-clip-text text-transparent">
                                 All Categories
                             </DialogTitle>
                         </DialogHeader>

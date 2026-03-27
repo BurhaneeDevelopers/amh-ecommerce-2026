@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         const { data: emailData, error } = await resend.emails.send({
           from: emailFrom,
           to: userEmail,
-          subject: 'Welcome to MSI E-commerce!',
+          subject: 'Welcome to A.M. Hydraulics!',
           html: WelcomeEmailTemplate({ userName, userEmail }),
         })
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         const customerEmailResult = await resend.emails.send({
           from: emailFrom,
           to: userEmail,
-          subject: `${isBulk ? 'Bulk ' : ''}Quote Request Received - MSI E-commerce`,
+          subject: `${isBulk ? 'Bulk ' : ''}Quote Request Received - A.M. Hydraulics`,
           html: EnquiryEmailTemplate({
             userName,
             userEmail,

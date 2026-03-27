@@ -16,8 +16,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "MSI E-Commerce",
-  description: "",
+  title: "A.M. Hydraulics - Hydraulic Hoses & Fittings",
+  description: "Leading manufacturer & distributor of hydraulic hoses and fittings in Chennai. Authorized stockist for Parker, Polyhose, Yuken, Rexroth, and more.",
 };
 
 export default function RootLayout({
@@ -31,11 +31,11 @@ export default function RootLayout({
         className={`${poppins.variable} ${montserrat.variable} antialiased`}
       >
         <NextTopLoader
-          color="#f38b00"
+          color="#ff6b35"
           height={4}
           showSpinner={false}
           speed={200}
-          shadow="0 0 10px #f38b00,0 0 5px #f38b00"
+          shadow="0 0 10px #ff6b35,0 0 5px #ff6b35"
         />
         <ProtectedComponent>
           {children}

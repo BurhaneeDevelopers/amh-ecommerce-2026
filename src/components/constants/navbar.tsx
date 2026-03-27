@@ -55,26 +55,17 @@ export default function Navbar() {
   ];
 
   return (
-    <div className="min-w-full sticky top-0 z-50 bg-[#2d2d2d] border-b border-gray-700 shadow-lg">
+    <div className="min-w-full sticky top-0 z-50 bg-white border-b border-[#e0d4f7] shadow-md">
       {/* Main Navbar */}
-      <div className="bg-[#2d2d2d]">
+      <div className="bg-white">
         <div className="w-full">
           <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
-            {/* Left: Logo - Much Larger */}
+            {/* Left: Company Name */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
-              <div className="relative flex gap-4">
-                <img
-                  alt="MSI Logo"
-                  src="/msi-logo-white.png"
-                  className="object-cover scale-150 h-20 p-2 w-36 transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy" decoding="async" width={500} height={300}
-                />
-                <img
-                  alt="MSI Logo"
-                  src="/xlnt.png"
-                  className="object-cover scale-150 h-20 p-2 w-full transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy" decoding="async" width={500} height={300}
-                />
+              <div className="relative">
+                <h1 className="text-2xl font-bold text-[#2d2d2d]">
+                  A.M. <span className="text-[#ff6b35]">Hydraulics</span>
+                </h1>
               </div>
             </Link>
 
@@ -82,14 +73,14 @@ export default function Navbar() {
             <div className="hidden lg:flex flex-1 mx-8">
               <div className="relative w-full group">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                  <Search className="w-5 h-5 text-gray-400 group-hover:text-[#f38b00] transition-colors duration-200" />
+                  <Search className="w-5 h-5 text-[#6b6b6b] group-hover:text-[#ff6b35] transition-colors duration-200" />
                 </div>
                 <input
                   type="text"
-                  placeholder='Search for "Power Tools", "Drills", "Saws"...'
-                  className="w-full pl-12 pr-4 py-4 text-sm font-medium bg-white/10 border-2 border-gray-600 rounded-2xl 
-                           focus:outline-none focus:ring-2 focus:ring-[#f38b00] focus:border-transparent 
-                           hover:border-[#f38b00]/40 hover:shadow-md text-white placeholder:text-gray-400
+                  placeholder='Search for "Hydraulic Hoses", "Fittings", "Pumps"...'
+                  className="w-full pl-12 pr-4 py-4 text-sm font-medium bg-[#fef5f0] border-2 border-[#e0d4f7] rounded-2xl 
+                           focus:outline-none focus:ring-2 focus:ring-[#ff6b35] focus:border-transparent 
+                           hover:border-[#ff6b35]/40 hover:shadow-md text-[#2d2d2d] placeholder:text-[#6b6b6b]
                            transition-all duration-300"
                   onClick={() => setIsSearchModalOpen(true)}
                   readOnly
@@ -108,10 +99,10 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden hover:bg-white/10 rounded-xl"
+                className="lg:hidden hover:bg-[#fef5f0] rounded-xl text-[#2d2d2d]"
                 onClick={() => setIsSearchModalOpen(true)}
               >
-                <Search className="w-5 h-5 text-gray-300" />
+                <Search className="w-5 h-5" />
               </Button>
 
               {/* Sign In / Account - Desktop */}
@@ -123,11 +114,7 @@ export default function Navbar() {
               <Link href="/wishlist">
                 <Button 
                   size="lg"
-                  className="relative gap-2.5 rounded-2xl bg-gradient-to-r from-[#f38b00] via-[#ff9500] to-[#ffed05] 
-                           hover:from-[#e07a00] hover:via-[#ff8800] hover:to-[#ffd700] 
-                           text-white font-bold shadow-lg hover:shadow-xl 
-                           transition-all duration-300 hover:scale-105 
-                           px-6 py-6 text-base"
+                  className="relative gap-2.5 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a25] text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 px-6 py-6 text-base"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="hidden sm:inline">My Cart</span>
@@ -149,23 +136,23 @@ export default function Navbar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="md:hidden hover:bg-white/10 rounded-xl"
+                    className="md:hidden hover:bg-[#fef5f0] rounded-xl text-[#2d2d2d]"
                   >
-                    <Menu className="w-6 h-6 text-gray-300" />
+                    <Menu className="w-6 h-6" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+                    <DialogTitle className="text-2xl font-bold text-center text-[#8b5cf6]">
                       Menu
                     </DialogTitle>
                   </DialogHeader>
                   <nav className="flex flex-col gap-3 mt-4">
-                    <div className="pb-3 border-b border-gray-200">
+                    <div className="pb-3 border-b border-[#e0d4f7]">
                       <AccountMenu />
                     </div>
 
-                    <div className="pb-3 border-b border-gray-200">
+                    <div className="pb-3 border-b border-[#e0d4f7]">
                       <ToggleCategories />
                     </div>
 
@@ -177,17 +164,15 @@ export default function Navbar() {
                           href={link.href}
                           onClick={() => setIsOpen(false)}
                           className="group flex items-center gap-4 p-4 rounded-xl 
-                                   bg-gradient-to-r from-gray-50 to-white 
-                                   hover:from-[#f38b00]/10 hover:to-[#ffed05]/10 
-                                   transition-all duration-300 border-2 border-gray-100 
-                                   hover:border-[#f38b00] hover:shadow-md"
+                                   bg-white hover:bg-[#fff0e8] 
+                                   transition-all duration-300 border-2 border-[#e0d4f7] 
+                                   hover:border-[#ff6b35] hover:shadow-md"
                         >
                           <div className="p-3 rounded-xl bg-white shadow-sm 
-                                        group-hover:bg-gradient-to-r group-hover:from-[#f38b00] 
-                                        group-hover:to-[#ffed05] transition-all duration-300">
-                            <Icon className="w-5 h-5 text-gray-700 group-hover:text-white" />
+                                        group-hover:bg-[#ff6b35] transition-all duration-300">
+                            <Icon className="w-5 h-5 text-[#4a4a4a] group-hover:text-white" />
                           </div>
-                          <span className="text-lg font-bold text-gray-900 group-hover:text-[#f38b00]">
+                          <span className="text-lg font-bold text-[#2d2d2d] group-hover:text-[#ff6b35]">
                             {link.label}
                           </span>
                         </Link>
@@ -202,7 +187,7 @@ export default function Navbar() {
       </div>
 
       {/* Bottom Navigation Bar - Desktop Only */}
-      <div className="hidden md:block bg-[#3a3a3a] border-t border-gray-700">
+      <div className="hidden md:block bg-[#fef5f0] border-t border-[#e0d4f7]">
         <div className="w-full px-4 lg:px-6">
           <div className="flex items-center justify-between py-3">
             {/* Left: Main Navigation Links */}
@@ -212,45 +197,45 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-white/10
+                           hover:bg-white
                            transition-all duration-300 group"
                 >
-                  <Home className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
+                  <Home className="w-5 h-5 text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors" />
+                  <span className="text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35]">
                     Home
                   </span>
                 </Button>
               </Link>
 
-              <div className="h-6 w-px bg-gray-600" />
+              <div className="h-6 w-px bg-[#c084fc]" />
 
               {/* Products */}
               <Link href="/products">
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-white/10
+                           hover:bg-white
                            transition-all duration-300 group"
                 >
-                  <Package className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
+                  <Package className="w-5 h-5 text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors" />
+                  <span className="text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35]">
                     Products
                   </span>
                 </Button>
               </Link>
 
-              <div className="h-6 w-px bg-gray-600" />
+              <div className="h-6 w-px bg-[#c084fc]" />
 
               {/* About */}
               <Link href="/about">
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
-                           hover:bg-white/10
+                           hover:bg-white
                            transition-all duration-300 group"
                 >
-                  <Info className="w-5 h-5 text-gray-300 group-hover:text-[#f38b00] transition-colors" />
-                  <span className="text-sm font-semibold text-gray-300 group-hover:text-[#f38b00]">
+                  <Info className="w-5 h-5 text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors" />
+                  <span className="text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35]">
                     About
                   </span>
                 </Button>
@@ -281,12 +266,12 @@ export default function Navbar() {
                           />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-gray-600 transition-all duration-300 shadow-sm flex-shrink-0">
-                          <Package className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 group-hover:text-[#f38b00]" />
+                        <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-lg bg-white flex items-center justify-center group-hover:bg-[#fff0e8] transition-all duration-300 shadow-sm flex-shrink-0 border border-[#e0d4f7]">
+                          <Package className="w-4 h-4 lg:w-5 lg:h-5 text-[#6b6b6b] group-hover:text-[#ff6b35]" />
                         </div>
                       )}
                       {/* Brand Name - Responsive sizing and wrapping */}
-                      <P className="text-[10px] xl:text-sm font-semibold text-gray-300 group-hover:text-[#f38b00] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
+                      <P className="text-[10px] xl:text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors text-center lg:text-left leading-tight max-w-20 xl:max-w-full">
                         {brand.brand_name}
                       </P>
                     </div>

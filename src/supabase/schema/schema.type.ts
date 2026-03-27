@@ -1,67 +1,88 @@
-export interface Category {
-  id?: string | null;
-  category_name: string;
-  slug: string;
-  parent_id: string | null;
-  icon?: string | null;
-  created_at?: string;
-  type: "sub" | "main";
-  is_featured?: boolean; // for homepage category sections
-  order?: number; // order for featured categories on homepage
+// =====================================================
+// A.M. Hydraulics & Pneumatics Catalog Schema Types
+// =====================================================
 
-  // ✅ New field for self join
-  parent_category_name?: string | null;
+// =====================================================
+// CATALOG SYSTEM TYPES
+// =====================================================
+
+export interface Category {
+  id?: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface Brand {
-  id?: string | null;
-  brand_logo: string;
-  brand_name: string;
-  slug: string;
-  created_at?: Date | string;
-  updated_at?: Date | string | null;
-  order?: number;
+export interface Master {
+  id?: string;
+  name: string;
+  description: string;
+  color: string;
+  icon: string;
+  category_id?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Joined data
+  fields?: MasterField[];
+}
+
+export interface MasterField {
+  id?: string;
+  master_id: string;
+  label: string;
+  type: 'select' | 'text' | 'number' | 'color';
+  options: string[]; // Array of options for select type
+  unit?: string | null;
+  sort_order: number;
+  created_at?: string;
 }
 
 export interface Product {
-  id?: string | null;
-  model_tally_name: string; // unique internal identifier linking to warehouse stock
-  product_name: string;
-  model_number: string;
-  specifications: string[]; // array of specification strings
-  pcs_per_crtn: number; // pieces per carton
-  accessories?: string[]; // optional for future multi-tag linking
-  spares?: string[]; // optional for future multi-tag linking
-  photos: string[]; // array of URLs
-  videos?: string[]; // optional array of URLs
-  brand_id: string | null; // FK to Brand
-  category_id: string | null; // FK to Category (main or sub)
-  capacity?: string; // e.g., 'DIY', 'Professional', 'Industrial'
-  is_on_sale: boolean;
-  is_featured: boolean;
-  on_hand_qty: number;
-  stock_status?: boolean;
+  id?: string;
+  name: string;
+  sku: string;
+  description?: string | null;
+  category_id: string;
+  status: 'active' | 'inactive' | 'draft';
+  master_values: Record<string, string[]>; // { "field_id": ["value1", "value2"] }
+  images?: string[];
   price?: number | null;
-  created_at?: Date | string;
-  updated_at?: Date | string;
-
-  // Joined data from related tables
-  brand?: {
-    id: string;
-    brand_name: string;
-    brand_logo: string;
-  };
-  category?: {
-    id: string;
-    category_name: string;
-    type: string;
-  };
-  capacity_data?: {
-    id: string;
-    capacity_name: string;
-    slug: string;
-  };
+  stock_quantity?: number;
+  is_featured?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Joined data
+  category?: Category;
+  brands?: Brand[];
 }
+
+export interface Brand {
+  id?: string;
+  name: string;
+  logo_url?: string | null;
+  description?: string | null;
+  website_url?: string | null;
+  is_featured?: boolean;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProductBrand {
+  id?: string;
+  product_id: string;
+  brand_id: string;
+  created_at?: string;
+}
+
+// =====================================================
+// EXISTING SYSTEM TYPES (Keep for compatibility)
+// =====================================================
 
 // Wishlist Table
 export interface Wishlist {

@@ -26,7 +26,7 @@ const FeaturedDeal: React.FC = () => {
 
     return (
         <div className="rounded-xl border bg-white shadow-sm p-1 hover:shadow-lg transition-shadow duration-300">
-            <H5 className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white font-semibold px-4 py-2 rounded-lg text-center uppercase flex items-center justify-center gap-2">
+            <H5 className="bg-gradient-to-r from-[#ff6b35] via-[#8b5cf6] to-[#a855f7] text-white font-semibold px-4 py-2 rounded-lg text-center uppercase flex items-center justify-center gap-2">
                 <Sparkles className="w-5 h-5" />
                 Featured Deal
             </H5>
@@ -58,12 +58,12 @@ const FeaturedDeal: React.FC = () => {
                 <div className="p-2 w-full pb-2">
                     {ad.click_url ? (
                         <a href={ad.click_url} target="_blank" rel="noopener noreferrer">
-                            <Button className='bg-gradient-to-r from-orange-500 to-red-500 font-bold text-white hover:from-orange-600 hover:to-red-600 w-full shadow-md hover:shadow-lg transition-all duration-300'>
+                            <Button className='bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] font-bold text-white hover:from-[#e55a25] hover:to-[#7c3aed] w-full shadow-md hover:shadow-lg transition-all duration-300'>
                                 Get This Deal
                             </Button>
                         </a>
                     ) : (
-                        <Button className='bg-gradient-to-r from-orange-500 to-red-500 font-bold text-white w-full shadow-md' disabled>
+                        <Button className='bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] font-bold text-white w-full shadow-md' disabled>
                             Coming Soon
                         </Button>
                     )}

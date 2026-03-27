@@ -81,7 +81,7 @@ const MainColumn = () => {
                         onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    <Button className="rounded-s-none bg-gradient-to-tl from-[#f38b00] to-[#ffeD05] text-white hover:bg-[#fcb031]/90 !py-7 !px-4">
+                    <Button className="rounded-s-none bg-gradient-to-tl from-[#ff6b35] to-[#8b5cf6] text-white hover:bg-[#ff6b35]/90 !py-7 !px-4">
                         <Search className="!w-7 !h-7" />
                     </Button>
                 </div>

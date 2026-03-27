@@ -70,7 +70,7 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 rounded-lg transition-colors border border-gray-200 hover:border-[#f38b00]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 rounded-lg transition-colors border border-gray-200 hover:border-[#ff6b35]">
         {/* Product Image */}
         <div className="relative w-16 h-16 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden flex items-center justify-center">
           {productImage ? (
@@ -126,14 +126,14 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
             size="sm"
             className={`h-9 px-4 text-xs font-medium whitespace-nowrap ${isOutOfStock
                 ? "bg-indigo-600 hover:bg-indigo-700"
-                : "bg-gradient-to-r from-[#f38b00] to-[#ffed05] hover:opacity-90 text-gray-900"
+                : "bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] hover:opacity-90 text-white"
               }`}
           >
             {isOutOfStock ? "Pre-Order" : "Get Quote"}
           </Button>
           <button
             onClick={handleViewProduct}
-            className="p-2 rounded-md transition-all duration-200 hover:scale-105 border border-gray-200 hover:border-[#f38b00]"
+            className="p-2 rounded-md transition-all duration-200 hover:scale-105 border border-gray-200 hover:border-[#ff6b35]"
           >
             <Eye className="w-4 h-4 text-gray-600" />
           </button>
@@ -189,7 +189,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-[calc(100vw-2rem)] max-h-[90vh] p-0 gap-0 flex flex-col">
         <DialogHeader className="px-4 sm:px-6 py-4 border-b flex-shrink-0">
-          <DialogTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#f38b00] to-[#ffed05] bg-clip-text text-transparent">
+          <DialogTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] bg-clip-text text-transparent">
             Search Products
           </DialogTitle>
         </DialogHeader>
@@ -232,7 +232,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
           {showResults && (isLoading || isFetching) && (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-[#f38b00]" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#ff6b35]" />
               <span className="ml-3 text-gray-600">Searching...</span>
             </div>
           )}
