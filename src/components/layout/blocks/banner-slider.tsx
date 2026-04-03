@@ -11,6 +11,7 @@ import Image from 'next/image';
 const fallbackImages = [
   '/banners/cordless-tool.jpg',
   '/banners/tool-box.jpg',
+  '/banners/banner.png',
 ];
 
 const swipeConfidenceThreshold = 5000;
@@ -134,7 +135,7 @@ const BannerSlider: React.FC = () => {
                     initial={{ opacity: 0, x: -30, y: 30 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="max-w-md sm:max-w-lg md:max-w-2xl space-y-3 sm:space-y-4 bg-[#2d2d2d]/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 lg:p-8 border-l-4 border-[#ff6b35] shadow-2xl"
+                    className="max-w-md sm:max-w-lg md:max-w-2xl space-y-3 sm:space-y-4 bg-[#2d2d2d]/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 lg:p-8 border-l-4 border-[#f38b00] shadow-2xl"
                   >
                     {slide?.title && (
                       <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white leading-tight tracking-tight uppercase"
@@ -162,7 +163,7 @@ const BannerSlider: React.FC = () => {
                       >
                         <Button
                           size="lg"
-                          className="bg-gradient-to-r from-[#ff6b35] via-[#8b5cf6] to-[#a855f7] hover:from-[#e55a25] hover:via-[#7c3aed] hover:to-[#9333ea] text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 rounded-xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 text-sm sm:text-base lg:text-lg"
+                          className="bg-gradient-to-r from-[#f38b00] via-[#ff9500] to-[#ffed05] hover:from-[#e07a00] hover:via-[#ff8800] hover:to-[#ffd700] text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 rounded-xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 text-sm sm:text-base lg:text-lg"
                         >
                           <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                           Get a Quote

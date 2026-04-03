@@ -6,14 +6,23 @@ import {
   AdminEnquiryNotificationTemplate,
 } from '@/lib/email-templates'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy initialization to avoid build-time errors
+let resend: Resend | null = null
+const getResend = () => {
+  if (!resend && process.env.RESEND_API_KEY) {
+    resend = new Resend(process.env.RESEND_API_KEY)
+  }
+  return resend
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { type, data } = body
 
-    if (!process.env.RESEND_API_KEY) {
+    const resendClient = getResend()
+    
+    if (!resendClient || !process.env.RESEND_API_KEY) {
       console.error('RESEND_API_KEY is not configured')
       return NextResponse.json(
         { error: 'Email service not configured' },
@@ -28,7 +37,7 @@ export async function POST(request: NextRequest) {
       case 'welcome': {
         const { userName, userEmail } = data
 
-        const { data: emailData, error } = await resend.emails.send({
+        const { data: emailData, error } = await resendClient.emails.send({
           from: emailFrom,
           to: userEmail,
           subject: 'Welcome to A.M. Hydraulics!',
@@ -62,7 +71,7 @@ export async function POST(request: NextRequest) {
         console.log('From email:', emailFrom)
 
         // Send confirmation email to customer
-        const customerEmailResult = await resend.emails.send({
+        const customerEmailResult = await resendClient.emails.send({
           from: emailFrom,
           to: userEmail,
           subject: `${isBulk ? 'Bulk ' : ''}Quote Request Received - A.M. Hydraulics`,
@@ -85,7 +94,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Send notification email to admin
-        const adminEmailResult = await resend.emails.send({
+        const adminEmailResult = await resendClient.emails.send({
           from: emailFrom,
           to: adminEmail,
           subject: `🔔 New ${isBulk ? 'Bulk ' : ''}Quote Request from ${userName}`,
