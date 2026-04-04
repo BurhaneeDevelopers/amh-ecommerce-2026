@@ -1,43 +1,23 @@
 import { supabase } from "../client";
-import { Product, Accessories, Spares } from "../schema/schema.type";
+import { Product } from "../schema/schema.type";
 
 class Products_Service {
     private table = "products";
 
     async getAllProducts(): Promise<Product[] | null> {
-            const { data, error } = await supabase.from(this.table)
-                .select(`
-                    *,
-                    brand:brand_id (
-                        id,
-                        brand_name,
-                        brand_logo
-                    ),
-                    category:category_id (
-                        id,
-                        category_name,
-                        type
-                    )
-                `)
-
-            if (error) throw error;
-            return data;
-        }
-
-
-    async getFeaturedProducts(): Promise<Product[] | null> {
         const { data, error } = await supabase.from(this.table)
-            .select('*')
-            .eq('is_featured', true)
-
-        if (error) throw error;
-        return data;
-    }
-
-    async getProductsById(id: string): Promise<Product[] | null> {
-        const { data, error } = await supabase.from(this.table)
-            .select('*')
-            .eq("id", id)
+            .select(`
+                *,
+                category:categories (
+                    id,
+                    name,
+                    description,
+                    color,
+                    icon
+                )
+            `)
+            .eq('status', 'active')
+            .order('created_at', { ascending: false });
 
         if (error) throw error;
         return data;
@@ -47,24 +27,35 @@ class Products_Service {
         const { data, error } = await supabase.from(this.table)
             .select(`
                 *,
-                brand:brand_id (
+                category:categories (
                     id,
-                    brand_name,
-                    brand_logo
-                ),
-                category:category_id (
-                    id,
-                    category_name,
-                    type
-                ),
-                capacity_data:capacity (
-                    id,
-                    capacity_name,
-                    slug
+                    name,
+                    description,
+                    color,
+                    icon
                 )
             `)
             .eq("id", id)
-            .single()
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getProductsBySku(sku: string): Promise<Product | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select(`
+                *,
+                category:categories (
+                    id,
+                    name,
+                    description,
+                    color,
+                    icon
+                )
+            `)
+            .eq("sku", sku)
+            .single();
 
         if (error) throw error;
         return data;
@@ -74,153 +65,73 @@ class Products_Service {
         const { data, error } = await supabase.from(this.table)
             .delete()
             .eq("id", id)
-            .select('*')
+            .select('*');
 
         if (error) throw error;
         return data;
     }
 
-    async createNewProduct(payload: Product): Promise<Product[] | null> {
+    async createNewProduct(payload: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<Product[] | null> {
         const { data, error } = await supabase.from(this.table)
             .insert(payload)
+            .select('*');
+
+        if (error) throw error;
+        return data;
+    }
+
+    async updateProduct(id: string, payload: Partial<Product>): Promise<Product | null> {
+        const { data, error } = await supabase.from(this.table)
+            .update(payload)
+            .eq("id", id)
             .select('*')
+            .single();
 
         if (error) throw error;
         return data;
     }
 
-    async getProductAccessories(accessoryIds: string[]): Promise<Accessories[] | null> {
-        if (!accessoryIds || accessoryIds.length === 0) return [];
-        
-        const { data, error } = await supabase
-            .from('accessories')
-            .select(`
-                *,
-                category:category_id (
-                    id,
-                    category_name
-                )
-            `)
-            .in('id', accessoryIds);
-
-        if (error) throw error;
-        return data;
-    }
-
-    async getProductSpares(spareIds: string[]): Promise<Spares[] | null> {
-        if (!spareIds || spareIds.length === 0) return [];
-        
-        const { data, error } = await supabase
-            .from('spares')
-            .select(`
-                *,
-                category:category_id (
-                    id,
-                    category_name
-                )
-            `)
-            .in('id', spareIds);
-
-        if (error) throw error;
-        return data;
-    }
-
-    async getProductsByMainCategory(mainCategoryId: string, limit: number = 10): Promise<Product[] | null> {
-        // First, get all subcategory IDs for this main category
-        const { data: subcategories, error: subError } = await supabase
-            .from('category')
-            .select('id')
-            .eq('parent_id', mainCategoryId);
-
-        if (subError) throw subError;
-
-        const subcategoryIds = subcategories?.map(sub => sub.id) || [];
-        const allCategoryIds = [mainCategoryId, ...subcategoryIds];
-
-        // Fetch products that belong to main category or any of its subcategories
-        const { data, error } = await supabase
+    async getProductsByCategory(categoryId: string, limit?: number): Promise<Product[] | null> {
+        let query = supabase
             .from(this.table)
             .select(`
                 *,
-                brand:brand_id (
+                category:categories (
                     id,
-                    brand_name,
-                    brand_logo
-                ),
-                category:category_id (
-                    id,
-                    category_name,
-                    type
+                    name,
+                    description,
+                    color,
+                    icon
                 )
             `)
-            .in('category_id', allCategoryIds)
-            .limit(limit);
+            .eq('category_id', categoryId)
+            .eq('status', 'active')
+            .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        return data;
-    }
-
-    async getProductsByCategoryIds(categoryIds: string[]): Promise<Product[] | null> {
-        if (!categoryIds || categoryIds.length === 0) return [];
-
-        const { data, error } = await supabase
-            .from(this.table)
-            .select(`
-                *,
-                brand:brand_id (
-                    id,
-                    brand_name,
-                    brand_logo
-                ),
-                category:category_id (
-                    id,
-                    category_name,
-                    type
-                )
-            `)
-            .in('category_id', categoryIds);
-
-        if (error) throw error;
-        return data;
-    }
-
-    async getProductsForFeaturedCategories(): Promise<Product[] | null> {
-        // Get all featured categories
-        const { data: featuredCategories, error: catError } = await supabase
-            .from('category')
-            .select('id, type, parent_id')
-            .eq('is_featured', true)
-            .order('order', { ascending: true });
-
-        if (catError) throw catError;
-        if (!featuredCategories || featuredCategories.length === 0) return [];
-
-        // Collect all category IDs (main + their subcategories)
-        const allCategoryIds = new Set<string>();
-        
-        for (const cat of featuredCategories) {
-            if (cat.id) allCategoryIds.add(cat.id);
-            
-            // If it's a main category, get its subcategories
-            if (cat.type === 'main') {
-                const { data: subs } = await supabase
-                    .from('category')
-                    .select('id')
-                    .eq('parent_id', cat.id);
-                
-                subs?.forEach(sub => {
-                    if (sub.id) allCategoryIds.add(sub.id);
-                });
-            }
+        if (limit) {
+            query = query.limit(limit);
         }
 
-        // Fetch all products for these categories
-        return this.getProductsByCategoryIds(Array.from(allCategoryIds));
+        const { data, error } = await query;
+
+        if (error) throw error;
+        return data;
+    }
+
+    async searchProducts(searchTerm: string, categoryId?: string): Promise<Product[] | null> {
+        const { data, error } = await supabase
+            .rpc('search_products', {
+                search_term: searchTerm,
+                category_filter: categoryId || null,
+                status_filter: 'active'
+            });
+
+        if (error) throw error;
+        return data;
     }
 
     async getProductsWithFilters(params: {
         categoryIds?: string[];
-        brandIds?: string[];
         search?: string;
         sortBy?: string;
         limit?: number;
@@ -230,34 +141,24 @@ class Products_Service {
             .from(this.table)
             .select(`
                 *,
-                brand:brand_id (
+                category:categories (
                     id,
-                    brand_name,
-                    brand_logo
-                ),
-                category:category_id (
-                    id,
-                    category_name,
-                    type,
-                    parent_id,
-                    is_featured,
-                    order
+                    name,
+                    description,
+                    color,
+                    icon
                 )
-            `, { count: 'exact' });
+            `, { count: 'exact' })
+            .eq('status', 'active');
 
         // Apply category filter
         if (params.categoryIds && params.categoryIds.length > 0) {
             query = query.in('category_id', params.categoryIds);
         }
 
-        // Apply brand filter
-        if (params.brandIds && params.brandIds.length > 0) {
-            query = query.in('brand_id', params.brandIds);
-        }
-
         // Apply search filter
         if (params.search) {
-            query = query.or(`product_name.ilike.%${params.search}%,model_number.ilike.%${params.search}%`);
+            query = query.or(`name.ilike.%${params.search}%,sku.ilike.%${params.search}%,description.ilike.%${params.search}%`);
         }
 
         // Apply sorting
@@ -266,14 +167,13 @@ class Products_Service {
                 query = query.order('created_at', { ascending: false });
                 break;
             case 'name_asc':
-                query = query.order('product_name', { ascending: true });
+                query = query.order('name', { ascending: true });
                 break;
             case 'name_desc':
-                query = query.order('product_name', { ascending: false });
+                query = query.order('name', { ascending: false });
                 break;
             default:
-                // Default sorting by category order and product name
-                query = query.order('product_name', { ascending: true });
+                query = query.order('name', { ascending: true });
                 break;
         }
 

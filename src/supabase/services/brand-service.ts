@@ -1,56 +1,30 @@
-import { supabase } from "../client";
 import { Brand } from "../schema/schema.type";
 
+// Stub service for brands - brands are not in the new schema
+// This service returns empty data to prevent errors in components that still reference brands
 class Brands_Service {
-    private table = "brand";
-
     async getAllBrands(): Promise<Brand[] | null> {
-        const { data, error } = await supabase.from(this.table)
-            .select('*')
-            .order('order', { ascending: true })
-
-        if (error) throw error;
-        return data;
+        // Return empty array since brands table doesn't exist in new schema
+        return [];
     }
 
     async getSingleBrandById(id: string | null): Promise<Brand | null> {
-        const { data, error } = await supabase.from(this.table)
-            .select('*')
-            .eq("id", id)
-            .single()
-
-        if (error) throw error;
-        return data;
-    }
-
-    async deleteBrandById(id: string): Promise<Brand[] | null> {
-        const { data, error } = await supabase.from(this.table)
-            .delete()
-            .eq("id", id)
-            .select('*')
-
-        if (error) throw error;
-        return data;
+        return null;
     }
 
     async createNewBrand(payload: Brand): Promise<Brand[] | null> {
-        const { data, error } = await supabase.from(this.table)
-            .insert(payload)
-            .select('*')
-
-        if (error) throw error;
-        return data;
+        console.warn('Brand creation not supported in new schema');
+        return [];
     }
 
     async updateBrand(payload: Brand): Promise<Brand | null> {
-        const { data, error } = await supabase.from(this.table)
-            .update(payload)
-            .eq("id", payload.id)
-            .select('*')
-            .single()
+        console.warn('Brand update not supported in new schema');
+        return null;
+    }
 
-        if (error) throw error;
-        return data;
+    async deleteBrandById(id: string): Promise<Brand[] | null> {
+        console.warn('Brand deletion not supported in new schema');
+        return [];
     }
 }
 

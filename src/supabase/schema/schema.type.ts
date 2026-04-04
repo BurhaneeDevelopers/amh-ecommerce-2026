@@ -1,5 +1,6 @@
 // =====================================================
 // A.M. Hydraulics & Pneumatics Catalog Schema Types
+// Based on: 001_hydraulics_catalog_schema.sql
 // =====================================================
 
 // =====================================================
@@ -49,18 +50,14 @@ export interface Product {
   category_id: string;
   status: 'active' | 'inactive' | 'draft';
   master_values: Record<string, string[]>; // { "field_id": ["value1", "value2"] }
-  images?: string[];
-  price?: number | null;
-  stock_quantity?: number;
-  is_featured?: boolean;
   created_at?: string;
   updated_at?: string;
   
   // Joined data
   category?: Category;
-  brands?: Brand[];
 }
 
+// Legacy Brand types (kept for backward compatibility if needed)
 export interface Brand {
   id?: string;
   name: string;

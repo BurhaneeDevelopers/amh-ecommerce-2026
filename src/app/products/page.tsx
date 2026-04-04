@@ -1,15 +1,15 @@
 "use client";
 import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetAllMainCategoriesWithProductCount } from "@/api/category.service";
-import { useGetFeaturedProducts } from "@/api/products.service";
+import { useGetAllCategoriesWithProductCount } from "@/api/category.service";
+import { useGetAllProducts } from "@/api/products.service";
 import CategoryCard from "@/components/blocks/category-card";
 import FeaturedProductsCarousel from "@/components/products/featured-products-carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategoriesContent = () => {
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllMainCategoriesWithProductCount();
-  const { data: featuredProducts = [], isLoading: featuredLoading } = useGetFeaturedProducts();
+  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
+  const { data: allProducts = [], isLoading: productsLoading } = useGetAllProducts();
 
   if (categoriesLoading) {
     return (
@@ -78,15 +78,15 @@ const CategoriesContent = () => {
           )}
         </div>
 
-        {/* Featured Products Carousel Section */}
-        {!featuredLoading && featuredProducts.length > 0 && (
+        {/* All Products Carousel Section */}
+        {!productsLoading && allProducts.length > 0 && (
           <div className="border-t pt-16">
-            <FeaturedProductsCarousel products={featuredProducts} />
+            <FeaturedProductsCarousel products={allProducts} />
           </div>
         )}
 
-        {/* Featured Products Loading State */}
-        {featuredLoading && (
+        {/* Products Loading State */}
+        {productsLoading && (
           <div className="border-t pt-16">
             <Skeleton className="h-12 w-64 mb-6" />
             <div className="flex gap-4 overflow-hidden">

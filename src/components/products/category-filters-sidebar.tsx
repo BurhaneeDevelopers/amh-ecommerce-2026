@@ -4,15 +4,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { useGetSubCatBasedOnMainCatId } from '@/api/category.service'
-import { useGetAllBrands } from '@/api/brand.service'
-import { Brand, Category } from '@/supabase/schema/schema.type'
+import { useGetAllCategories } from '@/api/category.service'
+import { Category } from '@/supabase/schema/schema.type'
 import { X } from 'lucide-react'
 
 interface CategoryFiltersSidebarProps {
   mainCategoryId: string
   selectedSubcategories: string[]
-  setSelectedSubcategories: (categories: string[]) => void
+  setSelectedSubcategories: (subcategories: string[]) => void
   selectedBrands: string[]
   setSelectedBrands: (brands: string[]) => void
   priceRange: number[]
@@ -21,54 +20,32 @@ interface CategoryFiltersSidebarProps {
 }
 
 export default function CategoryFiltersSidebar({
-  mainCategoryId,
   selectedSubcategories,
   setSelectedSubcategories,
-  selectedBrands,
-  setSelectedBrands,
   onClearFilters,
 }: CategoryFiltersSidebarProps) {
-  const { data: subcategories = [], isLoading: subcategoriesLoading } = useGetSubCatBasedOnMainCatId(mainCategoryId)
-  const { data: brands = [], isLoading: brandsLoading } = useGetAllBrands()
+  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategories()
 
-  const handleSubcategoryChange = (subcategoryId: string, checked: boolean) => {
-    setSelectedSubcategories(
-      checked
-        ? [...selectedSubcategories, subcategoryId]
-        : selectedSubcategories.filter((id) => id !== subcategoryId)
-    )
-  }
-
-  const handleBrandChange = (brandId: string, checked: boolean) => {
-    setSelectedBrands(
-      checked
-        ? [...selectedBrands, brandId]
-        : selectedBrands.filter((b) => b !== brandId)
-    )
+  const handleCategorySelect = (categoryId: string) => {
+    const isSelected = selectedSubcategories.includes(categoryId)
+    
+    if (isSelected) {
+      setSelectedSubcategories(selectedSubcategories.filter(id => id !== categoryId))
+    } else {
+      setSelectedSubcategories([...selectedSubcategories, categoryId])
+    }
   }
 
   // Get active filter information
   const getActiveFilters = () => {
-    const filters: Array<{ id: string; name: string; type: 'subcategory' | 'brand' }> = []
+    const filters: Array<{ id: string; name: string }> = []
     
-    selectedSubcategories.forEach(subId => {
-      const subcategory = subcategories.find(c => c.id === subId)
-      if (subcategory) {
+    selectedSubcategories.forEach(catId => {
+      const category = categories.find(c => c.id === catId)
+      if (category) {
         filters.push({
-          id: subId,
-          name: subcategory.category_name,
-          type: 'subcategory'
-        })
-      }
-    })
-    
-    selectedBrands.forEach(brandId => {
-      const brand = brands.find(b => b.id === brandId)
-      if (brand) {
-        filters.push({
-          id: brandId,
-          name: brand.brand_name || '',
-          type: 'brand'
+          id: catId,
+          name: category.name
         })
       }
     })
@@ -78,12 +55,8 @@ export default function CategoryFiltersSidebar({
 
   const activeFilters = getActiveFilters()
 
-  const removeFilter = (filterId: string, type: 'subcategory' | 'brand') => {
-    if (type === 'subcategory') {
-      handleSubcategoryChange(filterId, false)
-    } else {
-      handleBrandChange(filterId, false)
-    }
+  const removeFilter = (filterId: string) => {
+    handleCategorySelect(filterId)
   }
 
   return (
@@ -114,7 +87,7 @@ export default function CategoryFiltersSidebar({
                     >
                       <span>{filter.name}</span>
                       <button
-                        onClick={() => removeFilter(filter.id, filter.type)}
+                        onClick={() => removeFilter(filter.id)}
                         className="ml-1 hover:bg-primary-dark rounded-full p-0.5 transition-colors"
                         aria-label={`Remove ${filter.name} filter`}
                       >
@@ -126,76 +99,44 @@ export default function CategoryFiltersSidebar({
               </div>
             )}
 
-            {/* Subcategories */}
-            {subcategories.length > 0 && (
-              <div>
-                <h3 className="font-semibold mb-3">Subcategories</h3>
-                {subcategoriesLoading ? (
-                  <div className="space-y-2">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="h-10 bg-gray-200 rounded animate-pulse" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-                    {subcategories.map((subcategory: Category) => (
-                      <div 
-                        key={subcategory.id} 
-                        className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleSubcategoryChange(subcategory.id || '', !selectedSubcategories.includes(subcategory.id || ''))}
-                      >
-                        <Checkbox
-                          id={`subcategory-${subcategory.id}`}
-                          checked={selectedSubcategories.includes(subcategory.id || '')}
-                          onCheckedChange={(checked) =>
-                            handleSubcategoryChange(subcategory.id || '', checked as boolean)
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <label
-                          htmlFor={`subcategory-${subcategory.id}`}
-                          className="text-sm font-medium leading-none cursor-pointer flex-1"
-                        >
-                          {subcategory.category_name}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Brands */}
+            {/* Categories */}
             <div>
-              <h3 className="font-semibold mb-3">Brands</h3>
-              {brandsLoading ? (
+              <h3 className="font-semibold mb-3">Other Categories</h3>
+              {categoriesLoading ? (
                 <div className="space-y-2">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="h-8 bg-gray-200 rounded animate-pulse" />
+                    <div key={i} className="h-10 bg-gray-200 rounded animate-pulse" />
                   ))}
                 </div>
               ) : (
-                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                  {brands.map((brand: Brand) => (
+                <div className="space-y-1 max-h-96 overflow-y-auto pr-1">
+                  {categories.map((category: Category) => (
                     <div 
-                      key={brand.id} 
-                      className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleBrandChange(brand.id || '', !selectedBrands.includes(brand.id || ''))}
+                      key={category.id}
+                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${
+                        selectedSubcategories.includes(category.id || '')
+                          ? 'bg-primary/10 hover:bg-primary/20' 
+                          : 'hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleCategorySelect(category.id || '')}
                     >
-                      <Checkbox
-                        id={`brand-${brand.id}`}
-                        checked={selectedBrands.includes(brand.id || '')}
-                        onCheckedChange={(checked) =>
-                          handleBrandChange(brand.id || '', checked as boolean)
-                        }
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <label
-                        htmlFor={`brand-${brand.id}`}
-                        className="text-sm font-medium leading-none cursor-pointer flex-1"
-                      >
-                        {brand.brand_name}
-                      </label>
+                      <div className="flex items-center space-x-2 flex-1">
+                        <Checkbox
+                          id={`category-${category.id}`}
+                          checked={selectedSubcategories.includes(category.id || '')}
+                          onCheckedChange={() => handleCategorySelect(category.id || '')}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <label
+                          htmlFor={`category-${category.id}`}
+                          className="text-sm font-medium leading-none cursor-pointer flex-1"
+                        >
+                          {category.name}
+                        </label>
+                      </div>
+                      {category.icon && (
+                        <span className="text-lg">{category.icon}</span>
+                      )}
                     </div>
                   ))}
                 </div>

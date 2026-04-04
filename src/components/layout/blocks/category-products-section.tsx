@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { H2, P } from '@/components/typography/typography'
 import { Container } from '../container'
 import ProductCard from '@/components/blocks/product-card'
-import { useGetProductsByMainCategory } from '@/api/products.service'
+import { useGetProductsByCategory } from '@/api/products.service'
 import { Category } from '@/supabase/schema/schema.type'
 
 interface CategoryProductsSectionProps {
@@ -15,7 +15,7 @@ interface CategoryProductsSectionProps {
 }
 
 const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => {
-    const { data: products = [], isLoading } = useGetProductsByMainCategory(category.id || '', 20)
+    const { data: products = [], isLoading } = useGetProductsByCategory(category.id || '', 20)
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
     
@@ -72,9 +72,9 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
             {/* Header */}
             <div className="flex justify-between items-center mb-2">
                 <div>
-                    <H2 className="mb-1">{category.category_name}</H2>
+                    <H2 className="mb-1">{category.name}</H2>
                     <P className="text-gray-500 text-sm">
-                        Explore our range of {category.category_name.toLowerCase()} products
+                        Explore our range of {category.name.toLowerCase()} products
                     </P>
                 </div>
                 <div className="flex gap-2 items-center">
@@ -130,7 +130,7 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
                     href={`/category/${category.id}`}
                     className="flex items-center gap-2 text-sm text-[#272727] hover:text-orange-600 font-medium transition-colors group"
                 >
-                    View All {category.category_name}
+                    View All {category.name}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
             </div>

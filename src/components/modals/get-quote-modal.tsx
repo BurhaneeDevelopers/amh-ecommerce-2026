@@ -20,9 +20,12 @@ interface GetQuoteModalProps {
     onOpenChange: (open: boolean) => void
     product: {
         id?: string | null | undefined
-        product_name: string
+        name?: string
+        sku?: string
+        // Legacy support
+        product_name?: string
         model_number?: string
-        photos: string[]
+        photos?: string[]
     }
     onSuccess?: () => void
 }
@@ -40,6 +43,11 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
     const { data: user } = Use_auth()
     const [quantity, setQuantity] = useAtom(productQuantityAtom)
     const createEnquiryMutation = useCreateNewEnquiry()
+
+    // Support both old and new schema
+    const productName = product.name || product.product_name || 'Product'
+    const productSku = product.sku || product.model_number || ''
+    const productImage = product.photos?.[0] || '/placeholder-product.jpg'
 
     const initialValues: FormValues = {
         name: user?.full_name || '',
@@ -111,8 +119,8 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 companyName: values.company,
                 city: values.city,
                 products: [{
-                    product_name: product.product_name,
-                    model_number: product.model_number,
+                    product_name: productName,
+                    model_number: productSku,
                     quantity: quantity,
                 }],
                 message: values.message,
@@ -148,7 +156,7 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">Request Quote</h2>
-                            <p className="text-sm text-gray-500">Get pricing for {product.product_name}</p>
+                            <p className="text-sm text-gray-500">Get pricing for {productName}</p>
                         </div>
                     </div>
                     <button
@@ -165,14 +173,14 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                         <Image
                             width={500}
                             height={500}
-                            src={product.photos[0] || '/placeholder-product.jpg'}
-                            alt={product.product_name}
+                            src={productImage}
+                            alt={productName}
                             className="w-16 h-16 object-cover rounded-lg border"
                         />
                         <div>
-                            <h3 className="font-medium text-gray-900">{product.product_name}</h3>
-                            {product.model_number && (
-                                <p className="text-sm text-gray-500">Model: {product.model_number}</p>
+                            <h3 className="font-medium text-gray-900">{productName}</h3>
+                            {productSku && (
+                                <p className="text-sm text-gray-500">SKU: {productSku}</p>
                             )}
                         </div>
                     </div>

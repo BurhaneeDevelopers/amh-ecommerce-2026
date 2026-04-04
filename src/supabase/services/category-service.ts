@@ -2,179 +2,76 @@ import { supabase } from "../client";
 import { Category } from "../schema/schema.type";
 
 class Categories_Service {
-  private table = "category";
+    private table = "categories";
 
-  async getAllMainCategories(): Promise<Category[] | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("type", "main")
-      .order("order", { ascending: true });
+    async getAllCategories(): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .order('name', { ascending: true });
 
-    if (error) throw error;
-    return data;
-  }
+        if (error) throw error;
+        return data;
+    }
 
-  async getFeaturedMainCategories(): Promise<Category[] | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("type", "main")
-      .eq("is_featured", true)
-      .order("order", { ascending: true });
+    async getAllCategoriesWithProductCount(): Promise<(Category & { product_count: number })[] | null> {
+        const { data, error } = await supabase
+            .from(this.table)
+            .select(`
+                *,
+                products:products(count)
+            `)
+            .order('name', { ascending: true });
 
-    if (error) throw error;
-    return data;
-  }
+        if (error) throw error;
 
-  async getAllSubCategories(): Promise<Category[] | null> {
-    // get all sub categories
-    const { data: subs, error: subError } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("type", "sub");
+        // Transform the data to include product_count
+        return data?.map(cat => ({
+            ...cat,
+            product_count: cat.products?.[0]?.count || 0
+        })) || [];
+    }
 
-    if (subError) throw subError;
+    async getSingleCategoryById(id: string | null): Promise<Category | null> {
+        if (!id) return null;
 
-    // get all main categories (parents)
-    const { data: mains, error: mainError } = await supabase
-      .from(this.table)
-      .select("id, category_name")
-      .eq("type", "main");
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .eq("id", id)
+            .single();
 
-    if (mainError) throw mainError;
+        if (error) throw error;
+        return data;
+    }
 
-    // map parent name into subs
-    const mainsMap = new Map(mains.map((m) => [m.id, m.category_name]));
+    async createNewCategory(payload: Omit<Category, 'id' | 'created_at' | 'updated_at'>): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .insert(payload)
+            .select('*');
 
-    return subs?.map((sub) => ({
-      ...sub,
-      parent_category_name: mainsMap.get(sub.parent_id) || null,
-    })) as Category[];
-  }
+        if (error) throw error;
+        return data;
+    }
 
-  async getSubCatBasedOnMainCatId(
-    main_category_id?: string | null
-  ): Promise<Category[] | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("parent_id", main_category_id);
+    async updateCategory(id: string, payload: Partial<Category>): Promise<Category | null> {
+        const { data, error } = await supabase.from(this.table)
+            .update(payload)
+            .eq("id", id)
+            .select('*')
+            .single();
 
-    if (error) throw error;
-    return data;
-  }
+        if (error) throw error;
+        return data;
+    }
 
-  async getAllCategories(): Promise<Category[] | null> {
-    const { data, error } = await supabase.from(this.table).select("*");
+    async deleteCategoryById(id: string): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .delete()
+            .eq("id", id)
+            .select('*');
 
-    if (error) throw error;
-    return data;
-  }
-
-  async getSingleCategoryById(id: string | null): Promise<Category | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async getSingleCategoryBySlug(slug: string | null): Promise<Category | null> {
-    if (!slug) return null;
-    
-    const { data, error } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("slug", slug)
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async deleteCategoryById(id: string): Promise<Category[] | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .delete()
-      .eq("id", id)
-      .select("*");
-
-    if (error) throw error;
-    return data;
-  }
-
-  async createNewCategory(payload: Category): Promise<Category[] | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .insert(payload)
-      .select("*");
-
-    if (error) throw error;
-    return data;
-  }
-
-  async updateCategory(payload: Category): Promise<Category | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .update(payload)
-      .eq("id", payload.id)
-      .select("*")
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async getAllMainCategoriesWithProductCount(): Promise<(Category & { product_count: number })[] | null> {
-    // Get all main categories
-    const { data: categories, error: catError } = await supabase
-      .from(this.table)
-      .select("*")
-      .eq("type", "main")
-      .order("order", { ascending: true });
-
-    if (catError) throw catError;
-    if (!categories) return null;
-
-    // For each category, count products
-    const categoriesWithCount = await Promise.all(
-      categories.map(async (cat) => {
-        // Count products in this category
-        const { count: mainCount } = await supabase
-          .from("products")
-          .select("*", { count: "exact", head: true })
-          .eq("category_id", cat.id);
-
-        // Get subcategories
-        const { data: subcats } = await supabase
-          .from(this.table)
-          .select("id")
-          .eq("parent_id", cat.id);
-
-        // Count products in subcategories
-        let subCount = 0;
-        if (subcats && subcats.length > 0) {
-          const subcatIds = subcats.map(s => s.id);
-          const { count } = await supabase
-            .from("products")
-            .select("*", { count: "exact", head: true })
-            .in("category_id", subcatIds);
-          subCount = count || 0;
-        }
-
-        return {
-          ...cat,
-          product_count: (mainCount || 0) + subCount
-        };
-      })
-    );
-
-    return categoriesWithCount;
-  }
+        if (error) throw error;
+        return data;
+    }
 }
 
 export const categories_service = new Categories_Service();

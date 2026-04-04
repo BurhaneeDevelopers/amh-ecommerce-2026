@@ -1,5 +1,5 @@
 import { createClient } from '../client';
-import type { Category, Master, MasterField, Product, Brand } from '../schema/schema.type';
+import type { Category, Master, MasterField, Product } from '../schema/schema.type';
 
 const supabase = createClient();
 
@@ -166,14 +166,12 @@ export async function deleteMasterField(id: string): Promise<void> {
 export async function getAllProducts(filters?: {
   categoryId?: string;
   status?: 'active' | 'inactive' | 'draft';
-  isFeatured?: boolean;
 }): Promise<Product[]> {
   let query = supabase
     .from('products')
     .select(`
       *,
-      category:categories(*),
-      brands:product_brands(brand:brands(*))
+      category:categories(*)
     `);
   
   if (filters?.categoryId) {
@@ -184,21 +182,13 @@ export async function getAllProducts(filters?: {
     query = query.eq('status', filters.status);
   }
   
-  if (filters?.isFeatured !== undefined) {
-    query = query.eq('is_featured', filters.isFeatured);
-  }
-  
   query = query.order('created_at', { ascending: false });
   
   const { data, error } = await query;
   
   if (error) throw error;
   
-  // Transform the brands data structure
-  return (data || []).map(product => ({
-    ...product,
-    brands: product.brands?.map((pb: any) => pb.brand).filter(Boolean) || []
-  }));
+  return data || [];
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
@@ -206,22 +196,14 @@ export async function getProductById(id: string): Promise<Product | null> {
     .from('products')
     .select(`
       *,
-      category:categories(*),
-      brands:product_brands(brand:brands(*))
+      category:categories(*)
     `)
     .eq('id', id)
     .single();
   
   if (error) throw error;
   
-  if (data) {
-    return {
-      ...data,
-      brands: data.brands?.map((pb: any) => pb.brand).filter(Boolean) || []
-    };
-  }
-  
-  return null;
+  return data;
 }
 
 export async function getProductBySku(sku: string): Promise<Product | null> {
@@ -229,22 +211,14 @@ export async function getProductBySku(sku: string): Promise<Product | null> {
     .from('products')
     .select(`
       *,
-      category:categories(*),
-      brands:product_brands(brand:brands(*))
+      category:categories(*)
     `)
     .eq('sku', sku)
     .single();
   
   if (error) throw error;
   
-  if (data) {
-    return {
-      ...data,
-      brands: data.brands?.map((pb: any) => pb.brand).filter(Boolean) || []
-    };
-  }
-  
-  return null;
+  return data;
 }
 
 export async function searchProducts(searchTerm: string, categoryId?: string): Promise<Product[]> {
@@ -292,99 +266,14 @@ export async function deleteProduct(id: string): Promise<void> {
 }
 
 // =====================================================
-// BRAND SERVICES
+// HELPER FUNCTIONS
 // =====================================================
 
-export async function getAllBrands(): Promise<Brand[]> {
+// Get all masters with fields for a specific category
+export async function getCategoryMasters(categoryId: string): Promise<Master[]> {
   const { data, error } = await supabase
-    .from('brands')
-    .select('*')
-    .order('sort_order');
+    .rpc('get_category_masters', { category_uuid: categoryId });
   
   if (error) throw error;
   return data || [];
-}
-
-export async function getFeaturedBrands(): Promise<Brand[]> {
-  const { data, error } = await supabase
-    .from('brands')
-    .select('*')
-    .eq('is_featured', true)
-    .order('sort_order');
-  
-  if (error) throw error;
-  return data || [];
-}
-
-export async function createBrand(brand: Omit<Brand, 'id' | 'created_at' | 'updated_at'>): Promise<Brand> {
-  const { data, error } = await supabase
-    .from('brands')
-    .insert(brand)
-    .select()
-    .single();
-  
-  if (error) throw error;
-  return data;
-}
-
-export async function updateBrand(id: string, updates: Partial<Brand>): Promise<Brand> {
-  const { data, error } = await supabase
-    .from('brands')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-  
-  if (error) throw error;
-  return data;
-}
-
-export async function deleteBrand(id: string): Promise<void> {
-  const { error } = await supabase
-    .from('brands')
-    .delete()
-    .eq('id', id);
-  
-  if (error) throw error;
-}
-
-// =====================================================
-// PRODUCT-BRAND RELATIONSHIP SERVICES
-// =====================================================
-
-export async function addBrandToProduct(productId: string, brandId: string): Promise<void> {
-  const { error } = await supabase
-    .from('product_brands')
-    .insert({ product_id: productId, brand_id: brandId });
-  
-  if (error) throw error;
-}
-
-export async function removeBrandFromProduct(productId: string, brandId: string): Promise<void> {
-  const { error } = await supabase
-    .from('product_brands')
-    .delete()
-    .eq('product_id', productId)
-    .eq('brand_id', brandId);
-  
-  if (error) throw error;
-}
-
-export async function getProductsByBrand(brandId: string): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      category:categories(*),
-      brands:product_brands!inner(brand:brands(*))
-    `)
-    .eq('product_brands.brand_id', brandId)
-    .eq('status', 'active');
-  
-  if (error) throw error;
-  
-  return (data || []).map(product => ({
-    ...product,
-    brands: product.brands?.map((pb: any) => pb.brand).filter(Boolean) || []
-  }));
 }

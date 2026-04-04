@@ -1,12 +1,12 @@
 -- =====================================================
--- A.M. Hydraulics & Pneumatics Catalog Schema
+-- FastenersPro Database Schema
 -- =====================================================
--- This schema supports a hydraulics & pneumatics catalog management system
+-- This schema supports a fasteners catalog management system
 -- with Categories, Masters (attributes), and Products
 -- 
 -- Hierarchy:
--- 1. Categories (e.g., "Hydraulic Hoses", "Pneumatic Fittings")
--- 2. Masters (e.g., "Size", "Pressure Rating", "Material") - linked to Categories
+-- 1. Categories (e.g., "Die Springs", "Ejector Pins")
+-- 2. Masters (e.g., "Size", "Length", "Material") - linked to Categories
 -- 3. Products - belong to one Category, have values from its Masters
 -- =====================================================
 
@@ -16,7 +16,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =====================================================
 -- CATEGORIES TABLE
 -- =====================================================
--- Categories represent product types (e.g., Hydraulic Hoses, Pneumatic Fittings)
+-- Categories represent product types (e.g., Die Springs, Ejector Pins)
 CREATE TABLE categories (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
@@ -38,7 +38,7 @@ CREATE INDEX idx_categories_name ON categories(name);
 -- =====================================================
 -- MASTERS TABLE
 -- =====================================================
--- Masters represent attribute types (e.g., Size, Pressure Rating, Material)
+-- Masters represent attribute types (e.g., Size, Length, Material)
 -- that can be linked to multiple categories
 CREATE TABLE masters (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -64,7 +64,7 @@ CREATE INDEX idx_masters_name ON masters(name);
 -- MASTER FIELDS TABLE
 -- =====================================================
 -- Fields define the specific attributes for each master
--- (e.g., Master "Size" has field "Size" with options ["1/4\"", "3/8\"", "1/2\""])
+-- (e.g., Master "Size" has field "Size" with options ["M6", "M8", "M10"])
 CREATE TABLE master_fields (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     master_id UUID NOT NULL REFERENCES masters(id) ON DELETE CASCADE,
@@ -96,10 +96,6 @@ CREATE TABLE products (
     category_id UUID NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
     status TEXT NOT NULL DEFAULT 'active',
     master_values JSONB NOT NULL DEFAULT '{}'::jsonb,
-    images TEXT[] DEFAULT ARRAY[]::TEXT[],
-    price DECIMAL(10, 2),
-    stock_quantity INTEGER DEFAULT 0,
-    is_featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     
@@ -115,51 +111,9 @@ CREATE INDEX idx_products_status ON products(status);
 CREATE INDEX idx_products_sku ON products(sku);
 CREATE INDEX idx_products_created_at ON products(created_at DESC);
 CREATE INDEX idx_products_name ON products(name);
-CREATE INDEX idx_products_is_featured ON products(is_featured);
 
 -- GIN index for JSONB master_values for efficient querying
 CREATE INDEX idx_products_master_values ON products USING GIN (master_values);
-
--- =====================================================
--- BRANDS TABLE (for authorized stockists)
--- =====================================================
-CREATE TABLE brands (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name TEXT NOT NULL,
-    logo_url TEXT,
-    description TEXT,
-    website_url TEXT,
-    is_featured BOOLEAN DEFAULT FALSE,
-    sort_order INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    
-    CONSTRAINT brands_name_length CHECK (char_length(name) >= 2 AND char_length(name) <= 100)
-);
-
-CREATE INDEX idx_brands_name ON brands(name);
-CREATE INDEX idx_brands_is_featured ON brands(is_featured);
-CREATE INDEX idx_brands_sort_order ON brands(sort_order);
-
--- =====================================================
--- PRODUCT BRANDS JUNCTION TABLE
--- =====================================================
-CREATE TABLE product_brands (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    brand_id UUID NOT NULL REFERENCES brands(id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    
-    UNIQUE(product_id, brand_id)
-);
-
-CREATE INDEX idx_product_brands_product_id ON product_brands(product_id);
-CREATE INDEX idx_product_brands_brand_id ON product_brands(brand_id);
-
--- =====================================================
--- KEEP EXISTING TABLES (User, Wishlist, Enquiry, etc.)
--- =====================================================
--- These tables remain unchanged as they're still needed
 
 -- =====================================================
 -- UPDATED_AT TRIGGER FUNCTION
@@ -189,26 +143,21 @@ CREATE TRIGGER update_products_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_brands_updated_at
-    BEFORE UPDATE ON brands
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- =====================================================
+
 -- Enable RLS on all tables
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE masters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE master_fields ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE brands ENABLE ROW LEVEL SECURITY;
-ALTER TABLE product_brands ENABLE ROW LEVEL SECURITY;
 
 -- =====================================================
 -- CATEGORIES RLS POLICIES
 -- =====================================================
--- Public read access
+
+-- Public read access (for ecommerce site)
 CREATE POLICY "Categories are viewable by everyone"
     ON categories FOR SELECT
     USING (true);
@@ -232,19 +181,24 @@ CREATE POLICY "Authenticated users can delete categories"
 -- =====================================================
 -- MASTERS RLS POLICIES
 -- =====================================================
+
+-- Public read access (for ecommerce site)
 CREATE POLICY "Masters are viewable by everyone"
     ON masters FOR SELECT
     USING (true);
 
+-- Authenticated users can insert
 CREATE POLICY "Authenticated users can insert masters"
     ON masters FOR INSERT
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can update
 CREATE POLICY "Authenticated users can update masters"
     ON masters FOR UPDATE
     USING (auth.role() = 'authenticated')
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can delete
 CREATE POLICY "Authenticated users can delete masters"
     ON masters FOR DELETE
     USING (auth.role() = 'authenticated');
@@ -252,19 +206,24 @@ CREATE POLICY "Authenticated users can delete masters"
 -- =====================================================
 -- MASTER FIELDS RLS POLICIES
 -- =====================================================
+
+-- Public read access (for ecommerce site)
 CREATE POLICY "Master fields are viewable by everyone"
     ON master_fields FOR SELECT
     USING (true);
 
+-- Authenticated users can insert
 CREATE POLICY "Authenticated users can insert master fields"
     ON master_fields FOR INSERT
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can update
 CREATE POLICY "Authenticated users can update master fields"
     ON master_fields FOR UPDATE
     USING (auth.role() = 'authenticated')
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can delete
 CREATE POLICY "Authenticated users can delete master fields"
     ON master_fields FOR DELETE
     USING (auth.role() = 'authenticated');
@@ -272,129 +231,80 @@ CREATE POLICY "Authenticated users can delete master fields"
 -- =====================================================
 -- PRODUCTS RLS POLICIES
 -- =====================================================
--- Public can view active products
+
+-- Public can view active products (for ecommerce site)
 CREATE POLICY "Active products are viewable by everyone"
     ON products FOR SELECT
     USING (status = 'active' OR auth.role() = 'authenticated');
 
+-- Authenticated users can insert
 CREATE POLICY "Authenticated users can insert products"
     ON products FOR INSERT
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can update
 CREATE POLICY "Authenticated users can update products"
     ON products FOR UPDATE
     USING (auth.role() = 'authenticated')
     WITH CHECK (auth.role() = 'authenticated');
 
+-- Authenticated users can delete
 CREATE POLICY "Authenticated users can delete products"
     ON products FOR DELETE
     USING (auth.role() = 'authenticated');
 
 -- =====================================================
--- BRANDS RLS POLICIES
+-- SEED DATA
 -- =====================================================
-CREATE POLICY "Brands are viewable by everyone"
-    ON brands FOR SELECT
-    USING (true);
 
-CREATE POLICY "Authenticated users can manage brands"
-    ON brands FOR ALL
-    USING (auth.role() = 'authenticated')
-    WITH CHECK (auth.role() = 'authenticated');
-
--- =====================================================
--- PRODUCT BRANDS RLS POLICIES
--- =====================================================
-CREATE POLICY "Product brands are viewable by everyone"
-    ON product_brands FOR SELECT
-    USING (true);
-
-CREATE POLICY "Authenticated users can manage product brands"
-    ON product_brands FOR ALL
-    USING (auth.role() = 'authenticated')
-    WITH CHECK (auth.role() = 'authenticated');
-
--- =====================================================
--- SEED DATA - Hydraulics & Pneumatics
--- =====================================================
 -- Insert sample categories
 INSERT INTO categories (name, description, color, icon) VALUES
-('Hydraulic Hoses', 'High-pressure hydraulic hoses for fluid power systems', '#ff6b35', '🔗'),
-('Hydraulic Fittings', 'Connectors and adapters for hydraulic systems', '#8b5cf6', '🔧'),
-('Pneumatic Fittings', 'Air fittings and connectors for pneumatic systems', '#a855f7', '⚙️'),
-('Hydraulic Pumps', 'Hydraulic pumps and power units', '#ec4899', '⚡'),
-('Pneumatic Valves', 'Control valves for pneumatic systems', '#10b981', '🎛️');
+    ('Die Springs', 'Compression springs used in die sets and molds', '#6366f1', '🔗'),
+    ('Ejector Pins', 'Pins used to eject parts from molds', '#ec4899', '📌');
 
--- Get the category IDs and insert masters
+-- Get the category IDs for reference
 DO $$
 DECLARE
-    cat_hoses_id UUID;
-    cat_h_fittings_id UUID;
-    cat_p_fittings_id UUID;
-    cat_pumps_id UUID;
-    cat_valves_id UUID;
+    cat_die_springs_id UUID;
+    cat_ejector_pins_id UUID;
     master_size_id UUID;
-    master_pressure_id UUID;
+    master_load_id UUID;
+    master_length_id UUID;
     master_material_id UUID;
-    master_thread_id UUID;
-    master_flow_id UUID;
 BEGIN
     -- Get category IDs
-    SELECT id INTO cat_hoses_id FROM categories WHERE name = 'Hydraulic Hoses';
-    SELECT id INTO cat_h_fittings_id FROM categories WHERE name = 'Hydraulic Fittings';
-    SELECT id INTO cat_p_fittings_id FROM categories WHERE name = 'Pneumatic Fittings';
-    SELECT id INTO cat_pumps_id FROM categories WHERE name = 'Hydraulic Pumps';
-    SELECT id INTO cat_valves_id FROM categories WHERE name = 'Pneumatic Valves';
+    SELECT id INTO cat_die_springs_id FROM categories WHERE name = 'Die Springs';
+    SELECT id INTO cat_ejector_pins_id FROM categories WHERE name = 'Ejector Pins';
     
-    -- Insert sample masters for Hydraulic Hoses
+    -- Insert sample masters
     INSERT INTO masters (name, description, color, icon, category_id) VALUES
-    ('Size', 'Hose diameter specification', '#ff6b35', '📐', cat_hoses_id)
-    RETURNING id INTO master_size_id;
+        ('Size', 'Product size specification', '#6366f1', '📐', cat_die_springs_id)
+        RETURNING id INTO master_size_id;
     
     INSERT INTO masters (name, description, color, icon, category_id) VALUES
-    ('Pressure Rating', 'Maximum working pressure', '#f59e0b', '⚡', cat_hoses_id)
-    RETURNING id INTO master_pressure_id;
+        ('Load', 'Load capacity specification', '#f59e0b', '⚡', cat_die_springs_id)
+        RETURNING id INTO master_load_id;
     
     INSERT INTO masters (name, description, color, icon, category_id) VALUES
-    ('Material', 'Hose material composition', '#10b981', '🔧', cat_hoses_id)
-    RETURNING id INTO master_material_id;
+        ('Length', 'Product length measurement', '#ec4899', '📏', cat_ejector_pins_id)
+        RETURNING id INTO master_length_id;
     
-    -- Insert sample masters for Hydraulic Fittings
     INSERT INTO masters (name, description, color, icon, category_id) VALUES
-    ('Thread Type', 'Thread specification', '#8b5cf6', '🔩', cat_h_fittings_id)
-    RETURNING id INTO master_thread_id;
-    
-    -- Insert sample masters for Pneumatic Valves
-    INSERT INTO masters (name, description, color, icon, category_id) VALUES
-    ('Flow Rate', 'Air flow capacity', '#ec4899', '💨', cat_valves_id)
-    RETURNING id INTO master_flow_id;
+        ('Material', 'Material composition', '#10b981', '🔧', cat_ejector_pins_id)
+        RETURNING id INTO master_material_id;
     
     -- Insert sample master fields
     INSERT INTO master_fields (master_id, label, type, options, unit, sort_order) VALUES
-    (master_size_id, 'Size', 'select', '["1/4\"", "3/8\"", "1/2\"", "5/8\"", "3/4\"", "1\""]'::jsonb, 'inch', 0),
-    (master_pressure_id, 'Pressure Rating', 'select', '["2000 PSI", "3000 PSI", "4000 PSI", "5000 PSI", "6000 PSI"]'::jsonb, 'PSI', 0),
-    (master_material_id, 'Material', 'select', '["Rubber", "Thermoplastic", "PTFE", "Stainless Steel Braided"]'::jsonb, NULL, 0),
-    (master_thread_id, 'Thread Type', 'select', '["NPT", "BSP", "JIC", "SAE", "Metric"]'::jsonb, NULL, 0),
-    (master_flow_id, 'Flow Rate', 'select', '["50 L/min", "100 L/min", "200 L/min", "500 L/min"]'::jsonb, 'L/min', 0);
-    
-    -- Insert sample brands (authorized stockists)
-    INSERT INTO brands (name, description, is_featured, sort_order) VALUES
-    ('Parker', 'Parker Hannifin - Global leader in motion and control technologies', TRUE, 1),
-    ('Polyhose', 'Polyhose India - Providing flexible solutions globally', TRUE, 2),
-    ('Yuken', 'Yuken India - Hydraulic equipment manufacturer', TRUE, 3),
-    ('Rexroth', 'Bosch Rexroth - Drive and control technologies', TRUE, 4),
-    ('Boss Hydraulics', 'Boss Hydraulics - Hydraulic components', TRUE, 5),
-    ('Torque', 'Torque - Industrial hydraulic solutions', TRUE, 6),
-    ('Polyhydron', 'Polyhydron - Hydraulic systems', TRUE, 7),
-    ('Hydroline Products', 'Hydroline - Hydraulic products', TRUE, 8),
-    ('Micro Pre Temp', 'Micro Pre Temp - Precision hydraulic components', TRUE, 9),
-    ('H-T', 'H-T - Hydraulic and pneumatic fittings', TRUE, 10);
-    
+        (master_size_id, 'Size', 'select', '["M6", "M8", "M10", "M12", "M16"]'::jsonb, NULL, 0),
+        (master_load_id, 'Load', 'select', '["Light", "Medium", "Heavy", "Extra Heavy"]'::jsonb, NULL, 0),
+        (master_length_id, 'Length', 'select', '["50mm", "75mm", "100mm", "150mm", "200mm"]'::jsonb, 'mm', 0),
+        (master_material_id, 'Material', 'select', '["SKD61", "SKH51", "Nitrided Steel", "Stainless Steel"]'::jsonb, NULL, 0);
 END $$;
 
 -- =====================================================
 -- HELPER FUNCTIONS
 -- =====================================================
+
 -- Function to get all masters for a category
 CREATE OR REPLACE FUNCTION get_category_masters(category_uuid UUID)
 RETURNS TABLE (
@@ -430,11 +340,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to search products
-CREATE OR REPLACE FUNCTION search_products(
-    search_term TEXT,
-    category_filter UUID DEFAULT NULL,
-    status_filter TEXT DEFAULT 'active'
-)
+CREATE OR REPLACE FUNCTION search_products(search_term TEXT, category_filter UUID DEFAULT NULL, status_filter TEXT DEFAULT 'active')
 RETURNS TABLE (
     id UUID,
     name TEXT,
@@ -443,10 +349,6 @@ RETURNS TABLE (
     category_id UUID,
     status TEXT,
     master_values JSONB,
-    images TEXT[],
-    price DECIMAL,
-    stock_quantity INTEGER,
-    is_featured BOOLEAN,
     created_at TIMESTAMPTZ
 ) AS $$
 BEGIN
@@ -459,10 +361,6 @@ BEGIN
         p.category_id,
         p.status,
         p.master_values,
-        p.images,
-        p.price,
-        p.stock_quantity,
-        p.is_featured,
         p.created_at
     FROM products p
     WHERE 
@@ -475,65 +373,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to get products with brands
-CREATE OR REPLACE FUNCTION get_products_with_brands()
-RETURNS TABLE (
-    id UUID,
-    name TEXT,
-    sku TEXT,
-    description TEXT,
-    category_id UUID,
-    status TEXT,
-    master_values JSONB,
-    images TEXT[],
-    price DECIMAL,
-    stock_quantity INTEGER,
-    is_featured BOOLEAN,
-    brands JSONB,
-    created_at TIMESTAMPTZ
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        p.id,
-        p.name,
-        p.sku,
-        p.description,
-        p.category_id,
-        p.status,
-        p.master_values,
-        p.images,
-        p.price,
-        p.stock_quantity,
-        p.is_featured,
-        COALESCE(
-            jsonb_agg(
-                jsonb_build_object(
-                    'id', b.id,
-                    'name', b.name,
-                    'logo_url', b.logo_url
-                )
-            ) FILTER (WHERE b.id IS NOT NULL),
-            '[]'::jsonb
-        ) as brands,
-        p.created_at
-    FROM products p
-    LEFT JOIN product_brands pb ON p.id = pb.product_id
-    LEFT JOIN brands b ON pb.brand_id = b.id
-    WHERE p.status = 'active'
-    GROUP BY p.id
-    ORDER BY p.created_at DESC;
-END;
-$$ LANGUAGE plpgsql;
-
 -- =====================================================
 -- COMMENTS FOR DOCUMENTATION
 -- =====================================================
-COMMENT ON TABLE categories IS 'Product categories (e.g., Hydraulic Hoses, Pneumatic Fittings)';
-COMMENT ON TABLE masters IS 'Attribute types (e.g., Size, Pressure Rating, Material) that can be linked to categories';
+
+COMMENT ON TABLE categories IS 'Product categories (e.g., Die Springs, Ejector Pins)';
+COMMENT ON TABLE masters IS 'Attribute types (e.g., Size, Length, Material) that can be linked to categories';
 COMMENT ON TABLE master_fields IS 'Specific fields for each master with their options';
 COMMENT ON TABLE products IS 'Actual products in the catalog';
-COMMENT ON TABLE brands IS 'Authorized brands/stockists (Parker, Polyhose, Yuken, etc.)';
-COMMENT ON TABLE product_brands IS 'Junction table linking products to brands';
+
 COMMENT ON COLUMN products.master_values IS 'JSONB object storing selected values for each master field. Format: {"field_id": ["value1", "value2"]}';
 COMMENT ON COLUMN products.status IS 'Product status: active (visible to public), inactive (hidden), draft (work in progress)';

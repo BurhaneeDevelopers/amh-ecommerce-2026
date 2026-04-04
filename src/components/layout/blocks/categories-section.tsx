@@ -2,14 +2,13 @@
 
 import { H2 } from '@/components/typography/typography'
 import { Container } from '../container'
-import { useGetAllMainCategories } from '@/api/category.service'
+import { useGetAllCategories } from '@/api/category.service'
 import { Loader2, Package, ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 
 const CategoriesSection = () => {
-    const { data: categories = [], isLoading } = useGetAllMainCategories()
+    const { data: categories = [], isLoading } = useGetAllCategories()
 
     if (isLoading) {
         return (
@@ -71,21 +70,17 @@ const CategoriesSection = () => {
                         }}
                     >
                         <Link
-                            href={`/category/${category.slug}`}
+                            href={`/category/${category.id}`}
                             className="group block h-full"
                         >
                             <div className="relative bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 h-full flex flex-col border border-gray-200/60 hover:border-primary/60 hover:-translate-y-2">
                                 {/* Image Container with Modern Overlay */}
-                                <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
+                                <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100" style={{ backgroundColor: `${category.color}15` }}>
                                     {category.icon ? (
                                         <>
-                                            <Image
-                                                width={500}
-                                                height={500}
-                                                src={category.icon}
-                                                alt={category.category_name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                                            />
+                                            <div className="w-full h-full flex items-center justify-center text-6xl sm:text-7xl group-hover:scale-110 transition-transform duration-700 ease-out">
+                                                {category.icon}
+                                            </div>
                                             {/* Modern Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -114,7 +109,7 @@ const CategoriesSection = () => {
                                 {/* Category Name with Modern Typography */}
                                 <div className="relative p-3 sm:p-4 text-center flex-1 flex items-center justify-center min-h-[60px] bg-gradient-to-b from-white to-gray-50/50 group-hover:from-gray-50 group-hover:to-white transition-all duration-500">
                                     <h3 className="font-semibold text-xs sm:text-sm text-gray-800 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-tight">
-                                        {category.category_name}
+                                        {category.name}
                                     </h3>
 
                                     {/* Bottom Accent Line */}

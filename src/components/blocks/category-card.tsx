@@ -11,36 +11,23 @@ interface CategoryCardProps extends Category {
 }
 
 export default function CategoryCard({
-  // id,
-  slug,
-  category_name,
+  id,
+  name,
+  description,
   icon,
+  color,
   product_count = 0,
-  is_featured
 }: CategoryCardProps) {
   return (
-    <Link href={`/category/${slug}`}>
+    <Link href={`/category/${id}`}>
       <Card className="group relative overflow-hidden h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer border-2 hover:border-primary">
-        {/* Featured Badge */}
-        {is_featured && (
-          <div className="absolute top-4 right-4 z-10">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900 shadow-lg animate-pulse">
-              ⭐ Featured
-            </span>
-          </div>
-        )}
-
         {/* Image Section */}
-        <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15">
+        <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15" style={{ backgroundColor: `${color}15` }}>
           {icon ? (
             <>
-              <Image
-                width={400}
-                height={208}
-                src={icon}
-                alt={category_name}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
-              />
+              <div className="absolute inset-0 flex items-center justify-center text-8xl">
+                {icon}
+              </div>
               {/* Gradient Overlay on Hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </>
@@ -60,9 +47,14 @@ export default function CategoryCard({
         {/* Content */}
         <div className="relative p-6 flex flex-col bg-white">
           {/* Category Name */}
-          <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 min-h-[3.5rem]">
-            {category_name}
+          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+            {name}
           </h3>
+          
+          {/* Description */}
+          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+            {description}
+          </p>
 
           {/* Product Count & CTA */}
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200 group-hover:border-primary/30 transition-colors duration-300">

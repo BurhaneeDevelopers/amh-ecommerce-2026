@@ -8,15 +8,15 @@ import { H2 } from '@/components/typography/typography'
 import { Container } from '../container'
 import ProductCard from '@/components/blocks/product-card'
 import { toast } from 'sonner'
-import { useGetFeaturedProducts } from '@/api/products.service'
+import { useGetAllProducts } from '@/api/products.service'
 
 const LatestProducts = () => {
     const {
         data: products = [],
         error: products_error,
-    } = useGetFeaturedProducts();
+    } = useGetAllProducts();
 
-    if (products_error) toast.error("Error fetching featured products");
+    if (products_error) toast.error("Error fetching products");
     
     const [currentPage, setCurrentPage] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
@@ -104,7 +104,7 @@ const LatestProducts = () => {
         <Container className='!px-0'>
             {/* Header */}
             <div className="flex justify-between items-center">
-                <H2>Featured Products</H2>
+                <H2>Latest Products</H2>
                 <div className="flex gap-2 items-center">
                     <button
                         onClick={handlePrev}

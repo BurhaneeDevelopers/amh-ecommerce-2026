@@ -1,12 +1,15 @@
 'use client'
 
-import { useGetFeaturedMainCategories } from '@/api/category.service'
+import { useGetAllCategories } from '@/api/category.service'
 import { Loader2 } from 'lucide-react'
 import CategoryProductsSection from './category-products-section'
 import { Container } from '../container'
 
 const FeaturedCategoriesProducts = () => {
-    const { data: featuredCategories = [], isLoading } = useGetFeaturedMainCategories()
+    const { data: categories = [], isLoading } = useGetAllCategories()
+    
+    // Show first 3 categories as "featured"
+    const featuredCategories = categories.slice(0, 3)
 
     if (isLoading) {
         return (

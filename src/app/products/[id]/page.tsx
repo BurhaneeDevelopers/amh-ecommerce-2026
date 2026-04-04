@@ -2,14 +2,12 @@
 
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
-import { useGetSingleProduct, useGetProductAccessories, useGetProductSpares } from '@/api/products.service'
-import { useGetSingleCapacity } from '@/api/capacity.service'
+import { useGetSingleProduct } from '@/api/products.service'
 import { Container } from '@/components/layout/container'
 import GetQuoteModal from '@/components/modals/get-quote-modal'
 import EnquirySuccessModal from '@/components/blocks/modal/enquiry-success-modal'
 import ProductImageGallery from '@/components/product/product-image-gallery'
 import ProductInfo from '@/components/product/product-info'
-import RelatedItemsSection from '@/components/product/related-items-section'
 import Breadcrumb from '@/components/product/breadcrumb'
 import CommentsSection from '@/components/product/comments-section'
 
@@ -21,11 +19,6 @@ export default function ProductDetailsPage() {
 
   // Fetch product data
   const { data: product, isLoading: productLoading, error: productError } = useGetSingleProduct(productId)
-  
-  // Fetch linked accessories and spares based on product data
-  const { data: productAccessories = [] } = useGetProductAccessories(product?.accessories || [])
-  const { data: productSpares = [] } = useGetProductSpares(product?.spares || [])
-  const { data: productCapacity } = useGetSingleCapacity(product?.capacity || null)
 
   if (productLoading) {
     return (
@@ -83,54 +76,41 @@ export default function ProductDetailsPage() {
   }
 
   // Prepare data for components
-  const capacityInfo = product?.capacity_data || (
-    productCapacity?.id ? {
-      id: productCapacity.id,
-      capacity_name: productCapacity.capacity_name,
-      slug: productCapacity.slug
-    } : null
-  )
-  const isOutOfStock = !product.stock_status || product.on_hand_qty <= 0
+  const isOutOfStock = product?.status !== 'active'
   
   const badge = isOutOfStock
     ? { type: 'out of stock' as const, label: 'Out of Stock', className: 'bg-gray-500 text-white' }
-    : product.is_on_sale 
-    ? { type: 'on sale' as const, label: 'On Sale!', className: 'bg-red-500 text-white' }
-    : product.is_featured 
-    ? { type: 'featured' as const, label: 'Featured', className: 'bg-yellow-500 text-black' }
+    : product?.status === 'draft'
+    ? { type: 'draft' as const, label: 'Draft', className: 'bg-yellow-500 text-black' }
     : null
+
+  // Placeholder images if none exist
+  const productImages = product?.master_values ? [] : []
 
   return (
     <Container className="">
       {/* Breadcrumb */}
       <Breadcrumb 
-        productName={product.product_name}
-        categoryName={product.category?.category_name}
+        productName={product.name}
+        categoryName={product.category?.name}
       />
 
       {/* Main Product Section */}
       <div className="flex flex-wrap w-full 2xl:flex-nowrap gap-12 lg:gap-16 mb-16">
         {/* Image Gallery */}
         <ProductImageGallery
-          images={product.photos || []}
-          productName={product.product_name}
+          images={productImages}
+          productName={product.name}
           badge={badge}
         />
 
         {/* Product Info */}
         <ProductInfo
           product={product}
-          capacityInfo={capacityInfo}
           onGetQuote={() => setShowQuoteModal(true)}
           isOutOfStock={isOutOfStock}
         />
       </div>
-
-      {/* Related Items Section */}
-      <RelatedItemsSection
-        accessories={productAccessories}
-        spares={productSpares}
-      />
 
       {/* Comments Section */}
       <div className="mt-16">

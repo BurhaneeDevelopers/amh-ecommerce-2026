@@ -18,9 +18,12 @@ import Image from 'next/image'
 
 interface BulkQuoteProduct {
     id: string
-    product_name: string
+    name?: string
+    sku?: string
+    // Legacy support
+    product_name?: string
     model_number?: string
-    photos: string[]
+    photos?: string[]
     quantity?: number
 }
 
@@ -122,9 +125,11 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
         }
 
         // Prepare product list for message
-        const productList = localProducts.map((p, idx) =>
-            `${idx + 1}. ${p.product_name}${p.model_number ? ` (${p.model_number})` : ''} - Quantity: ${p.quantity || 1}`
-        ).join('\n')
+        const productList = localProducts.map((p, idx) => {
+            const name = p.name || p.product_name || 'Product'
+            const sku = p.sku || p.model_number || ''
+            return `${idx + 1}. ${name}${sku ? ` (${sku})` : ''} - Quantity: ${p.quantity || 1}`
+        }).join('\n')
 
         const totalQuantity = localProducts.reduce((sum, p) => sum + (p.quantity || 1), 0)
 
@@ -153,8 +158,8 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                 companyName: values.company,
                 city: values.city,
                 products: localProducts.map(p => ({
-                    product_name: p.product_name,
-                    model_number: p.model_number,
+                    product_name: p.name || p.product_name || 'Product',
+                    model_number: p.sku || p.model_number || '',
                     quantity: p.quantity || 1,
                 })),
                 message: values.message,
@@ -222,7 +227,12 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
 
                             {/* Preview - Always visible */}
                             <div className="space-y-2">
-                                {previewProducts.map((product, index) => (
+                                {previewProducts.map((product, index) => {
+                                    const productName = product.name || product.product_name || 'Product'
+                                    const productSku = product.sku || product.model_number || ''
+                                    const productImage = product.photos?.[0] || '/placeholder-product.jpg'
+                                    
+                                    return (
                                     <div key={product.id} className="flex gap-3 bg-white p-2.5 rounded-lg border shadow-sm">
                                         <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                             {index + 1}
@@ -230,14 +240,14 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                         <Image
                                             width={500}
                                             height={500}
-                                            src={product.photos[0] || '/placeholder-product.jpg'}
-                                            alt={product.product_name}
+                                            src={productImage}
+                                            alt={productName}
                                             className="w-10 h-10 object-cover rounded border shrink-0"
                                         />
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
-                                            {product.model_number && (
-                                                <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
+                                            <h4 className="font-medium text-gray-900 text-sm truncate">{productName}</h4>
+                                            {productSku && (
+                                                <p className="text-xs text-gray-500 truncate">SKU: {productSku}</p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2 shrink-0">
@@ -274,14 +284,19 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                             </button>
                                         </div>
                                     </div>
-                                ))}
+                                )})}
                             </div>
 
                             {/* Collapsible Content - Remaining products */}
                             {hasMoreProducts && (
                                 <>
                                     <CollapsibleContent className="space-y-2 mt-2">
-                                        {remainingProducts.map((product, index) => (
+                                        {remainingProducts.map((product, index) => {
+                                            const productName = product.name || product.product_name || 'Product'
+                                            const productSku = product.sku || product.model_number || ''
+                                            const productImage = product.photos?.[0] || '/placeholder-product.jpg'
+                                            
+                                            return (
                                             <div key={product.id} className="flex gap-3 bg-white p-2.5 rounded-lg border shadow-sm">
                                                 <Badge variant="outline" className="h-5 w-5 flex items-center justify-center p-0 text-xs shrink-0">
                                                     {PREVIEW_COUNT + index + 1}
@@ -289,14 +304,14 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                 <Image
                                                     width={500}
                                                     height={500}
-                                                    src={product.photos[0] || '/placeholder-product.jpg'}
-                                                    alt={product.product_name}
+                                                    src={productImage}
+                                                    alt={productName}
                                                     className="w-10 h-10 object-cover rounded border shrink-0"
                                                 />
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="font-medium text-gray-900 text-sm truncate">{product.product_name}</h4>
-                                                    {product.model_number && (
-                                                        <p className="text-xs text-gray-500 truncate">Model: {product.model_number}</p>
+                                                    <h4 className="font-medium text-gray-900 text-sm truncate">{productName}</h4>
+                                                    {productSku && (
+                                                        <p className="text-xs text-gray-500 truncate">SKU: {productSku}</p>
                                                     )}
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
@@ -333,7 +348,7 @@ export default function BulkQuoteModal({ open, onOpenChange, products, onSuccess
                                                     </button>
                                                 </div>
                                             </div>
-                                        ))}
+                                        )})}
                                     </CollapsibleContent>
 
                                     <CollapsibleTrigger asChild>

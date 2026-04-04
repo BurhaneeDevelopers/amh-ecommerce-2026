@@ -5,21 +5,18 @@ import { Button } from "../ui/button";
 import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { Product } from "@/supabase/schema/schema.type";
 import GetQuoteModal from "../modals/get-quote-modal";
-import { useCanViewQuantity } from "@/hooks/useCanViewQuantity";
 
-// Define badge variants based on `tag`
-type BadgeVariant = "on sale" | "out of stock" | "featured" | null;
+// Define badge variants based on status
+type BadgeVariant = "draft" | "inactive" | "active" | null;
 
-const badgeStyles: Record<Exclude<BadgeVariant, null>, string> = {
-  "on sale": "bg-gradient-to-r from-red-500 to-red-600 text-white",
-  "out of stock": "bg-gray-500 text-white",
-  featured: "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 text-black shadow-lg animate-pulse",
+const badgeStyles: Record<Exclude<BadgeVariant, null | 'active'>, string> = {
+  "draft": "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 text-black shadow-lg",
+  "inactive": "bg-gray-500 text-white",
 };
 
-const badgeLabels: Record<Exclude<BadgeVariant, null>, string> = {
-  "on sale": "🔥 Sale",
-  "out of stock": "Out of Stock",
-  featured: "⭐ Featured",
+const badgeLabels: Record<Exclude<BadgeVariant, null | 'active'>, string> = {
+  "draft": "📝 Draft",
+  "inactive": "Inactive",
 };
 
 interface ProductCardProps extends Product {
@@ -28,28 +25,19 @@ interface ProductCardProps extends Product {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   id,
-  product_name,
-  model_number,
-  photos,
-  on_hand_qty,
-  is_on_sale,
-  is_featured,
-  stock_status,
+  name,
+  sku,
+  description,
+  status,
+  master_values,
+  category,
   viewMode = 'grid',
 }) => {
   const router = useRouter();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const { canViewQuantity, isLoading: isLoadingAuth } = useCanViewQuantity();
 
-  // Determine badge based on product properties
-  const badge: BadgeVariant =
-    !stock_status || on_hand_qty <= 0
-      ? "out of stock"
-      : is_on_sale
-        ? "on sale"
-        : is_featured
-          ? "featured"
-          : null;
+  // Determine badge based on product status
+  const badge: BadgeVariant = status === 'active' ? null : status;
 
   const handleViewProduct = () => {
     if (id) {
@@ -61,37 +49,35 @@ const ProductCard: React.FC<ProductCardProps> = ({
     setIsQuoteModalOpen(true);
   };
 
+  // Placeholder image
+  const productImage = "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg";
+
+  // Extract first few master values for display
+  const displayValues = Object.entries(master_values || {}).slice(0, 2);
+
   // List view layout
   if (viewMode === 'list') {
     return (
-      <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${badge === "featured"
-          ? "border-yellow-400 shadow-lg hover:shadow-2xl"
-          : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
-        }`}>
+      <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
+        badge ? "border-gray-300 shadow-md hover:shadow-xl" : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
+      }`}>
         <div className="flex flex-row gap-6 p-4">
           {/* Product Image Container */}
-          <div className="relative flex-shrink-0 w-40 h-40 rounded-lg">
+          <div className="relative flex-shrink-0 w-40 h-40 rounded-lg bg-gray-50 flex items-center justify-center">
             <img
-              src={
-                photos[0] ??
-                "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-              }
-              alt={product_name}
+              src={productImage}
+              alt={name}
               className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
-              loading="lazy" decoding="async" width={160} height={160}
+              loading="lazy" 
+              decoding="async" 
+              width={160} 
+              height={160}
             />
 
             {/* Badge */}
-            {badge && (
+            {badge && badge !== 'active' && (
               <div className={`absolute top-2 right-2 ${badgeStyles[badge]} rounded-lg px-2 py-1 text-xs font-bold shadow-lg`}>
                 {badgeLabels[badge]}
-              </div>
-            )}
-
-            {/* Featured sparkle */}
-            {badge === "featured" && (
-              <div className="absolute top-2 left-2">
-                <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
               </div>
             )}
           </div>
@@ -100,26 +86,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex flex-col flex-grow justify-between min-w-0">
             <div className="space-y-2">
               <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
-                {product_name}
+                {name}
               </h3>
-              {model_number && (
+              {sku && (
                 <p className="text-sm text-gray-600 font-medium bg-gray-100 px-3 py-1 rounded-lg inline-block">
-                  {model_number}
+                  SKU: {sku}
                 </p>
               )}
-              {isLoadingAuth ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-gray-300 animate-pulse" />
-                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+              {category && (
+                <p className="text-xs text-gray-500">
+                  Category: {category.name}
+                </p>
+              )}
+              {displayValues.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {displayValues.map(([key, values]) => (
+                    <span key={key} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                      {Array.isArray(values) ? values.join(', ') : values}
+                    </span>
+                  ))}
                 </div>
-              ) : canViewQuantity ? (
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
-                  <p className="text-sm font-semibold text-gray-700">
-                    {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
-                  </p>
-                </div>
-              ) : null}
+              )}
             </div>
 
             {/* Action Buttons */}
@@ -127,13 +114,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Button
                 onClick={handleGetQuote}
                 size="lg"
-                className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${badge === "out of stock"
-                    ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
-                    : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
-                  } hover:scale-105 active:scale-95`}
+                disabled={status === 'inactive'}
+                className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
+                  status === 'inactive'
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white hover:scale-105 active:scale-95"
+                }`}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
-                {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
+                Get Quote
               </Button>
               <button
                 onClick={handleViewProduct}
@@ -154,9 +143,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onOpenChange={setIsQuoteModalOpen}
           product={{
             id: id,
-            product_name,
-            model_number,
-            photos,
+            name,
+            sku,
           }}
         />
       </div>
@@ -165,20 +153,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Grid view layout (default) - Compact and clean
   return (
-    <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${badge === "featured"
-        ? "border-yellow-400 shadow-lg hover:shadow-2xl"
-        : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
-      }`}>
+    <div className={`group relative overflow-hidden border-2 transition-all duration-300 bg-white rounded-xl hover:-translate-y-1 ${
+      badge ? "border-gray-300 shadow-md hover:shadow-xl" : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
+    }`}>
       {/* Product Image Container */}
-      <div className="relative aspect-square p-3">
+      <div className="relative aspect-square p-3 bg-gray-50">
         <img
-          src={
-            photos[0] ??
-            "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg"
-          }
-          alt={product_name}
+          src={productImage}
+          alt={name}
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
-          loading="lazy" decoding="async" width={500} height={300}
+          loading="lazy" 
+          decoding="async" 
+          width={500} 
+          height={300}
         />
 
         {/* Action Buttons - Always Visible */}
@@ -187,7 +174,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <WishlistButton product_id={id ?? ""} />
 
           {/* Badge */}
-          {badge && (
+          {badge && badge !== 'active' && (
             <div className={`${badgeStyles[badge]} rounded-lg px-2 py-1 text-xs font-bold shadow-lg`}>
               {badgeLabels[badge]}
             </div>
@@ -203,51 +190,48 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Eye className="w-5 h-5 md:w-6 md:h-6 text-gray-900" />
           </button>
         </div>
-
-        {/* Featured sparkle */}
-        {badge === "featured" && (
-          <div className="absolute top-2 left-2">
-            <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
-          </div>
-        )}
       </div>
 
       {/* Product Info */}
       <div className="p-3">
         <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200 min-h-[2.5rem] mb-2">
-          {product_name}
+          {name}
         </h3>
 
-        {model_number && (
+        {sku && (
           <p className="text-xs text-gray-600 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block mb-2">
-            {model_number}
+            SKU: {sku}
           </p>
         )}
 
-        {isLoadingAuth ? (
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" />
-            <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
+        {category && (
+          <p className="text-xs text-gray-500 mb-2">
+            {category.name}
+          </p>
+        )}
+
+        {displayValues.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {displayValues.map(([key, values]) => (
+              <span key={key} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                {Array.isArray(values) ? values[0] : values}
+              </span>
+            ))}
           </div>
-        ) : canViewQuantity ? (
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${on_hand_qty > 10 ? 'bg-green-500' : on_hand_qty > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
-            <p className="text-xs font-semibold text-gray-700">
-              {on_hand_qty > 0 ? `${on_hand_qty} in stock` : 'Out of stock'}
-            </p>
-          </div>
-        ) : null}
+        )}
 
         {/* Get Quote Button */}
         <Button
           onClick={handleGetQuote}
-          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${badge === "out of stock"
-              ? "bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
-              : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white"
-            } hover:scale-105 active:scale-95`}
+          disabled={status === 'inactive'}
+          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
+            status === 'inactive'
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white hover:scale-105 active:scale-95"
+          }`}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          {badge === "out of stock" ? "Pre-Order" : "Get Quote"}
+          Get Quote
         </Button>
       </div>
 
@@ -257,9 +241,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         onOpenChange={setIsQuoteModalOpen}
         product={{
           id: id,
-          product_name,
-          model_number,
-          photos,
+          name,
+          sku,
         }}
       />
     </div>
