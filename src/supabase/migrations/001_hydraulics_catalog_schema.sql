@@ -16,24 +16,36 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =====================================================
 -- CATEGORIES TABLE
 -- =====================================================
--- Categories represent product types (e.g., Die Springs, Ejector Pins)
+-- Categories represent product types with hierarchical structure
+-- Supports main categories and subcategories
 CREATE TABLE categories (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     color TEXT NOT NULL,
     icon TEXT NOT NULL,
+    parent_id UUID REFERENCES categories(id) ON DELETE CASCADE,
+    type TEXT NOT NULL DEFAULT 'main',
+    slug TEXT NOT NULL UNIQUE,
+    is_featured BOOLEAN NOT NULL DEFAULT false,
+    sort_order INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     
     -- Constraints
     CONSTRAINT categories_name_length CHECK (char_length(name) >= 2 AND char_length(name) <= 100),
-    CONSTRAINT categories_description_length CHECK (char_length(description) >= 5 AND char_length(description) <= 500)
+    CONSTRAINT categories_description_length CHECK (char_length(description) >= 5 AND char_length(description) <= 500),
+    CONSTRAINT categories_type_check CHECK (type IN ('main', 'sub'))
 );
 
--- Index for faster queries
+-- Indexes for faster queries
 CREATE INDEX idx_categories_created_at ON categories(created_at DESC);
 CREATE INDEX idx_categories_name ON categories(name);
+CREATE INDEX idx_categories_parent_id ON categories(parent_id);
+CREATE INDEX idx_categories_type ON categories(type);
+CREATE INDEX idx_categories_slug ON categories(slug);
+CREATE INDEX idx_categories_is_featured ON categories(is_featured);
+CREATE INDEX idx_categories_sort_order ON categories(sort_order);
 
 -- =====================================================
 -- MASTERS TABLE
@@ -257,24 +269,34 @@ CREATE POLICY "Authenticated users can delete products"
 -- SEED DATA
 -- =====================================================
 
--- Insert sample categories
-INSERT INTO categories (name, description, color, icon) VALUES
-    ('Die Springs', 'Compression springs used in die sets and molds', '#6366f1', '🔗'),
-    ('Ejector Pins', 'Pins used to eject parts from molds', '#ec4899', '📌');
+-- Insert sample categories with hierarchy
+INSERT INTO categories (name, description, color, icon, type, slug, is_featured, sort_order) VALUES
+    ('Die Springs', 'Compression springs used in die sets and molds', '#6366f1', '🔗', 'main', 'die-springs', true, 1),
+    ('Ejector Pins', 'Pins used to eject parts from molds', '#ec4899', '📌', 'main', 'ejector-pins', true, 2),
+    ('Hydraulic Tools', 'Professional hydraulic equipment and tools', '#f59e0b', '🔧', 'main', 'hydraulic-tools', false, 3);
 
 -- Get the category IDs for reference
 DO $$
 DECLARE
     cat_die_springs_id UUID;
     cat_ejector_pins_id UUID;
+    cat_hydraulic_tools_id UUID;
     master_size_id UUID;
     master_load_id UUID;
     master_length_id UUID;
     master_material_id UUID;
 BEGIN
     -- Get category IDs
-    SELECT id INTO cat_die_springs_id FROM categories WHERE name = 'Die Springs';
-    SELECT id INTO cat_ejector_pins_id FROM categories WHERE name = 'Ejector Pins';
+    SELECT id INTO cat_die_springs_id FROM categories WHERE slug = 'die-springs';
+    SELECT id INTO cat_ejector_pins_id FROM categories WHERE slug = 'ejector-pins';
+    SELECT id INTO cat_hydraulic_tools_id FROM categories WHERE slug = 'hydraulic-tools';
+    
+    -- Insert sample subcategories
+    INSERT INTO categories (name, description, color, icon, parent_id, type, slug, sort_order) VALUES
+        ('Light Load Springs', 'Light duty die springs', '#6366f1', '🔗', cat_die_springs_id, 'sub', 'light-load-springs', 1),
+        ('Heavy Load Springs', 'Heavy duty die springs', '#6366f1', '🔗', cat_die_springs_id, 'sub', 'heavy-load-springs', 2),
+        ('Standard Pins', 'Standard ejector pins', '#ec4899', '📌', cat_ejector_pins_id, 'sub', 'standard-pins', 1),
+        ('Nitrided Pins', 'Nitrided ejector pins', '#ec4899', '📌', cat_ejector_pins_id, 'sub', 'nitrided-pins', 2);
     
     -- Insert sample masters
     INSERT INTO masters (name, description, color, icon, category_id) VALUES
@@ -373,14 +395,92 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Function to get all subcategories for a main category
+CREATE OR REPLACE FUNCTION get_subcategories(main_category_id UUID)
+RETURNS TABLE (
+    id UUID,
+    name TEXT,
+    description TEXT,
+    color TEXT,
+    icon TEXT,
+    slug TEXT,
+    sort_order INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.id,
+        c.name,
+        c.description,
+        c.color,
+        c.icon,
+        c.slug,
+        c.sort_order
+    FROM categories c
+    WHERE c.parent_id = main_category_id
+    ORDER BY c.sort_order, c.name;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to get category hierarchy (main category with its subcategories)
+CREATE OR REPLACE FUNCTION get_category_hierarchy()
+RETURNS TABLE (
+    id UUID,
+    name TEXT,
+    description TEXT,
+    color TEXT,
+    icon TEXT,
+    slug TEXT,
+    is_featured BOOLEAN,
+    sort_order INTEGER,
+    subcategories JSONB
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.id,
+        c.name,
+        c.description,
+        c.color,
+        c.icon,
+        c.slug,
+        c.is_featured,
+        c.sort_order,
+        COALESCE(
+            (
+                SELECT jsonb_agg(
+                    jsonb_build_object(
+                        'id', sub.id,
+                        'name', sub.name,
+                        'description', sub.description,
+                        'color', sub.color,
+                        'icon', sub.icon,
+                        'slug', sub.slug,
+                        'sort_order', sub.sort_order
+                    ) ORDER BY sub.sort_order, sub.name
+                )
+                FROM categories sub
+                WHERE sub.parent_id = c.id
+            ),
+            '[]'::jsonb
+        ) as subcategories
+    FROM categories c
+    WHERE c.type = 'main'
+    ORDER BY c.sort_order, c.name;
+END;
+$$ LANGUAGE plpgsql;
+
 -- =====================================================
 -- COMMENTS FOR DOCUMENTATION
 -- =====================================================
 
-COMMENT ON TABLE categories IS 'Product categories (e.g., Die Springs, Ejector Pins)';
+COMMENT ON TABLE categories IS 'Product categories with hierarchical structure (main and subcategories)';
 COMMENT ON TABLE masters IS 'Attribute types (e.g., Size, Length, Material) that can be linked to categories';
 COMMENT ON TABLE master_fields IS 'Specific fields for each master with their options';
 COMMENT ON TABLE products IS 'Actual products in the catalog';
 
+COMMENT ON COLUMN categories.parent_id IS 'Reference to parent category for subcategories, NULL for main categories';
+COMMENT ON COLUMN categories.type IS 'Category type: main (top-level) or sub (child category)';
+COMMENT ON COLUMN categories.slug IS 'URL-friendly identifier for the category';
 COMMENT ON COLUMN products.master_values IS 'JSONB object storing selected values for each master field. Format: {"field_id": ["value1", "value2"]}';
 COMMENT ON COLUMN products.status IS 'Product status: active (visible to public), inactive (hidden), draft (work in progress)';

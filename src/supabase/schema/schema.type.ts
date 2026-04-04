@@ -13,8 +13,16 @@ export interface Category {
   description: string;
   color: string;
   icon: string;
+  parent_id?: string | null;
+  type: 'main' | 'sub';
+  slug: string;
+  is_featured?: boolean;
+  sort_order?: number;
   created_at?: string;
   updated_at?: string;
+  
+  // Joined data
+  subcategories?: Category[];
 }
 
 export interface Master {
