@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Search, Home, Package, BookOpen, Info, ShoppingCart } from "lucide-react";
+import { Menu, Search, Home, Package, BookOpen, Info, ShoppingCart, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -52,6 +52,7 @@ export default function Navbar() {
     { label: "Products", href: "/products", icon: Package },
     { label: "About", href: "/about", icon: Info },
     { label: "Blog", href: "/blog", icon: BookOpen },
+    { label: "Contact", href: "/contact", icon: Mail },
   ];
 
   return (
@@ -60,12 +61,14 @@ export default function Navbar() {
       <div className="bg-white">
         <div className="w-full">
           <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
-            {/* Left: Company Name */}
+            {/* Left: Company Logo */}
             <Link href="/" className="flex items-center flex-shrink-0 group">
-              <div className="relative">
-                <h1 className="text-2xl font-bold text-[#2d2d2d]">
-                  A.M. <span className="text-[#ff6b35]">Hydraulics</span>
-                </h1>
+              <div className="relative h-12 w-auto">
+                <img 
+                  src="/logo.png" 
+                  alt="A.M. Hydraulics" 
+                  className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
             </Link>
 
@@ -237,6 +240,23 @@ export default function Navbar() {
                   <Info className="w-5 h-5 text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors" />
                   <span className="text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35]">
                     About
+                  </span>
+                </Button>
+              </Link>
+
+              <div className="h-6 w-px bg-[#c084fc]" />
+
+              {/* Contact */}
+              <Link href="/contact">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 h-auto py-2.5 px-5 rounded-xl
+                           hover:bg-white
+                           transition-all duration-300 group"
+                >
+                  <Mail className="w-5 h-5 text-[#4a4a4a] group-hover:text-[#ff6b35] transition-colors" />
+                  <span className="text-sm font-semibold text-[#4a4a4a] group-hover:text-[#ff6b35]">
+                    Contact
                   </span>
                 </Button>
               </Link>

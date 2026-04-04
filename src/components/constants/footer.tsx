@@ -12,8 +12,12 @@ const Footer = () => {
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {/* Company Info */}
                     <div className="space-y-4">
-                        <div className="bg-[#ff6b35] p-4 w-fit rounded-lg shadow-lg">
-                            <h3 className="text-white font-bold text-xl">A.M. Hydraulics</h3>
+                        <div className="bg-white p-4 w-fit rounded-lg shadow-lg">
+                            <img 
+                                src="/logo.png" 
+                                alt="A.M. Hydraulics" 
+                                className="h-10 w-auto object-contain"
+                            />
                         </div>
 
                         <p className="text-[#e0d4f7] text-sm leading-relaxed">
