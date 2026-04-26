@@ -44,10 +44,31 @@ export interface MasterField {
   master_id: string;
   label: string;
   type: 'select' | 'text' | 'number' | 'color';
-  options: string[]; // Array of options for select type
   unit?: string | null;
   sort_order: number;
   created_at?: string;
+  
+  // Joined data
+  masters?: Master;
+}
+
+export interface MasterValue {
+  id?: string;
+  master_field_id: string;
+  value: string;
+  created_at?: string;
+  
+  // Joined data
+  master_fields?: MasterField;
+}
+
+export interface ProductMasterValue {
+  id?: string;
+  product_id: string;
+  master_value_id: string;
+  
+  // Joined data
+  master_values?: MasterValue;
 }
 
 export interface Product {
@@ -57,12 +78,13 @@ export interface Product {
   description?: string | null;
   category_id: string;
   status: 'active' | 'inactive' | 'draft';
-  master_values: Record<string, string[]>; // { "field_id": ["value1", "value2"] }
+  image_url?: string | null;
   created_at?: string;
   updated_at?: string;
   
   // Joined data
   category?: Category;
+  product_master_values?: ProductMasterValue[];
 }
 
 // Legacy Brand types (kept for backward compatibility if needed)

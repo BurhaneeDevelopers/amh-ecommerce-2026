@@ -43,7 +43,13 @@ export default function ProductInfo({
   };
 
   // Extract master values for display
-  const masterValueEntries = Object.entries(product.master_values || {});
+  const specs = (product.product_master_values || []).map(pmv => ({
+    id: pmv.id,
+    label: pmv.master_values?.master_fields?.label || "Spec",
+    value: pmv.master_values?.value || "",
+    unit: pmv.master_values?.master_fields?.unit || "",
+    icon: pmv.master_values?.master_fields?.masters?.icon || "🔹"
+  }));
 
   return (
     <div className="space-y-8 w-full flex-grow">
@@ -114,7 +120,7 @@ export default function ProductInfo({
       )}
 
       {/* Master Values / Specifications */}
-      {masterValueEntries.length > 0 && (
+      {specs.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-2xl p-6">
           <button
             onClick={() => setShowMasterValues(!showMasterValues)}
@@ -130,24 +136,19 @@ export default function ProductInfo({
             )}
           </button>
           {showMasterValues && (
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {masterValueEntries.map(([fieldId, values]) => (
-                <div key={fieldId} className="bg-blue-50 rounded-lg p-3">
-                  <P className="text-xs font-semibold text-blue-900 mb-1">
-                    Field ID: {fieldId}
-                  </P>
-                  <div className="flex flex-wrap gap-2">
-                    {Array.isArray(values) ? (
-                      values.map((value, idx) => (
-                        <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {value}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        {values}
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {specs.map((spec) => (
+                <div key={spec.id} className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex items-center gap-3 transition-colors hover:bg-blue-50">
+                  <div className="text-2xl">{spec.icon}</div>
+                  <div>
+                    <P className="text-xs font-semibold text-blue-900/70 mb-0.5 uppercase tracking-wider">
+                      {spec.label}
+                    </P>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-sm font-bold text-blue-900">
+                        {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
                       </span>
-                    )}
+                    </div>
                   </div>
                 </div>
               ))}

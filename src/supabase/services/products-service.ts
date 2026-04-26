@@ -14,6 +14,24 @@ class Products_Service {
                     description,
                     color,
                     icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
                 )
             `)
             .eq('status', 'active')
@@ -33,6 +51,24 @@ class Products_Service {
                     description,
                     color,
                     icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
                 )
             `)
             .eq("id", id)
@@ -52,6 +88,24 @@ class Products_Service {
                     description,
                     color,
                     icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
                 )
             `)
             .eq("sku", sku)
@@ -102,6 +156,24 @@ class Products_Service {
                     description,
                     color,
                     icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
                 )
             `)
             .eq('category_id', categoryId)
@@ -147,6 +219,24 @@ class Products_Service {
                     description,
                     color,
                     icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
                 )
             `, { count: 'exact' })
             .eq('status', 'active');

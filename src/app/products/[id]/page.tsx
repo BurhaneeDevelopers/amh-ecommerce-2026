@@ -85,7 +85,7 @@ export default function ProductDetailsPage() {
     : null
 
   // Placeholder images if none exist
-  const productImages = product?.master_values ? [] : []
+  const productImages = product?.product_master_values ? [] : []
 
   return (
     <Container className="">

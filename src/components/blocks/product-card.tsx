@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   sku,
   description,
   status,
-  master_values,
+  product_master_values,
   category,
   viewMode = 'grid',
 }) => {
@@ -53,7 +53,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const productImage = "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg";
 
   // Extract first few master values for display
-  const displayValues = Object.entries(master_values || {}).slice(0, 2);
+  const displayValues = (product_master_values || []).slice(0, 2).map(pmv => ({
+    label: pmv.master_values?.master_fields?.label || "Spec",
+    value: pmv.master_values?.value || "",
+    unit: pmv.master_values?.master_fields?.unit || ""
+  }));
 
   // List view layout
   if (viewMode === 'list') {
@@ -100,9 +104,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
               {displayValues.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {displayValues.map(([key, values]) => (
-                    <span key={key} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                      {Array.isArray(values) ? values.join(', ') : values}
+                  {displayValues.map((spec, idx) => (
+                    <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                      {spec.label}: {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
                     </span>
                   ))}
                 </div>
@@ -212,9 +216,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {displayValues.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
-            {displayValues.map(([key, values]) => (
-              <span key={key} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                {Array.isArray(values) ? values[0] : values}
+            {displayValues.map((spec, idx) => (
+              <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                {spec.label}: {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
               </span>
             ))}
           </div>
