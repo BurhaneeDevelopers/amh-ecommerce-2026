@@ -1,49 +1,78 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useGetSingleProduct } from '@/api/products.service'
 import { Container } from '@/components/layout/container'
 import GetQuoteModal from '@/components/modals/get-quote-modal'
 import EnquirySuccessModal from '@/components/blocks/modal/enquiry-success-modal'
-import ProductImageGallery from '@/components/product/product-image-gallery'
-import ProductInfo from '@/components/product/product-info'
-import Breadcrumb from '@/components/product/breadcrumb'
-import CommentsSection from '@/components/product/comments-section'
+import ProductSpecificationsTable from '@/components/product/product-specifications-table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
+import { Download } from 'lucide-react'
+import Image from 'next/image'
 
 export default function ProductDetailsPage() {
   const params = useParams()
   const productId = params.id as string
   const [showQuoteModal, setShowQuoteModal] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [selectedSpecification, setSelectedSpecification] = useState<{ index: number; cells: { label: string; value: string; unit: string | null }[] } | null>(null)
+  const [activeTab, setActiveTab] = useState<'description' | 'additional'>('description')
 
   // Fetch product data
   const { data: product, isLoading: productLoading, error: productError } = useGetSingleProduct(productId)
 
+  // Extract specification summary for display
+  const specificationSummary = useMemo(() => {
+    if (!product?.product_master_values) return null;
+    
+    const summary: { label: string; values: string[] }[] = [];
+    const masterMap = new Map<string, { label: string; values: Set<string> }>();
+
+    product.product_master_values.forEach((pmv) => {
+      const masterValue = pmv.master_values;
+      if (!masterValue?.master_fields?.masters) return;
+
+      const master = masterValue.master_fields.masters;
+      const masterId = master.id!;
+      const label = masterValue.master_fields.label;
+      const value = masterValue.value;
+      const unit = masterValue.master_fields.unit;
+
+      if (!masterMap.has(masterId)) {
+        masterMap.set(masterId, { label, values: new Set() });
+      }
+      
+      const displayValue = unit ? `${value} ${unit}` : value;
+      masterMap.get(masterId)!.values.add(displayValue);
+    });
+
+    masterMap.forEach((data) => {
+      summary.push({
+        label: data.label,
+        values: Array.from(data.values)
+      });
+    });
+
+    return summary;
+  }, [product]);
+
+  const handleGetQuote = (specData?: { index: number; cells: { label: string; value: string; unit: string | null }[] }) => {
+    setSelectedSpecification(specData || null);
+    setShowQuoteModal(true);
+  };
+
   if (productLoading) {
     return (
-      <Container className="py-8 lg:py-12">
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-8"></div>
+      <Container className="py-8 max-w-7xl">
+        <div className="animate-pulse space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="space-y-4">
-              <div className="aspect-square bg-gray-200 rounded-2xl"></div>
-              <div className="flex gap-3">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="w-20 h-20 bg-gray-200 rounded-xl"></div>
-                ))}
-              </div>
-            </div>
+            <Skeleton className="aspect-square rounded-lg" />
             <div className="space-y-6">
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="grid grid-cols-3 gap-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="h-16 bg-gray-200 rounded-xl"></div>
-                ))}
-              </div>
-              <div className="h-32 bg-gray-200 rounded-2xl"></div>
-              <div className="h-14 bg-gray-200 rounded-2xl"></div>
+              <Skeleton className="h-12 w-3/4" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-12 w-full" />
             </div>
           </div>
         </div>
@@ -53,68 +82,169 @@ export default function ProductDetailsPage() {
 
   if (productError || !product) {
     return (
-      <Container className="py-8 lg:py-12">
+      <Container className="py-8 max-w-7xl">
         <div className="text-center py-16">
-          <div className="max-w-md mx-auto">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0H4m16 0l-2-2m2 2l-2 2M4 13l2-2m-2 2l2 2" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Product not found</h2>
-            <p className="text-gray-600 mb-6">The product you&apos;re looking for doesn&apos;t exist or may have been removed.</p>
-            <button 
-              onClick={() => window.history.back()}
-              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
-            >
-              Go Back
-            </button>
-          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Product not found</h2>
+          <p className="text-gray-600 mb-6">The product you&apos;re looking for doesn&apos;t exist.</p>
+          <Button onClick={() => window.history.back()}>Go Back</Button>
         </div>
       </Container>
     )
   }
 
-  // Prepare data for components
   const isOutOfStock = product?.status !== 'active'
-  
-  const badge = isOutOfStock
-    ? { type: 'out of stock' as const, label: 'Out of Stock', className: 'bg-gray-500 text-white' }
-    : product?.status === 'draft'
-    ? { type: 'draft' as const, label: 'Draft', className: 'bg-yellow-500 text-black' }
-    : null
-
-  // Placeholder images if none exist
-  const productImages = product?.product_master_values ? [] : []
 
   return (
-    <Container className="">
-      {/* Breadcrumb */}
-      <Breadcrumb 
-        productName={product.name}
-        categoryName={product.category?.name}
-      />
-
-      {/* Main Product Section */}
-      <div className="flex flex-wrap w-full 2xl:flex-nowrap gap-12 lg:gap-16 mb-16">
-        {/* Image Gallery */}
-        <ProductImageGallery
-          images={productImages}
-          productName={product.name}
-          badge={badge}
-        />
+    <Container className="py-8 max-w-7xl">
+      {/* Product Header Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 mb-8">
+        {/* Product Image - Technical Diagram Style */}
+        <div className="bg-white border border-gray-200 rounded-lg p-8 flex items-center justify-center">
+          {product.image_url ? (
+            <Image
+              src={product.image_url}
+              alt={product.name}
+              width={350}
+              height={350}
+              className="max-w-full h-auto"
+            />
+          ) : (
+            <div className="w-full aspect-square flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <div className="text-6xl text-gray-300 mb-2">{product.category?.icon || '📦'}</div>
+                <p className="text-gray-400 text-sm">Technical Diagram</p>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Product Info */}
-        <ProductInfo
-          product={product}
-          onGetQuote={() => setShowQuoteModal(true)}
-          isOutOfStock={isOutOfStock}
-        />
+        <div className="space-y-6">
+          {/* Product Title */}
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {product.name}
+            </h1>
+            
+            {/* Description */}
+            {product.description && (
+              <p className="text-gray-600 leading-relaxed text-base">
+                {product.description}
+              </p>
+            )}
+          </div>
+
+          {/* Specifications Summary */}
+          {specificationSummary && specificationSummary.length > 0 && (
+            <div className="space-y-4 border-t border-gray-200 pt-6">
+              {/* Category */}
+              {product.category && (
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-2 min-w-[140px]">
+                    <span className="text-blue-600 text-xl">▶</span>
+                    <span className="font-semibold text-gray-900">Category</span>
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-gray-700">: {product.category.name}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic Specifications */}
+              {specificationSummary.map((spec, idx) => (
+                <div key={idx} className="flex items-start gap-4">
+                  <div className="flex items-center gap-2 min-w-[140px]">
+                    <span className="text-blue-600 text-xl">▶</span>
+                    <span className="font-semibold text-gray-900">{spec.label}</span>
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-gray-700">: {spec.values.join(', ')}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 pt-4">
+            <Button
+              onClick={() => handleGetQuote()}
+              disabled={isOutOfStock}
+              size="lg"
+              className="bg-gray-800 hover:bg-gray-900 text-white px-8 h-12 text-base font-semibold uppercase"
+            >
+              Get a Quote
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white px-8 h-12 text-base font-semibold uppercase"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Brochure
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Comments Section */}
-      <div className="mt-16">
-        <CommentsSection productId={productId} />
+      {/* Tabs Section */}
+      <div className="mb-0">
+        <div className="flex gap-0 border-b-0">
+          <button
+            onClick={() => setActiveTab('description')}
+            className={`px-8 py-3 font-medium transition-colors ${
+              activeTab === 'description'
+                ? 'bg-cyan-400 text-gray-900'
+                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+            }`}
+          >
+            Description
+          </button>
+          <button
+            onClick={() => setActiveTab('additional')}
+            className={`px-8 py-3 font-medium transition-colors ${
+              activeTab === 'additional'
+                ? 'bg-cyan-400 text-gray-900'
+                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+            }`}
+          >
+            Additional Information
+          </button>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="bg-white border border-gray-200 p-8 mb-12">
+        {activeTab === 'description' && (
+          <div className="space-y-8">
+            {/* Description Text */}
+            {product.description && (
+              <div className="prose prose-base max-w-none">
+                <p className="text-gray-700 leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            {/* Specifications Table */}
+            {product.product_master_values && product.product_master_values.length > 0 && (
+              <div>
+                <ProductSpecificationsTable
+                  product={product}
+                  onGetQuote={handleGetQuote}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'additional' && (
+          <div className="prose prose-base max-w-none">
+            <p className="text-gray-700 leading-relaxed">
+              Additional product information and technical details will be displayed here.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Get Quote Modal */}
@@ -130,8 +260,7 @@ export default function ProductDetailsPage() {
         open={showSuccessModal}
         onOpenChange={setShowSuccessModal}
         onContinueShopping={() => {
-          // You can add navigation logic here if needed
-          // For now, just close the modal
+          setShowSuccessModal(false);
         }}
       />
     </Container>

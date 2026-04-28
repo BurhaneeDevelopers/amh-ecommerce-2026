@@ -1,14 +1,14 @@
 "use client";
 import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetAllCategoriesWithProductCount } from "@/api/category.service";
+import { useGetMainCategories } from "@/api/category.service";
 import { useGetAllProducts } from "@/api/products.service";
 import CategoryCard from "@/components/blocks/category-card";
 import FeaturedProductsCarousel from "@/components/products/featured-products-carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategoriesContent = () => {
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
+  const { data: categories = [], isLoading: categoriesLoading } = useGetMainCategories();
   const { data: allProducts = [], isLoading: productsLoading } = useGetAllProducts();
 
   if (categoriesLoading) {
@@ -38,7 +38,7 @@ const CategoriesContent = () => {
               Browse by Category
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore our wide range of products organized by category. Click on any category to view all available products.
+              Explore our wide range of hydraulic and industrial products organized by category. Click on any category to view all available products.
             </p>
           </div>
 

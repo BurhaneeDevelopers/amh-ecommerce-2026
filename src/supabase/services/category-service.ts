@@ -13,6 +13,40 @@ class Categories_Service {
         return data;
     }
 
+    async getMainCategories(): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .eq('is_main', true)
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getMainCategoriesWithSubcategories(): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select(`
+                *,
+                subcategories:categories!parent_id(*)
+            `)
+            .eq('is_main', true)
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getSubcategoriesByParentId(parentId: string): Promise<Category[] | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select('*')
+            .eq('parent_id', parentId)
+            .eq('is_main', false)
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    }
+
     async getAllCategoriesWithProductCount(): Promise<(Category & { product_count: number })[] | null> {
         const { data, error } = await supabase
             .from(this.table)
@@ -35,7 +69,24 @@ class Categories_Service {
         if (!id) return null;
 
         const { data, error } = await supabase.from(this.table)
-            .select('*')
+            .select(`
+                *,
+                parent:categories!parent_id(*),
+                subcategories:categories!parent_id(*)
+            `)
+            .eq("id", id)
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getCategoryWithSubcategories(id: string): Promise<Category | null> {
+        const { data, error } = await supabase.from(this.table)
+            .select(`
+                *,
+                subcategories:categories!parent_id(*)
+            `)
             .eq("id", id)
             .single();
 

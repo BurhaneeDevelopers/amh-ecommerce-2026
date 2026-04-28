@@ -14,15 +14,14 @@ export interface Category {
   color: string;
   icon: string;
   parent_id?: string | null;
-  type: 'main' | 'sub';
-  slug: string;
-  is_featured?: boolean;
-  sort_order?: number;
+  is_main: boolean;
   created_at?: string;
   updated_at?: string;
   
   // Joined data
   subcategories?: Category[];
+  parent?: Category;
+  product_count?: number;
 }
 
 export interface Master {
