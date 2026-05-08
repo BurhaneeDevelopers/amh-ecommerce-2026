@@ -1,14 +1,14 @@
 "use client";
 import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetMainCategories } from "@/api/category.service";
+import { useGetMainCategories, useGetAllCategoriesWithProductCount } from "@/api/category.service";
 import { useGetAllProducts } from "@/api/products.service";
 import CategoryCard from "@/components/blocks/category-card";
 import FeaturedProductsCarousel from "@/components/products/featured-products-carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategoriesContent = () => {
-  const { data: categories = [], isLoading: categoriesLoading } = useGetMainCategories();
+  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
   const { data: allProducts = [], isLoading: productsLoading } = useGetAllProducts();
 
   if (categoriesLoading) {

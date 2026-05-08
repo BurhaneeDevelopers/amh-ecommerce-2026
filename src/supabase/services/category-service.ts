@@ -48,21 +48,48 @@ class Categories_Service {
     }
 
     async getAllCategoriesWithProductCount(): Promise<(Category & { product_count: number })[] | null> {
-        const { data, error } = await supabase
+        // Get all main categories
+        const { data: mainCategories, error: mainError } = await supabase
             .from(this.table)
-            .select(`
-                *,
-                products:products(count)
-            `)
+            .select('*')
+            .eq('is_main', true)
             .order('name', { ascending: true });
 
-        if (error) throw error;
+        if (mainError) throw mainError;
+        if (!mainCategories) return [];
 
-        // Transform the data to include product_count
-        return data?.map(cat => ({
-            ...cat,
-            product_count: cat.products?.[0]?.count || 0
-        })) || [];
+        // For each main category, count products in the category AND its subcategories
+        const categoriesWithCount = await Promise.all(
+            mainCategories.map(async (category) => {
+                // Get all subcategory IDs
+                const { data: subcategories } = await supabase
+                    .from(this.table)
+                    .select('id')
+                    .eq('parent_id', category.id);
+
+                const subcategoryIds = subcategories?.map(sub => sub.id) || [];
+                const allCategoryIds = [category.id, ...subcategoryIds];
+
+                // Count products in main category and all subcategories
+                const { count, error: countError } = await supabase
+                    .from('products')
+                    .select('*', { count: 'exact', head: true })
+                    .in('category_id', allCategoryIds)
+                    .eq('status', 'active');
+
+                if (countError) {
+                    console.error('Error counting products:', countError);
+                    return { ...category, product_count: 0 };
+                }
+
+                return {
+                    ...category,
+                    product_count: count || 0
+                };
+            })
+        );
+
+        return categoriesWithCount;
     }
 
     async getSingleCategoryById(id: string | null): Promise<Category | null> {
