@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "name": "discard-bs",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Do not create any summary files"
+  },
+  "workspaceFolderName": "amh-ecommerce-2026",
+  "shortName": "discard-bs"
+}

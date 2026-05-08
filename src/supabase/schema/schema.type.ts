@@ -55,6 +55,7 @@ export interface MasterValue {
   id?: string;
   master_field_id: string;
   value: string;
+  sort_order?: number;
   created_at?: string;
   
   // Joined data
@@ -65,9 +66,34 @@ export interface ProductMasterValue {
   id?: string;
   product_id: string;
   master_value_id: string;
+  created_at?: string;
   
   // Joined data
   master_values?: MasterValue;
+}
+
+export interface ProductVariant {
+  id?: string;
+  product_id: string;
+  variant_name?: string | null;
+  sku_suffix?: string | null;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+  
+  // Joined data
+  product_variant_values?: ProductVariantValue[];
+}
+
+export interface ProductVariantValue {
+  id?: string;
+  variant_id: string;
+  master_field_id: string;
+  value: string;
+  created_at?: string;
+  
+  // Joined data
+  master_field?: MasterField;
 }
 
 export interface Product {
@@ -84,6 +110,7 @@ export interface Product {
   // Joined data
   category?: Category;
   product_master_values?: ProductMasterValue[];
+  product_variants?: ProductVariant[];
 }
 
 // Legacy Brand types (kept for backward compatibility if needed)

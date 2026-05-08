@@ -17,7 +17,10 @@ export default function ProductDetailsPage() {
   const productId = params.id as string
   const [showQuoteModal, setShowQuoteModal] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [selectedSpecification, setSelectedSpecification] = useState<{ index: number; cells: { label: string; value: string; unit: string | null }[] } | null>(null)
+  const [selectedSpecification, setSelectedSpecification] = useState<{ 
+    index: number; 
+    cells: { label: string; value: string; unit: string | null }[] 
+  } | null>(null)
   const [activeTab, setActiveTab] = useState<'description' | 'additional'>('description')
 
   // Fetch product data
@@ -58,7 +61,10 @@ export default function ProductDetailsPage() {
     return summary;
   }, [product]);
 
-  const handleGetQuote = (specData?: { index: number; cells: { label: string; value: string; unit: string | null }[] }) => {
+  const handleGetQuote = (specData?: { 
+    index: number; 
+    cells: { label: string; value: string; unit: string | null }[] 
+  }) => {
     setSelectedSpecification(specData || null);
     setShowQuoteModal(true);
   };
@@ -227,7 +233,8 @@ export default function ProductDetailsPage() {
             )}
 
             {/* Specifications Table */}
-            {product.product_master_values && product.product_master_values.length > 0 && (
+            {((product.product_master_values && product.product_master_values.length > 0) || 
+              (product.product_variants && product.product_variants.length > 0)) && (
               <div>
                 <ProductSpecificationsTable
                   product={product}
