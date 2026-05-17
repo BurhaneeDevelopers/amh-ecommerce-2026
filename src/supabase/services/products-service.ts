@@ -163,6 +163,9 @@ class Products_Service {
     }
 
     async getProductsByCategory(categoryId: string, limit?: number): Promise<Product[] | null> {
+        // First, get all descendant category IDs (subcategories at all levels)
+        const categoryIds = await this.getAllDescendantCategoryIds(categoryId);
+        
         let query = supabase
             .from(this.table)
             .select(`
@@ -193,7 +196,7 @@ class Products_Service {
                     )
                 )
             `)
-            .eq('category_id', categoryId)
+            .in('category_id', categoryIds)
             .eq('status', 'active')
             .order('created_at', { ascending: false });
 
@@ -205,6 +208,34 @@ class Products_Service {
 
         if (error) throw error;
         return data;
+    }
+
+    // Helper function to get all descendant category IDs recursively
+    private async getAllDescendantCategoryIds(categoryId: string): Promise<string[]> {
+        const categoryIds = [categoryId]; // Include the parent category itself
+        
+        // Get direct children
+        const { data: children, error } = await supabase
+            .from('categories')
+            .select('id')
+            .eq('parent_id', categoryId);
+
+        if (error) {
+            console.error('Error fetching subcategories:', error);
+            return categoryIds;
+        }
+
+        if (!children || children.length === 0) {
+            return categoryIds;
+        }
+
+        // Recursively get descendants of each child
+        for (const child of children) {
+            const descendantIds = await this.getAllDescendantCategoryIds(child.id);
+            categoryIds.push(...descendantIds);
+        }
+
+        return categoryIds;
     }
 
     async searchProducts(searchTerm: string, categoryId?: string): Promise<Product[] | null> {
@@ -258,9 +289,17 @@ class Products_Service {
             `, { count: 'exact' })
             .eq('status', 'active');
 
-        // Apply category filter
+        // Apply category filter (including all descendant categories)
         if (params.categoryIds && params.categoryIds.length > 0) {
-            query = query.in('category_id', params.categoryIds);
+            // Get all descendant category IDs for each provided category
+            const allCategoryIds: string[] = [];
+            for (const categoryId of params.categoryIds) {
+                const descendantIds = await this.getAllDescendantCategoryIds(categoryId);
+                allCategoryIds.push(...descendantIds);
+            }
+            // Remove duplicates
+            const uniqueCategoryIds = [...new Set(allCategoryIds)];
+            query = query.in('category_id', uniqueCategoryIds);
         }
 
         // Apply search filter

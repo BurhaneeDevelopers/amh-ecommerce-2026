@@ -58,19 +58,13 @@ class Categories_Service {
         if (mainError) throw mainError;
         if (!mainCategories) return [];
 
-        // For each main category, count products in the category AND its subcategories
+        // For each main category, count products in the category AND its subcategories (recursively)
         const categoriesWithCount = await Promise.all(
             mainCategories.map(async (category) => {
-                // Get all subcategory IDs
-                const { data: subcategories } = await supabase
-                    .from(this.table)
-                    .select('id')
-                    .eq('parent_id', category.id);
+                // Get all descendant category IDs recursively
+                const allCategoryIds = await this.getAllDescendantCategoryIds(category.id);
 
-                const subcategoryIds = subcategories?.map(sub => sub.id) || [];
-                const allCategoryIds = [category.id, ...subcategoryIds];
-
-                // Count products in main category and all subcategories
+                // Count products in main category and all descendant subcategories
                 const { count, error: countError } = await supabase
                     .from('products')
                     .select('*', { count: 'exact', head: true })
@@ -90,6 +84,34 @@ class Categories_Service {
         );
 
         return categoriesWithCount;
+    }
+
+    // Helper function to get all descendant category IDs recursively
+    private async getAllDescendantCategoryIds(categoryId: string): Promise<string[]> {
+        const categoryIds = [categoryId]; // Include the parent category itself
+        
+        // Get direct children
+        const { data: children, error } = await supabase
+            .from(this.table)
+            .select('id')
+            .eq('parent_id', categoryId);
+
+        if (error) {
+            console.error('Error fetching subcategories:', error);
+            return categoryIds;
+        }
+
+        if (!children || children.length === 0) {
+            return categoryIds;
+        }
+
+        // Recursively get descendants of each child
+        for (const child of children) {
+            const descendantIds = await this.getAllDescendantCategoryIds(child.id);
+            categoryIds.push(...descendantIds);
+        }
+
+        return categoryIds;
     }
 
     async getSingleCategoryById(id: string | null): Promise<Category | null> {
