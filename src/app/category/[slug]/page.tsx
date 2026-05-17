@@ -1,9 +1,9 @@
 "use client";
 import { useState, useMemo, Suspense } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
-import { useGetProductsByCategory } from "@/api/products.service";
-import { useGetCategoryWithSubcategories, useGetSubcategoriesByParentId } from "@/api/category.service";
+import { useGetProductsByCategory, useGetProductsByDirectCategory } from "@/api/products.service";
+import { useGetCategoryWithSubcategories } from "@/api/category.service";
 import ProductCard from "@/components/blocks/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import Link from "next/link";
 
 const CategoryContent = () => {
   const params = useParams();
-  const router = useRouter();
   const categoryId = params.slug as string;
   
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,9 +21,27 @@ const CategoryContent = () => {
   // Get main category with subcategories
   const { data: category, isLoading: categoryLoading } = useGetCategoryWithSubcategories(categoryId);
   
-  // Get products for selected category (main or subcategory)
+  const subcategories = category?.subcategories || [];
+  const hasSubcategories = subcategories.length > 0;
+  
+  // Get products for selected category
+  // If parent has subcategories and none selected, show only direct products
+  // If subcategory selected or no subcategories exist, show all products including nested
   const activeCategory = selectedSubcategory || categoryId;
-  const { data: products = [], isLoading: productsLoading } = useGetProductsByCategory(activeCategory);
+  const showOnlyDirectProducts = hasSubcategories && !selectedSubcategory;
+  
+  const { data: allProducts = [], isLoading: allProductsLoading } = useGetProductsByCategory(
+    activeCategory,
+    undefined
+  );
+  
+  const { data: directProducts = [], isLoading: directProductsLoading } = useGetProductsByDirectCategory(
+    activeCategory,
+    undefined
+  );
+  
+  const products = showOnlyDirectProducts ? directProducts : allProducts;
+  const productsLoading = showOnlyDirectProducts ? directProductsLoading : allProductsLoading;
 
   // Filter products by search query
   const filteredProducts = useMemo(() => {
@@ -59,9 +76,6 @@ const CategoryContent = () => {
     );
   }
 
-  const subcategories = category.subcategories || [];
-  const hasSubcategories = subcategories.length > 0;
-
   return (
     <Container>
       <div className="py-8">
@@ -94,47 +108,70 @@ const CategoryContent = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Subcategories */}
-          {hasSubcategories && (
-            <aside className="lg:w-64 flex-shrink-0">
-              <div className="bg-white rounded-xl border border-gray-200 p-4 sticky top-4">
-                <h3 className="font-bold text-gray-900 mb-4">Subcategories</h3>
-                <div className="space-y-1">
-                  {/* All Products Option */}
-                  <button
-                    onClick={() => setSelectedSubcategory(null)}
-                    className={`w-full text-left px-4 py-2.5 rounded-lg transition-colors ${
-                      !selectedSubcategory
-                        ? "bg-blue-50 text-blue-700 font-medium"
-                        : "text-gray-700 hover:bg-gray-50"
-                    }`}
+        <div className="space-y-8">
+          {/* Subcategories Section - Show only if viewing parent category */}
+          {hasSubcategories && !selectedSubcategory && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Subcategories</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {subcategories.map((sub) => (
+                  <Link
+                    key={sub.id}
+                    href={`/category/${sub.id}`}
+                    className="group bg-white rounded-xl border border-gray-200 p-6 hover:border-blue-500 hover:shadow-lg transition-all duration-200"
                   >
-                    All Products
-                  </button>
-                  
-                  {/* Subcategory Options */}
-                  {subcategories.map((sub) => (
-                    <button
-                      key={sub.id}
-                      onClick={() => setSelectedSubcategory(sub.id!)}
-                      className={`w-full text-left px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 ${
-                        selectedSubcategory === sub.id
-                          ? "bg-blue-50 text-blue-700 font-medium"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className="text-lg">{sub.icon}</span>
-                      <span className="flex-1">{sub.name}</span>
-                    </button>
-                  ))}
-                </div>
+                    <div className="flex items-start gap-4">
+                      {sub.icon && (
+                        <div 
+                          className="text-4xl flex-shrink-0"
+                          style={{ color: sub.color || '#3b82f6' }}
+                        >
+                          {sub.icon}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
+                          {sub.name}
+                        </h3>
+                        {sub.description && (
+                          <p className="text-sm text-gray-600 line-clamp-2">
+                            {sub.description}
+                          </p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </aside>
+            </div>
           )}
 
-          {/* Products Area */}
-          <div className="flex-1">
+          {/* Products Section */}
+          <div>
+            {/* Section Header with Search */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedSubcategory ? "Products" : hasSubcategories ? "All Products" : "Products"}
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Showing {filteredProducts.length} of {products.length} products
+                </p>
+              </div>
+              
+              {/* Back button if subcategory is selected */}
+              {selectedSubcategory && (
+                <button
+                  onClick={() => setSelectedSubcategory(null)}
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  <ChevronRight className="w-4 h-4 rotate-180" />
+                  Back to all categories
+                </button>
+              )}
+            </div>
+
             {/* Search Bar */}
             <div className="mb-6">
               <div className="relative">
@@ -147,9 +184,6 @@ const CategoryContent = () => {
                   className="pl-10 h-12"
                 />
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Showing {filteredProducts.length} of {products.length} products
-              </p>
             </div>
 
             {/* Products Grid */}

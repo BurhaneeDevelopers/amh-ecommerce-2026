@@ -210,6 +210,52 @@ class Products_Service {
         return data;
     }
 
+    async getProductsByDirectCategory(categoryId: string, limit?: number): Promise<Product[] | null> {
+        // Only get products directly assigned to this category (no subcategories)
+        let query = supabase
+            .from(this.table)
+            .select(`
+                *,
+                category:categories (
+                    id,
+                    name,
+                    description,
+                    color,
+                    icon
+                ),
+                product_master_values (
+                    id,
+                    master_values (
+                        id,
+                        value,
+                        master_fields (
+                            id,
+                            label,
+                            unit,
+                            masters (
+                                id,
+                                name,
+                                icon,
+                                color
+                            )
+                        )
+                    )
+                )
+            `)
+            .eq('category_id', categoryId)
+            .eq('status', 'active')
+            .order('created_at', { ascending: false });
+
+        if (limit) {
+            query = query.limit(limit);
+        }
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+        return data;
+    }
+
     // Helper function to get all descendant category IDs recursively
     private async getAllDescendantCategoryIds(categoryId: string): Promise<string[]> {
         const categoryIds = [categoryId]; // Include the parent category itself
