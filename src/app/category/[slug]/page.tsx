@@ -25,23 +25,16 @@ const CategoryContent = () => {
   const hasSubcategories = subcategories.length > 0;
   
   // Get products for selected category
-  // If parent has subcategories and none selected, show only direct products
-  // If subcategory selected or no subcategories exist, show all products including nested
+  // Always show all products including from subcategories
   const activeCategory = selectedSubcategory || categoryId;
-  const showOnlyDirectProducts = hasSubcategories && !selectedSubcategory;
   
   const { data: allProducts = [], isLoading: allProductsLoading } = useGetProductsByCategory(
     activeCategory,
     undefined
   );
   
-  const { data: directProducts = [], isLoading: directProductsLoading } = useGetProductsByDirectCategory(
-    activeCategory,
-    undefined
-  );
-  
-  const products = showOnlyDirectProducts ? directProducts : allProducts;
-  const productsLoading = showOnlyDirectProducts ? directProductsLoading : allProductsLoading;
+  const products = allProducts;
+  const productsLoading = allProductsLoading;
 
   // Filter products by search query
   const filteredProducts = useMemo(() => {
@@ -153,7 +146,7 @@ const CategoryContent = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedSubcategory ? "Products" : hasSubcategories ? "All Products" : "Products"}
+                  All Products
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
                   Showing {filteredProducts.length} of {products.length} products
