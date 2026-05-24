@@ -62,15 +62,18 @@ export default function Navbar() {
         <div className="w-full">
           <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
             {/* Left: Company Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0 group">
-              <div className="relative h-12 w-auto">
-                <img 
-                  src="/logo.png" 
-                  alt="A.M. Hydraulics" 
-                  className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center flex-shrink-0 group">
+                <div className="relative h-12 w-auto">
+                  <img
+                    src="/logo.webp"
+                    alt="A.M. Hydraulics"
+                    className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              </Link>
+              <h5 className="text-xl font-bold text-primary font-mono">A.M Hydraulics & Tubes</h5>
+            </div>
 
             {/* Center: Enhanced Search Bar */}
             <div className="hidden lg:flex flex-1 mx-8">
@@ -115,14 +118,14 @@ export default function Navbar() {
 
               {/* My Cart Button - Prominent */}
               <Link href="/wishlist">
-                <Button 
+                <Button
                   size="lg"
                   className="relative gap-2.5 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a25] text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 px-6 py-6 text-base"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="hidden sm:inline">My Cart</span>
                   {wishlistCount > 0 && (
-                    <Badge 
+                    <Badge
                       className="absolute -top-2 -right-2 min-w-[24px] h-[24px] text-xs font-bold 
                                bg-red-500 hover:bg-red-600 flex items-center justify-center 
                                rounded-full px-1.5 shadow-lg animate-pulse"
@@ -266,8 +269,8 @@ export default function Navbar() {
             <div className="flex items-center overflow-x-auto scrollbar-hide max-w-[50%] lg:max-w-[60%] xl:max-w-none">
               {featuredBrands.length > 0 ? (
                 featuredBrands.map((brand) => (
-                  <Link 
-                    key={brand.id} 
+                  <Link
+                    key={brand.id}
                     href={`/category/all?brand=${brand.id}`}
                     className="group flex-shrink-0"
                   >
