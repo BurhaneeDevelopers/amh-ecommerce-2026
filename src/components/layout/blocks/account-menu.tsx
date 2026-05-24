@@ -32,16 +32,16 @@ const AccountMenu = () => {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl 
-                             hover:bg-white/10
-                             transition-all duration-300 border-2 border-transparent hover:border-[#ff6b35]/20"
+                    className="group flex items-center gap-2.5 px-4 rounded-2xl 
+                             border border-slate-200 hover:border-[#ff6b35]/30
+                             hover:bg-slate-50 transition-all duration-300 h-12"
                 >
-                    <div className="p-2 rounded-lg bg-gray-700">
-                        <User className="w-5 h-5 text-gray-300" />
+                    <div className="p-2 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-[#ff6b35]/10 group-hover:text-[#ff6b35] transition-all duration-300">
+                        <User className="w-5 h-5" />
                     </div>
                     <div className="text-left hidden lg:block">
-                        <p className="text-xs text-gray-400 font-medium">Hello,</p>
-                        <p className="text-sm font-bold text-gray-200">
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider leading-none mb-0.5">Hello,</p>
+                        <p className="text-sm font-bold text-slate-800 leading-none group-hover:text-[#ff6b35] transition-colors duration-300">
                             {user ? user.full_name?.split(' ')[0] : 'Sign In'}
                         </p>
                     </div>
@@ -64,8 +64,8 @@ const AccountMenu = () => {
                 <DropdownMenuSeparator className="my-2" />
                 {user ? (
                     <>
-                        <DropdownMenuItem 
-                            disabled={is_logging_out} 
+                        <DropdownMenuItem
+                            disabled={is_logging_out}
                             onClick={handleLogout}
                             className="px-3 py-2.5 rounded-lg cursor-pointer hover:bg-red-50 hover:text-red-600 font-medium"
                         >
