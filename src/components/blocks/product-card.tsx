@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import WishlistButton from "./wishlist-button";
@@ -29,6 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   sku,
   description,
   status,
+  image_url,
   product_master_values,
   category,
   viewMode = 'grid',
@@ -49,8 +52,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     setIsQuoteModalOpen(true);
   };
 
-  // Placeholder image
-  const productImage = "https://opencart.mahardhi.com/MT05/toolex/image/cache/catalog/products/9-266x266.jpg";
+  // Product image with proper placeholder fallback
+  const productImage = image_url ?? null;
+
+  // SVG placeholder data URI
+  const placeholderSrc = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f1f5f9'/%3E%3Crect x='150' y='130' width='100' height='80' rx='8' fill='%23cbd5e1'/%3E%3Ccircle cx='200' cy='270' r='20' fill='%23cbd5e1'/%3E%3Ctext x='200' y='330' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E`;
 
   // Extract first few master values for display
   const displayValues = (product_master_values || []).slice(0, 2).map(pmv => ({
@@ -69,7 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Product Image Container */}
           <div className="relative flex-shrink-0 w-40 h-40 rounded-lg bg-gray-50 flex items-center justify-center">
             <img
-              src={productImage}
+              src={productImage ?? placeholderSrc}
               alt={name}
               className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
               loading="lazy" 
@@ -163,7 +169,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Product Image Container */}
       <div className="relative aspect-square p-3 bg-gray-50">
         <img
-          src={productImage}
+          src={productImage ?? placeholderSrc}
           alt={name}
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
           loading="lazy" 

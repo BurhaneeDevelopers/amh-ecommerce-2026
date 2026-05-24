@@ -21,20 +21,20 @@ export const useCreateNewWishlist = () => {
     mutationFn: (payload: Wishlist) =>
       wishlist_service.createNewWishlist(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wishlist_list_all"] });
+      queryClient.invalidateQueries({ queryKey: ["wishlist_by_user"] });
     },
   });
 };
 
 export const useDeleteWishlist = () => {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: { user_id: string; product_id: string }) =>
       wishlist_service.deleteWishlistByUserAndProduct(payload),
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({ queryKey: ["wishlist_by_user"] });
-    // },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist_by_user"] });
+    },
   });
 };
 
