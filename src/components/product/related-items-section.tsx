@@ -18,20 +18,20 @@ export default function RelatedItemsSection({ accessories, spares }: RelatedItem
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Accessories Section */}
       {hasAccessories && (
-        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border border-blue-100">
-          <div className="mb-8">
-            <H2 className="text-2xl lg:text-3xl font-bold text-blue-900 mb-2">
+        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+          <div className="mb-4">
+            <H2 className="text-xl lg:text-2xl font-bold text-blue-900 mb-1">
               Related Accessories
             </H2>
-            <p className="text-blue-700">
+            <p className="text-sm text-blue-700">
               Enhance your experience with these compatible accessories
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
             {accessories.map((accessory) => (
               <RelatedItemCard
                 key={accessory.id}
@@ -48,17 +48,17 @@ export default function RelatedItemsSection({ accessories, spares }: RelatedItem
 
       {/* Spares Section */}
       {hasSpares && (
-        <section className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border border-green-100">
-          <div className="mb-8">
-            <H2 className="text-2xl lg:text-3xl font-bold text-green-900 mb-2">
+        <section className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-5 border border-green-100">
+          <div className="mb-4">
+            <H2 className="text-xl lg:text-2xl font-bold text-green-900 mb-1">
               Spare Parts
             </H2>
-            <p className="text-green-700">
+            <p className="text-sm text-green-700">
               Keep your equipment running with genuine spare parts
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
             {spares.map((spare) => (
               <RelatedItemCard
                 key={spare.id}

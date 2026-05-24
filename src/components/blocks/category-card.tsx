@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { Category } from '@/supabase/schema/schema.type'
-import { ArrowRight, Package } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import Image from 'next/image'
 
 interface CategoryCardProps extends Category {
   product_count?: number
@@ -14,28 +13,38 @@ export default function CategoryCard({
   id,
   name,
   description,
-  icon,
   color,
   product_count = 0,
 }: CategoryCardProps) {
+  const accent = color || '#f97316'
+
   return (
     <Link href={`/category/${id}`}>
       <Card className="group relative overflow-hidden h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer border-2 hover:border-primary">
         {/* Image Section */}
-        <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15" style={{ backgroundColor: `${color}15` }}>
-          {icon ? (
-            <>
-              <div className="absolute inset-0 flex items-center justify-center text-8xl">
-                {icon}
-              </div>
-              {/* Gradient Overlay on Hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </>
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-              <Package className="w-24 h-24 text-primary/40 transition-all duration-300 group-hover:scale-110 group-hover:text-primary" />
-            </div>
-          )}
+        <div
+          className="relative h-52 w-full overflow-hidden flex items-center justify-center"
+          style={{ backgroundColor: `${accent}12` }}
+        >
+          {/* Consistent SVG category icon */}
+          <div className="group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 96 96"
+              className="w-20 h-20"
+            >
+              <rect width="96" height="96" rx="20" fill={`${accent}22`} />
+              <rect x="26" y="36" width="44" height="34" rx="5" fill={accent} opacity="0.72" />
+              <rect x="34" y="26" width="28" height="14" rx="4" fill={accent} opacity="0.95" />
+              <rect x="38" y="48" width="20" height="14" rx="3" fill="white" opacity="0.55" />
+            </svg>
+          </div>
+
+          {/* Gradient Overlay on Hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Shine sweep */}
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
           {/* Decorative Corner Element */}
           <div className="absolute top-0 left-0 w-20 h-20 bg-primary/10 rounded-br-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -50,7 +59,7 @@ export default function CategoryCard({
           <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">
             {name}
           </h3>
-          
+
           {/* Description */}
           <p className="text-sm text-gray-600 mb-4 line-clamp-2">
             {description}
@@ -73,9 +82,6 @@ export default function CategoryCard({
             </div>
           </div>
         </div>
-
-        {/* Shimmer Effect on Hover */}
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       </Card>
     </Link>
   )

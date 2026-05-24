@@ -22,21 +22,21 @@ export default function RelatedItemCard({ name, images, category, type }: Relate
   const remainingCount = hasImages ? Math.max(0, images.length - 4) : 0
 
   return (
-    <div className="group bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-gray-300 transition-all duration-300 hover:-translate-y-1">
+    <div className="group bg-white border border-gray-200 rounded-2xl p-3 hover:shadow-lg hover:border-gray-300 transition-all duration-300 hover:-translate-y-1">
       {/* Main Image */}
-      <div className="aspect-square mb-4 overflow-hidden rounded-xl bg-gray-50 border border-gray-100">
+      <div className="aspect-[4/3] mb-3 overflow-hidden rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
         {mainImage ? (
           <Image
             width={300}
             height={300}
             src={mainImage}
             alt={name}
-            className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+            className="max-w-full max-h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
-            <ImageIcon className="w-12 h-12 mb-2" />
-            <P className="text-xs text-center px-2">No image available</P>
+            <ImageIcon className="w-8 h-8 mb-1" />
+            <P className="text-[10px] text-center px-1">No image</P>
           </div>
         )}
       </div>

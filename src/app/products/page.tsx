@@ -1,15 +1,12 @@
 "use client";
 import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetMainCategories, useGetAllCategoriesWithProductCount } from "@/api/category.service";
-import { useGetAllProducts } from "@/api/products.service";
+import { useGetAllCategoriesWithProductCount } from "@/api/category.service";
 import CategoryCard from "@/components/blocks/category-card";
-import FeaturedProductsCarousel from "@/components/products/featured-products-carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CategoriesContent = () => {
   const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
-  const { data: allProducts = [], isLoading: productsLoading } = useGetAllProducts();
 
   if (categoriesLoading) {
     return (
@@ -77,25 +74,6 @@ const CategoriesContent = () => {
             </div>
           )}
         </div>
-
-        {/* All Products Carousel Section */}
-        {!productsLoading && allProducts.length > 0 && (
-          <div className="border-t pt-16">
-            <FeaturedProductsCarousel products={allProducts} />
-          </div>
-        )}
-
-        {/* Products Loading State */}
-        {productsLoading && (
-          <div className="border-t pt-16">
-            <Skeleton className="h-12 w-64 mb-6" />
-            <div className="flex gap-4 overflow-hidden">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="flex-none w-[calc(20%-12.8px)] h-96" />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </Container>
   );

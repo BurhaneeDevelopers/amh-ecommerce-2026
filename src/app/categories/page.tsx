@@ -41,28 +41,34 @@ export default function CategoriesPage() {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category) => (
-            <Link
+              <Link
               key={category.id}
               href={`/category/${category.id}`}
-              className="group relative bg-white rounded-2xl border-2 border-gray-200 hover:border-blue-500 transition-all duration-300 overflow-hidden hover:shadow-xl"
+              className="group relative bg-white rounded-2xl border-2 border-gray-200 hover:border-primary transition-all duration-300 overflow-hidden hover:shadow-xl"
             >
               {/* Color accent bar */}
               <div
-                className="absolute top-0 left-0 right-0 h-2"
-                style={{ backgroundColor: category.color }}
+                className="absolute top-0 left-0 right-0 h-1.5"
+                style={{ backgroundColor: category.color || '#f97316' }}
               />
 
               <div className="p-6">
-                {/* Icon and Title */}
+                {/* SVG icon and Title */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div
-                    className="text-5xl flex-shrink-0"
-                    style={{ color: category.color }}
-                  >
-                    {category.icon}
+                  <div className="flex-shrink-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 56 56"
+                      className="w-14 h-14"
+                    >
+                      <rect width="56" height="56" rx="12" fill={`${category.color || '#f97316'}20`} />
+                      <rect x="14" y="22" width="28" height="22" rx="4" fill={category.color || '#f97316'} opacity="0.72" />
+                      <rect x="18" y="15" width="20" height="11" rx="3" fill={category.color || '#f97316'} opacity="0.95" />
+                      <rect x="22" y="30" width="12" height="9" rx="2" fill="white" opacity="0.55" />
+                    </svg>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
                       {category.name}
                     </h3>
                     <p className="text-sm text-gray-600 line-clamp-2">
@@ -73,10 +79,10 @@ export default function CategoriesPage() {
 
                 {/* View Products Link */}
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
-                  <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                  <span className="text-sm font-medium text-primary group-hover:text-primary/80">
                     View Products
                   </span>
-                  <ArrowRight className="w-5 h-5 text-blue-600 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>

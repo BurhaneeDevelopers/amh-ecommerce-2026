@@ -167,63 +167,63 @@ const ProductCard: React.FC<ProductCardProps> = ({
       badge ? "border-gray-300 shadow-md hover:shadow-xl" : "border-gray-200 hover:border-primary shadow-md hover:shadow-xl"
     }`}>
       {/* Product Image Container */}
-      <div className="relative aspect-square p-3 bg-gray-50">
+      <div className="relative aspect-[4/3] p-2 bg-gray-50 flex items-center justify-center">
         <img
           src={productImage ?? placeholderSrc}
           alt={name}
-          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+          className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
           loading="lazy" 
           decoding="async" 
-          width={500} 
-          height={300}
         />
 
         {/* Action Buttons - Always Visible */}
-        <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
+        <div className="absolute top-1.5 left-1.5 right-1.5 flex justify-between items-start z-10">
           {/* Wishlist Button */}
           <WishlistButton product_id={id ?? ""} />
 
           {/* Badge */}
           {badge && badge !== 'active' && (
-            <div className={`${badgeStyles[badge]} rounded-lg px-2 py-1 text-xs font-bold shadow-lg`}>
+            <div className={`${badgeStyles[badge]} rounded-lg px-2 py-0.5 text-[10px] font-bold shadow-lg`}>
               {badgeLabels[badge]}
             </div>
           )}
         </div>
 
         {/* View Button - Always Visible on Mobile, Center on Desktop Hover */}
-        <div className="absolute bottom-2 right-2 md:bottom-0 md:right-0 md:top-0 md:left-0 md:flex md:items-center md:justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-1.5 right-1.5 md:bottom-0 md:right-0 md:top-0 md:left-0 md:flex md:items-center md:justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleViewProduct}
-            className="h-10 w-10 md:h-14 md:w-14 rounded-full bg-white shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center border-2 border-gray-200 hover:border-primary"
+            className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center border border-gray-200 hover:border-primary"
           >
-            <Eye className="w-5 h-5 md:w-6 md:h-6 text-gray-900" />
+            <Eye className="w-4 h-4 text-gray-900" />
           </button>
         </div>
       </div>
 
       {/* Product Info */}
-      <div className="p-3">
-        <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200 min-h-[2.5rem] mb-2">
+      <div className="p-2.5">
+        <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200 min-h-[2.25rem] mb-1.5">
           {name}
         </h3>
 
-        {sku && (
-          <p className="text-xs text-gray-600 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block mb-2">
-            SKU: {sku}
-          </p>
-        )}
+        <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+          {sku && (
+            <span className="text-[10px] text-gray-600 font-medium bg-gray-100 px-1.5 py-0.5 rounded">
+              SKU: {sku}
+            </span>
+          )}
 
-        {category && (
-          <p className="text-xs text-gray-500 mb-2">
-            {category.name}
-          </p>
-        )}
+          {category && (
+            <span className="text-[10px] text-gray-500 font-medium">
+              {category.name}
+            </span>
+          )}
+        </div>
 
         {displayValues.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
             {displayValues.map((spec, idx) => (
-              <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+              <span key={idx} className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">
                 {spec.label}: {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
               </span>
             ))}
@@ -234,13 +234,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Button
           onClick={handleGetQuote}
           disabled={status === 'inactive'}
-          className={`w-full h-10 rounded-xl font-bold text-sm transition-all duration-300 shadow-md hover:shadow-lg ${
+          className={`w-full h-8 rounded-lg font-bold text-xs transition-all duration-300 shadow-sm hover:shadow-md ${
             status === 'inactive'
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white hover:scale-105 active:scale-95"
+              : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white hover:scale-102 active:scale-98"
           }`}
         >
-          <ShoppingCart className="w-4 h-4 mr-2" />
+          <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
           Get Quote
         </Button>
       </div>

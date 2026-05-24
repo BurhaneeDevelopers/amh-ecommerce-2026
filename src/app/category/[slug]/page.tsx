@@ -182,9 +182,9 @@ const CategoryContent = () => {
             {/* Products Grid */}
             <div className="min-h-[400px]">
               {productsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <Skeleton key={i} className="h-96" />
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-1.5 sm:gap-2 md:gap-2.5">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <Skeleton key={i} className="h-60 rounded-xl" />
                   ))}
                 </div>
               ) : filteredProducts.length === 0 ? (
@@ -216,9 +216,9 @@ const CategoryContent = () => {
                   </div>
                 </div>
               ) : (
-                <div className={`grid gap-6 ${
+                <div className={`grid gap-1.5 sm:gap-2 md:gap-2.5 ${
                   viewMode === 'grid' 
-                    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+                    ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7' 
                     : 'grid-cols-1'
                 }`}>
                   {filteredProducts.map((product) => (

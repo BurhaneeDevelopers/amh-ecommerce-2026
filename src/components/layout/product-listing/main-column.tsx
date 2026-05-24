@@ -111,7 +111,7 @@ const MainColumn = () => {
 
             {/* Products Grid */}
             {paginatedProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
                     {paginatedProducts.map((product) => (
                         <ProductCard
                             key={product.id}
