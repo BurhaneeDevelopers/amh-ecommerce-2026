@@ -11,6 +11,7 @@ import Footer from "../constants/footer";
 import Navbar from "../constants/navbar";
 import { Providers } from "@/api/providers";
 import AnnouncementBanner from "../announcement/announcement-banner";
+import { FloatingWidgets } from "./floating-widgets";
 
 const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
   const set_current_user_auth = useSetAtom(current_user_auth_atom);
@@ -80,6 +81,7 @@ const ProtectedComponent: React.FC<PropsWithChildren> = ({ children }) => {
       <Navbar />
       {children}
       <Footer />
+      <FloatingWidgets />
       {/* </ThemeProvider> */}
     </Providers>
   );
