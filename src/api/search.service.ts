@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 /**
  * Search products by query string
- * Searches in product_name, model_number, and specifications
+ * Searches in name, sku, and description
  */
 const searchProducts = async (query: string): Promise<Product[]> => {
   if (!query || query.trim().length === 0) {
@@ -17,18 +17,16 @@ const searchProducts = async (query: string): Promise<Product[]> => {
     .from('products')
     .select(`
       *,
-      brand:brand_id (
+      category:categories (
         id,
-        brand_name,
-        brand_logo
-      ),
-      category:category_id (
-        id,
-        category_name,
-        type
+        name,
+        description,
+        color,
+        icon
       )
     `)
-    .or(`product_name.ilike.%${searchTerm}%,model_number.ilike.%${searchTerm}%`)
+    .or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`)
+    .eq('status', 'active')
     .limit(20);
 
   if (error) throw error;
@@ -45,5 +43,6 @@ export const useSearchProducts = (query: string, enabled: boolean = true) => {
     enabled: enabled && query.trim().length > 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: false, // Prevents multiple API retries on search inputs
   });
 };

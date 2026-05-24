@@ -48,12 +48,11 @@ const HighlightText = ({ text, highlight }: { text: string; highlight: string })
  */
 const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product; searchQuery: string; onClose: () => void }) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const productImage = product.photos?.[0];
-  const productName = product.product_name || "Unnamed Product";
-  const modelNumber = product.model_number || "";
-  const brandName = product.brand?.brand_name || "";
-  const categoryName = product.category?.category_name || "";
-  const isOutOfStock = !product.stock_status || (product.on_hand_qty ?? 0) <= 0;
+  const productImage = product.image_url;
+  const productName = product.name || "Unnamed Product";
+  const modelNumber = product.sku || "";
+  const categoryName = product.category?.name || "";
+  const isOutOfStock = product.status === 'inactive';
 
   const handleGetQuote = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -72,7 +71,7 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
     <>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 rounded-lg transition-colors border border-gray-200 hover:border-[#ff6b35]">
         {/* Product Image */}
-        <div className="relative w-16 h-16 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+        <div className="relative w-16 h-16 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden flex items-center justify-center bg-gray-50">
           {productImage ? (
             <Image
               width={500}
@@ -93,15 +92,10 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
           </h4>
           {modelNumber && (
             <p className="text-xs text-gray-600 truncate mt-0.5">
-              Model: <HighlightText text={modelNumber} highlight={searchQuery} />
+              SKU: <HighlightText text={modelNumber} highlight={searchQuery} />
             </p>
           )}
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            {brandName && (
-              <span className="text-xs text-gray-500 border border-gray-200 px-2 py-0.5 rounded">
-                {brandName}
-              </span>
-            )}
             {categoryName && (
               <span className="text-xs text-gray-500 border border-gray-200 px-2 py-0.5 rounded">
                 {categoryName}
@@ -109,11 +103,11 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
             )}
             {isOutOfStock ? (
               <span className="text-xs text-red-600 font-medium border border-red-200 px-2 py-0.5 rounded">
-                Out of Stock
+                Unavailable
               </span>
             ) : (
               <span className="text-xs text-green-600 font-medium border border-green-200 px-2 py-0.5 rounded">
-                In Stock
+                Active
               </span>
             )}
           </div>
@@ -151,7 +145,7 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
           id: product.id,
           product_name: productName,
           model_number: modelNumber,
-          photos: product.photos,
+          photos: productImage ? [productImage] : [],
         }}
       />
     </>
