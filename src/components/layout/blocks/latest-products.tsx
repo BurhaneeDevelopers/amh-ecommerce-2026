@@ -14,7 +14,7 @@ const LatestProducts = () => {
     const {
         data: products = [],
         error: products_error,
-    } = useGetAllProducts();
+    } = useGetAllProducts(16);
 
     if (products_error) toast.error("Error fetching products");
     

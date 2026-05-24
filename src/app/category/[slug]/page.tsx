@@ -1,14 +1,28 @@
 "use client";
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, Suspense, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Container } from "@/components/layout/container";
-import { useGetProductsByCategory, useGetProductsByDirectCategory } from "@/api/products.service";
+import { useGetProductsInfinite } from "@/api/products.service";
 import { useGetCategoryWithSubcategories } from "@/api/category.service";
 import ProductCard from "@/components/blocks/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+// Custom debounce hook to prevent excessive database queries on keypress
+function useDebounce<T>(value: T, delay: number = 300): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
 
 const CategoryContent = () => {
   const params = useParams();
@@ -24,29 +38,53 @@ const CategoryContent = () => {
   const subcategories = category?.subcategories || [];
   const hasSubcategories = subcategories.length > 0;
   
-  // Get products for selected category
-  // Always show all products including from subcategories
+  // Get products for selected category using infinite query
   const activeCategory = selectedSubcategory || categoryId;
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  const {
+    data: productsData,
+    isLoading: allProductsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useGetProductsInfinite({
+    categories: [activeCategory],
+    search: debouncedSearch
+  });
   
-  const { data: allProducts = [], isLoading: allProductsLoading } = useGetProductsByCategory(
-    activeCategory,
-    undefined
-  );
+  const products = useMemo(() => {
+    return productsData?.pages.flatMap((page) => page.products) ?? [];
+  }, [productsData]);
+
+  const totalProductsCount = productsData?.pages[0]?.totalCount ?? 0;
   
-  const products = allProducts;
   const productsLoading = allProductsLoading;
 
-  // Filter products by search query
-  const filteredProducts = useMemo(() => {
-    if (!searchQuery) return products;
-    
-    const query = searchQuery.toLowerCase();
-    return products.filter(product => 
-      product.name.toLowerCase().includes(query) ||
-      product.sku.toLowerCase().includes(query) ||
-      product.description?.toLowerCase().includes(query)
-    );
-  }, [products, searchQuery]);
+  // Intersection Observer for infinite scrolling
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [handleObserver, productsData]);
 
   if (categoryLoading) {
     return (
@@ -149,7 +187,7 @@ const CategoryContent = () => {
                   All Products
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Showing {filteredProducts.length} of {products.length} products
+                  Showing {products.length} of {totalProductsCount} products
                 </p>
               </div>
               
@@ -187,7 +225,7 @@ const CategoryContent = () => {
                     <Skeleton key={i} className="h-60 rounded-xl" />
                   ))}
                 </div>
-              ) : filteredProducts.length === 0 ? (
+              ) : products.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="max-w-md mx-auto">
                     <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -216,14 +254,31 @@ const CategoryContent = () => {
                   </div>
                 </div>
               ) : (
-                <div className={`grid gap-1.5 sm:gap-2 md:gap-2.5 ${
-                  viewMode === 'grid' 
-                    ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7' 
-                    : 'grid-cols-1'
-                }`}>
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} {...product} viewMode={viewMode} />
-                  ))}
+                <div className="space-y-6">
+                  <div className={`grid gap-1.5 sm:gap-2 md:gap-2.5 ${
+                    viewMode === 'grid' 
+                      ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7' 
+                      : 'grid-cols-1'
+                  }`}>
+                    {products.map((product) => (
+                      <ProductCard key={product.id} {...product} viewMode={viewMode} />
+                    ))}
+                  </div>
+
+                  {/* Load More Observer / Spinner */}
+                  <div ref={loadMoreRef} className="flex justify-center py-8">
+                    {isFetchingNextPage && (
+                      <div className="flex items-center gap-2 text-gray-500">
+                        <span className="w-5 h-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
+                        <span>Loading more products...</span>
+                      </div>
+                    )}
+                    {!hasNextPage && products.length > 0 && (
+                      <p className="text-gray-400 text-sm">
+                        You've reached the end of this category
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -2,10 +2,10 @@ import { Product } from '@/supabase/schema/schema.type';
 import { products_service } from '@/supabase/services/products-service';
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
-export const useGetAllProducts = () => {
+export const useGetAllProducts = (limit?: number) => {
     return useQuery<Product[], Error>({
-        queryKey: ['product_list_all'],
-        queryFn: async () => (await products_service.getAllProducts()) ?? [],
+        queryKey: ['product_list_all', limit],
+        queryFn: async () => (await products_service.getAllProducts(limit)) ?? [],
         refetchOnWindowFocus: false,
         refetchOnMount: true,
         staleTime: 1000 * 60 * 5,

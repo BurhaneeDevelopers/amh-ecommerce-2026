@@ -4,8 +4,8 @@ import { Product } from "../schema/schema.type";
 class Products_Service {
     private table = "products";
 
-    async getAllProducts(): Promise<Product[] | null> {
-        const { data, error } = await supabase.from(this.table)
+    async getAllProducts(limit?: number): Promise<Product[] | null> {
+        let query = supabase.from(this.table)
             .select(`
                 *,
                 category:categories (
@@ -36,6 +36,12 @@ class Products_Service {
             `)
             .eq('status', 'active')
             .order('created_at', { ascending: false });
+
+        if (limit) {
+            query = query.limit(limit);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
         return data;
