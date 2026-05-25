@@ -72,7 +72,7 @@ export default function Navbar() {
                   />
                 </div>
               </Link>
-              <h5 className="text-xl font-bold text-primary font-mono">A.M Hydraulics & Tubes</h5>
+              <h5 className="text-3xl font-bold font-mono">A.M Hydraulics & Tubes</h5>
             </div>
 
             {/* Center: Enhanced Search Bar */}
