@@ -62,9 +62,9 @@ export default function Navbar() {
         <div className="w-full">
           <div className="flex items-center justify-between h-20 px-4 lg:px-6 overflow-hidden">
             {/* Left: Company Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link href="/" className="flex items-center flex-shrink-0 group">
-                <div className="relative h-12 w-auto">
+                <div className="relative h-10 sm:h-12 w-auto">
                   <img
                     src="/logo.webp"
                     alt="A.M. Hydraulics"
@@ -72,7 +72,9 @@ export default function Navbar() {
                   />
                 </div>
               </Link>
-              <h5 className="text-3xl font-bold font-mono">A.M Hydraulics & Tubes</h5>
+              <h5 className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold font-mono whitespace-nowrap">
+                A.M Hydraulics & Tubes
+              </h5>
             </div>
 
             {/* Center: Enhanced Search Bar */}

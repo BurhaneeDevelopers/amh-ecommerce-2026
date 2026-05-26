@@ -6,6 +6,7 @@ import { useGetMainCategories } from '@/api/category.service'
 import { Loader2, ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 const CategoriesSection = () => {
     const { data: categories = [], isLoading } = useGetMainCategories()
@@ -79,22 +80,35 @@ const CategoriesSection = () => {
                                     className="relative w-full aspect-square overflow-hidden"
                                     style={{ backgroundColor: `${category.color || '#f97316'}12` }}
                                 >
-                                    {/* SVG placeholder icon — uses category color as accent */}
-                                    <div className="w-full h-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700 ease-out">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 80 80"
-                                            className="w-14 h-14 sm:w-16 sm:h-16 transition-all duration-500 drop-shadow-sm"
-                                        >
-                                            <rect width="80" height="80" rx="16" fill={`${category.color || '#f97316'}25`} />
-                                            <rect x="22" y="28" width="36" height="28" rx="4" fill={category.color || '#f97316'} opacity="0.75" />
-                                            <rect x="28" y="22" width="24" height="10" rx="3" fill={category.color || '#f97316'} opacity="0.95" />
-                                            <rect x="32" y="38" width="16" height="12" rx="2" fill="white" opacity="0.55" />
-                                        </svg>
-                                    </div>
-
-                                    {/* Gradient Overlay on hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    {category.image_url ? (
+                                        /* Real category image if available */
+                                        <>
+                                            <Image
+                                                src={category.image_url}
+                                                alt={category.name}
+                                                width={1000}
+                                                height={1000}
+                                                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
+                                                loading="lazy"
+                                            />
+                                            {/* Gradient Overlay on hover */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        </>
+                                    ) : (
+                                        /* SVG placeholder icon — uses category color as accent */
+                                        <div className="w-full h-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700 ease-out">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 80 80"
+                                                className="w-14 h-14 sm:w-16 sm:h-16 transition-all duration-500 drop-shadow-sm"
+                                            >
+                                                <rect width="80" height="80" rx="16" fill={`${category.color || '#f97316'}25`} />
+                                                <rect x="22" y="28" width="36" height="28" rx="4" fill={category.color || '#f97316'} opacity="0.75" />
+                                                <rect x="28" y="22" width="24" height="10" rx="3" fill={category.color || '#f97316'} opacity="0.95" />
+                                                <rect x="32" y="38" width="16" height="12" rx="2" fill="white" opacity="0.55" />
+                                            </svg>
+                                        </div>
+                                    )}
 
                                     {/* Shine sweep */}
                                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">

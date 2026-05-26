@@ -174,9 +174,9 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
         onOpenChange={setIsQuoteModalOpen}
         product={{
           id: product.id,
-          product_name: product.product_name,
-          model_number: product.model_number,
-          photos: product.photos,
+          name: product.product_name,
+          sku: product.model_number,
+          image_url: product.photos?.[0],
         }}
       />
     </>

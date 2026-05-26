@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Category } from '@/supabase/schema/schema.type'
 import { ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import Image from 'next/image'
 
 interface CategoryCardProps extends Category {
   product_count?: number
@@ -14,6 +15,7 @@ export default function CategoryCard({
   name,
   description,
   color,
+  image_url,
   product_count = 0,
 }: CategoryCardProps) {
   const accent = color || '#f97316'
@@ -26,19 +28,30 @@ export default function CategoryCard({
           className="relative h-52 w-full overflow-hidden flex items-center justify-center"
           style={{ backgroundColor: `${accent}12` }}
         >
-          {/* Consistent SVG category icon */}
-          <div className="group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 96 96"
-              className="w-20 h-20"
-            >
-              <rect width="96" height="96" rx="20" fill={`${accent}22`} />
-              <rect x="26" y="36" width="44" height="34" rx="5" fill={accent} opacity="0.72" />
-              <rect x="34" y="26" width="28" height="14" rx="4" fill={accent} opacity="0.95" />
-              <rect x="38" y="48" width="20" height="14" rx="3" fill="white" opacity="0.55" />
-            </svg>
-          </div>
+          {image_url ? (
+            /* Real category image if available */
+            <Image
+              src={image_url}
+              alt={name}
+              width={1000}
+              height={1000}
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
+            />
+          ) : (
+            /* Fallback to SVG icon */
+            <div className="group-hover:scale-110 transition-transform duration-700 ease-out drop-shadow-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 96 96"
+                className="w-20 h-20"
+              >
+                <rect width="96" height="96" rx="20" fill={`${accent}22`} />
+                <rect x="26" y="36" width="44" height="34" rx="5" fill={accent} opacity="0.72" />
+                <rect x="34" y="26" width="28" height="14" rx="4" fill={accent} opacity="0.95" />
+                <rect x="38" y="48" width="20" height="14" rx="3" fill="white" opacity="0.55" />
+              </svg>
+            </div>
+          )}
 
           {/* Gradient Overlay on Hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

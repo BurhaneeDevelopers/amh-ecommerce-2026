@@ -13,7 +13,6 @@ import { Use_auth } from '@/api/user.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
 import { sendEnquiryEmail } from '@/lib/email'
 import { Formik, Form, Field } from 'formik'
-import Image from 'next/image'
 
 interface GetQuoteModalProps {
     open: boolean
@@ -22,6 +21,7 @@ interface GetQuoteModalProps {
         id?: string | null | undefined
         name?: string
         sku?: string
+        image_url?: string | null
         // Legacy support
         product_name?: string
         model_number?: string
@@ -47,7 +47,10 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
     // Support both old and new schema
     const productName = product.name || product.product_name || 'Product'
     const productSku = product.sku || product.model_number || ''
-    const productImage = product.photos?.[0] || '/placeholder-product.jpg'
+    const productImage = product.image_url || product.photos?.[0] || null
+    
+    // SVG placeholder for missing images
+    const placeholderSrc = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f1f5f9'/%3E%3Crect x='150' y='130' width='100' height='80' rx='8' fill='%23cbd5e1'/%3E%3Ccircle cx='200' cy='270' r='20' fill='%23cbd5e1'/%3E%3Ctext x='200' y='330' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E`
 
     const initialValues: FormValues = {
         name: user?.full_name || '',
@@ -170,12 +173,13 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                 {/* Product Info */}
                 <div className="p-6 bg-gray-50 border-b">
                     <div className="flex gap-4">
-                        <Image
-                            width={500}
-                            height={500}
-                            src={productImage}
+                        <img
+                            src={productImage ?? placeholderSrc}
                             alt={productName}
-                            className="w-16 h-16 object-cover rounded-lg border"
+                            className="w-16 h-16 object-contain rounded-lg border bg-white"
+                            loading="lazy"
+                            width={64}
+                            height={64}
                         />
                         <div>
                             <h3 className="font-medium text-gray-900">{productName}</h3>
@@ -192,7 +196,7 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
                     enableReinitialize={true}
                     onSubmit={handleSubmit}
                 >
-                    {({ values, handleChange, handleBlur }) => (
+                    {() => (
                         <Form className="p-6 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>

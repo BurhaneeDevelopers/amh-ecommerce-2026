@@ -53,19 +53,28 @@ export default function CategoriesPage() {
               />
 
               <div className="p-6">
-                {/* SVG icon and Title */}
+                {/* Image or SVG icon and Title */}
                 <div className="flex items-start gap-4 mb-4">
                   <div className="flex-shrink-0">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 56 56"
-                      className="w-14 h-14"
-                    >
-                      <rect width="56" height="56" rx="12" fill={`${category.color || '#f97316'}20`} />
-                      <rect x="14" y="22" width="28" height="22" rx="4" fill={category.color || '#f97316'} opacity="0.72" />
-                      <rect x="18" y="15" width="20" height="11" rx="3" fill={category.color || '#f97316'} opacity="0.95" />
-                      <rect x="22" y="30" width="12" height="9" rx="2" fill="white" opacity="0.55" />
-                    </svg>
+                    {category.image_url ? (
+                      <img
+                        src={category.image_url}
+                        alt={category.name}
+                        className="w-14 h-14 object-cover rounded-lg"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 56 56"
+                        className="w-14 h-14"
+                      >
+                        <rect width="56" height="56" rx="12" fill={`${category.color || '#f97316'}20`} />
+                        <rect x="14" y="22" width="28" height="22" rx="4" fill={category.color || '#f97316'} opacity="0.72" />
+                        <rect x="18" y="15" width="20" height="11" rx="3" fill={category.color || '#f97316'} opacity="0.95" />
+                        <rect x="22" y="30" width="12" height="9" rx="2" fill="white" opacity="0.55" />
+                      </svg>
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">

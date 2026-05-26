@@ -341,18 +341,21 @@ Alternatively, you can chat directly with a live representative via the WhatsApp
               initial={{ opacity: 0, x: -15, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: -15, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-4 py-2.5 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 max-w-xs relative pointer-events-auto"
+              className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 max-w-[200px] sm:max-w-xs relative pointer-events-auto"
             >
               <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">WhatsApp Support</span>
-                <span className="text-sm font-medium leading-tight">Need instant pricing? Chat with us!</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide truncate">WhatsApp Support</span>
+                <span className="text-xs sm:text-sm font-medium leading-tight">Need instant pricing? Chat with us!</span>
               </div>
               <button 
-                onClick={() => setShowWhatsAppTooltip(false)} 
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 ml-2 self-start rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowWhatsAppTooltip(false);
+                }} 
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 ml-1 sm:ml-2 self-start rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 shrink-0"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
               </button>
               
               {/* Little triangle arrow facing left */}
@@ -544,15 +547,18 @@ Alternatively, you can chat directly with a live representative via the WhatsApp
                 initial={{ opacity: 0, x: 15, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 15, scale: 0.95 }}
-                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-4 py-2.5 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 max-w-xs relative pointer-events-auto"
+                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 max-w-[180px] sm:max-w-xs relative pointer-events-auto"
               >
-                <Sparkles className="w-4 h-4 text-[#ff6b35] shrink-0 animate-pulse" />
-                <span className="text-sm font-medium leading-tight">Got questions? Chat with AI!</span>
+                <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#ff6b35] shrink-0 animate-pulse" />
+                <span className="text-xs sm:text-sm font-medium leading-tight">Got questions? Chat with AI!</span>
                 <button 
-                  onClick={() => setShowChatTooltip(false)} 
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 ml-2 self-start rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowChatTooltip(false);
+                  }} 
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 ml-1 sm:ml-2 self-start rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 shrink-0"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
                 </button>
 
                 {/* Little triangle arrow facing right */}

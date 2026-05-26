@@ -143,9 +143,9 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
         onOpenChange={setIsQuoteModalOpen}
         product={{
           id: product.id,
-          product_name: productName,
-          model_number: modelNumber,
-          photos: productImage ? [productImage] : [],
+          name: productName,
+          sku: modelNumber,
+          image_url: productImage,
         }}
       />
     </>

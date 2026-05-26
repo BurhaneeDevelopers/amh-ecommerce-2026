@@ -110,9 +110,9 @@ export default function ProductDetailsPage() {
             <Image
               src={product.image_url}
               alt={product.name}
-              width={350}
-              height={350}
-              className="max-w-full h-auto"
+              width={1000}
+              height={1000}
+              className="max-w-full h-[350px]! w-[350px]!"
             />
           ) : (
             <div className="w-full aspect-square flex items-center justify-center bg-gray-50">

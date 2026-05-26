@@ -13,6 +13,7 @@ export interface Category {
   description: string;
   color: string;
   icon: string;
+  image_url?: string | null;
   parent_id?: string | null;
   is_main: boolean;
   created_at?: string;

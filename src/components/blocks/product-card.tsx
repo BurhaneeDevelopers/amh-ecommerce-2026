@@ -155,6 +155,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             id: id,
             name,
             sku,
+            image_url,
           }}
         />
       </div>
@@ -253,6 +254,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           id: id,
           name,
           sku,
+          image_url,
         }}
       />
     </div>
