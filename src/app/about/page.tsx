@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/container";
 import { H1, H2, H3, P } from "@/components/typography/typography";
 import { Building2, Factory, MapPin, Phone, Mail, Award, Users, Target } from "lucide-react";
 import Image from "next/image";
+import { CertificationsSection } from "@/components/layout/blocks/certifications-section";
 
 export default function AboutPage() {
     return (
@@ -227,6 +228,9 @@ export default function AboutPage() {
                     </div>
                 </div>
             </Container>
+
+            {/* Certifications Section */}
+            <CertificationsSection />
         </div>
     );
 }
