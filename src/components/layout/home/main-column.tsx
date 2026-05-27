@@ -6,6 +6,7 @@ import FeaturedCategoriesProducts from '../blocks/featured-categories-products'
 import TestimonialsSection from '../blocks/testimonials-section'
 import BlogsSection from '../blocks/blogs-section'
 import GoogleReviewsSection from '../blocks/google-reviews-section'
+import LinkedInPostsSection from '../blocks/linkedin-posts-section'
 import { Container } from '../container'
 
 
@@ -23,6 +24,9 @@ export default function MainColumn() {
                 <TestimonialsSection />
                 <BlogsSection />
             </Container>
+
+            {/* LinkedIn Posts Section */}
+            <LinkedInPostsSection />
 
             {/* Google Reviews Section at the very bottom of the page */}
             <GoogleReviewsSection />
