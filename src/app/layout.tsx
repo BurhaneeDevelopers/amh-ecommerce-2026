@@ -18,6 +18,15 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "A.M. Hydraulics - Hydraulic Hoses & Fittings",
   description: "Leading manufacturer & distributor of hydraulic hoses and fittings in Chennai. Authorized stockist for Parker, Polyhose, Yuken, Rexroth, and more.",
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
 };
 
 export default function RootLayout({
