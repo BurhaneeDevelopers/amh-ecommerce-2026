@@ -9,9 +9,12 @@ import Image from 'next/image';
 
 // Fallback images if no ads are available
 const fallbackImages = [
-  '/banners/cordless-tool.jpg',
-  '/banners/tool-box.jpg',
   '/banners/banner.png',
+  '/banners/ai-banner-2.png',
+  '/banners/ai-banner-3.png',
+  '/banners/ai-banner-4.png',
+  '/banners/ai-banner-5.png',
+  '/banners/ai-banner-6.png',
 ];
 
 const swipeConfidenceThreshold = 5000;
@@ -82,8 +85,8 @@ const BannerSlider: React.FC = () => {
   return (
     <div className="relative w-full bg-orange-50 py-8">
       <div className="w-full px-4 lg:px-6">
-        {/* Main slider container - aspect ratio capped to viewport height */}
-        <div className="relative w-full aspect-[16/9] max-h-[70vh] overflow-hidden group bg-gradient-to-r from-orange-50 to-orange-100 rounded-3xl">
+        {/* Main slider container - 16:9 aspect ratio, full width */}
+        <div className="relative w-full aspect-[16/9] overflow-hidden group bg-gradient-to-r from-orange-50 to-orange-100 rounded-3xl">
           {/* Render all slides but only show current one */}
           {slides.map((slide, slideIndex) => (
             <motion.div
@@ -110,15 +113,15 @@ const BannerSlider: React.FC = () => {
                 pointerEvents: slideIndex === index ? 'auto' : 'none'
               }}
             >
-              {/* Responsive image container - contains full poster without cropping */}
-              <div className="relative w-full h-full overflow-hidden rounded-2xl flex items-center justify-center">
+              {/* Image container - full width 16:9 without cropping */}
+              <div className="relative w-full h-full overflow-hidden rounded-2xl">
                 <Image
-                  width={1080}
-                  height={720}
+                  width={1920}
+                  height={1080}
                   src={slide.src}
                   alt={slide.alt}
                   priority={slideIndex === 0}
-                  className="w-fit h-full object-contain select-none pointer-events-none rounded-2xl!"
+                  className="w-full h-full object-cover select-none pointer-events-none rounded-2xl"
                 />
               </div>
 
