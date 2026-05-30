@@ -3,6 +3,7 @@ import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import ProtectedComponent from "@/components/layout/ProtectedComponent";
 import NextTopLoader from 'nextjs-toploader';
+import Script from 'next/script';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -136,6 +137,20 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${montserrat.variable} antialiased`}
       >
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-9HDWZC7HCN"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-9HDWZC7HCN');
+          `}
+        </Script>
+        
         <NextTopLoader
           color="#ff6b35"
           height={4}
