@@ -357,10 +357,10 @@ export function generateProductJsonLd(product: Product & {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    '@id': `${SITE_URL}/products/${product.id}`,
+    '@id': `${SITE_URL}/products/${product.sku}`,
     name: product.name,
     description: product.description || `${product.name} - High-quality hydraulic component available from A.M. Hydraulics & Tubes, Chennai. Authorized supplier with ISO 9001:2015 certification.`,
-    url: `${SITE_URL}/products/${product.id}`,
+    url: `${SITE_URL}/products/${product.sku}`,
     image: product.image_url ? [product.image_url] : [`${SITE_URL}/og-default.jpg`],
     sku: product.sku,
     mpn: product.sku,
@@ -373,7 +373,7 @@ export function generateProductJsonLd(product: Product & {
     },
     offers: {
       '@type': 'Offer',
-      url: `${SITE_URL}/products/${product.id}`,
+      url: `${SITE_URL}/products/${product.sku}`,
       priceCurrency: 'INR',
       availability: product.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: {

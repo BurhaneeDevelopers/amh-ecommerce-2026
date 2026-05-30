@@ -42,80 +42,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Fetch all active products
+  // Fetch all active products with SKU
   const { data: products } = await supabase
     .from('products')
-    .select('id, updated_at')
-    .eq('status', 'active');
+    .select('sku, updated_at')
+    .eq('status', 'active')
+    .not('sku', 'is', null);
 
   const productPages: MetadataRoute.Sitemap = (products || []).map((product) => ({
-    url: `${baseUrl}/products/${product.id}`,
+    url: `${baseUrl}/products/${product.sku}`,
     lastModified: product.updated_at || currentDate,
     changeFrequency: 'weekly' as const,
     priority: 0.90,
   }));
 
-  // Fetch all main categories (is_main = true)
-  const { data: mainCategories } = await supabase
+  // Fetch all categories with slugs
+  const { data: categories } = await supabase
     .from('categories')
-    .select('id, name, updated_at')
-    .eq('is_main', true)
+    .select('slug, updated_at')
+    .not('slug', 'is', null)
     .order('name');
 
-  const mainCategoryPages: MetadataRoute.Sitemap = (mainCategories || []).map((category) => ({
-    url: `${baseUrl}/category/${category.id}`,
+  const categoryPages: MetadataRoute.Sitemap = (categories || []).map((category) => ({
+    url: `${baseUrl}/category/${category.slug}`,
     lastModified: category.updated_at || currentDate,
     changeFrequency: 'weekly' as const,
     priority: 0.85,
   }));
-
-  // Fetch all subcategories (is_main = false, has parent_id)
-  const { data: subcategories } = await supabase
-    .from('categories')
-    .select('id, name, parent_id, updated_at')
-    .eq('is_main', false)
-    .not('parent_id', 'is', null);
-
-  // Build subcategory URLs with parent path
-  const subcategoryPages: MetadataRoute.Sitemap = [];
-  for (const subcat of subcategories || []) {
-    if (subcat.parent_id) {
-      // Fetch parent to build correct URL
-      const { data: parent } = await supabase
-        .from('categories')
-        .select('id, parent_id')
-        .eq('id', subcat.parent_id)
-        .single();
-
-      if (parent) {
-        if (parent.parent_id) {
-          // This is a level 3 nested category
-          const { data: grandparent } = await supabase
-            .from('categories')
-            .select('id')
-            .eq('id', parent.parent_id)
-            .single();
-
-          if (grandparent) {
-            subcategoryPages.push({
-              url: `${baseUrl}/category/${grandparent.id}/${parent.id}/${subcat.id}`,
-              lastModified: subcat.updated_at || currentDate,
-              changeFrequency: 'weekly' as const,
-              priority: 0.75,
-            });
-          }
-        } else {
-          // This is a level 2 subcategory
-          subcategoryPages.push({
-            url: `${baseUrl}/category/${parent.id}/${subcat.id}`,
-            lastModified: subcat.updated_at || currentDate,
-            changeFrequency: 'weekly' as const,
-            priority: 0.80,
-          });
-        }
-      }
-    }
-  }
 
   // Fetch all published blog posts
   const { data: blogs } = await supabase
@@ -133,8 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...productPages,
-    ...mainCategoryPages,
-    ...subcategoryPages,
+    ...categoryPages,
     ...blogPages,
   ];
 }
