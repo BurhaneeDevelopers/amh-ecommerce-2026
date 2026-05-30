@@ -4,10 +4,40 @@ import { MapPin, Phone, Mail, Clock, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import JsonLd from "@/components/seo/JsonLd";
+import { ORGANIZATION_JSON_LD } from "@/lib/seo/structured-data";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Contact Us — +91 98843 69751 | A.M. Hydraulics & Tubes Chennai',
+  description: 'Contact A.M. Hydraulics & Tubes — Shop: 148, Angappa Naicken Street, Parrys Corner, Near High Court, Chennai – 600001, Tamil Nadu, India. Factory: 53/26, Amman Koil Street, Athipet, Kuppam, Ambattur Industrial Estate, Chennai – 600058. Phone: +91 98843 69751 (Primary), 044 42161198 (Office). WhatsApp: +91 93827 13392. Email: info@amhat.com. ISO 9001:2015 & ISO 14001:2015 certified hydraulic components supplier.',
+  alternates: {
+    canonical: 'https://hydraulicstore.in/contact',
+  },
+  openGraph: {
+    title: 'Contact Us — +91 98843 69751 | A.M. Hydraulics & Tubes Chennai',
+    description: 'Get in touch with A.M. Hydraulics & Tubes. Shop in Parrys Corner, Factory in Ambattur. Call +91 98843 69751.',
+    url: 'https://hydraulicstore.in/contact',
+  },
+};
+
+const contactPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  '@id': 'https://hydraulicstore.in/contact',
+  url: 'https://hydraulicstore.in/contact',
+  name: 'Contact A.M. Hydraulics & Tubes',
+  description: 'Contact information for A.M. Hydraulics & Tubes - Hydraulic components supplier in Chennai',
+  mainEntity: {
+    '@id': 'https://hydraulicstore.in/#organization',
+  },
+};
 
 export default function ContactPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-yellow-50/30">
+        <>
+            <JsonLd data={[contactPageSchema, ORGANIZATION_JSON_LD]} />
+            <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-yellow-50/30">
             {/* Hero Section with Modern Gradient */}
             <div className="relative overflow-hidden bg-gradient-to-br from-[#ff6b35] via-[#e55a25] to-[#ff6b35] text-white py-20">
                 {/* Decorative Elements */}
@@ -454,5 +484,6 @@ export default function ContactPage() {
                 </div>
             </Container>
         </div>
+        </>
     );
 }

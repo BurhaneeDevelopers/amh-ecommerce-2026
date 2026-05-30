@@ -1,102 +1,72 @@
-"use client";
 import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
-import { useGetAllCategoriesWithProductCount } from "@/api/category.service";
-import CategoryCard from "@/components/blocks/category-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProductsPageClient from "./products-client";
+import JsonLd from "@/components/seo/JsonLd";
+import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/seo/structured-data";
+import type { Metadata } from "next";
+import { createClient } from "@/supabase/client";
 
-const CategoriesContent = () => {
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
+export const metadata: Metadata = {
+  title: 'Buy Hydraulic & Pneumatic Components Online India — All Products',
+  description: 'Browse and buy hydraulic hoses, fittings, pumps, valves, cylinders, power packs, and pneumatic components online in India. A.M. Hydraulics & Tubes is an ISO 9001:2015 certified authorized stockist for Parker, Polyhose, Yuken, Rexroth, Boss Hydraulics, Torque, Enerpac, Festo, Vickers in Chennai. Shop genuine industrial components with manufacturer warranty. Call +91 98843 69751 for bulk orders and custom assemblies.',
+  alternates: {
+    canonical: 'https://hydraulicstore.in/products',
+  },
+  openGraph: {
+    title: 'Buy Hydraulic & Pneumatic Components Online India — All Products',
+    description: 'Browse hydraulic hoses, fittings, pumps, valves, and pneumatic components. Authorized Parker, Yuken, Rexroth dealer in Chennai.',
+    url: 'https://hydraulicstore.in/products',
+  },
+};
 
-  if (categoriesLoading) {
-    return (
-      <Container>
-        <div className="mx-auto py-8">
-          <Skeleton className="h-12 w-64 mb-4" />
-          <Skeleton className="h-6 w-96 mb-12" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-80" />
-            ))}
-          </div>
-        </div>
-      </Container>
-    );
+async function getProductCount() {
+  try {
+    const supabase = createClient();
+    const { count } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active');
+    return count || 0;
+  } catch (error) {
+    console.error('Error fetching product count:', error);
+    return 0;
   }
+}
+
+export default async function ProductsPage() {
+  const productCount = await getProductCount();
+
+  const breadcrumbData = generateBreadcrumbJsonLd([
+    { name: 'Home', url: 'https://hydraulicstore.in' },
+    { name: 'All Products', url: 'https://hydraulicstore.in/products' },
+  ]);
+
+  const collectionData = generateCollectionPageJsonLd(
+    'All Hydraulic & Pneumatic Products',
+    'Complete range of hydraulic hoses, fittings, pumps, valves, cylinders, power packs, and pneumatic components from authorized brands',
+    'https://hydraulicstore.in/products',
+    productCount
+  );
 
   return (
-    <Container>
-      <div className="mx-auto py-8 space-y-16">
-        {/* Categories Section */}
-        <div>
-          {/* Header */}
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Browse by Category
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore our wide range of hydraulic and industrial products organized by category. Click on any category to view all available products.
-            </p>
-          </div>
-
-          {/* Categories Grid */}
-          {categories.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No categories available
-                </h3>
-                <p className="text-gray-500">
-                  Categories will appear here once they are added.
-                </p>
-              </div>
-            </div>
-          ) : (
+    <>
+      <JsonLd data={[breadcrumbData, collectionData]} />
+      <Suspense fallback={
+        <Container>
+          <div className="mx-auto py-8">
+            <Skeleton className="h-12 w-64 mb-4" />
+            <Skeleton className="h-6 w-96 mb-12" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map((category) => (
-                <CategoryCard key={category.id} {...category} />
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-80" />
               ))}
             </div>
-          )}
-        </div>
-      </div>
-    </Container>
-  );
-};
-
-const ProductsPage = () => {
-  return (
-    <Suspense fallback={
-      <Container>
-        <div className="mx-auto py-8">
-          <Skeleton className="h-12 w-64 mb-4" />
-          <Skeleton className="h-6 w-96 mb-12" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-80" />
-            ))}
           </div>
-        </div>
-      </Container>
-    }>
-      <CategoriesContent />
-    </Suspense>
+        </Container>
+      }>
+        <ProductsPageClient />
+      </Suspense>
+    </>
   );
-};
-
-export default ProductsPage;
+}

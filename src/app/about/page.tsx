@@ -3,10 +3,40 @@ import { H1, H2, H3, P } from "@/components/typography/typography";
 import { Building2, Factory, MapPin, Phone, Mail, Award, Users, Target } from "lucide-react";
 import Image from "next/image";
 import { CertificationsSection } from "@/components/layout/blocks/certifications-section";
+import JsonLd from "@/components/seo/JsonLd";
+import { ORGANIZATION_JSON_LD } from "@/lib/seo/structured-data";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'About Us — ISO Certified Since 1999 | A.M. Hydraulics & Tubes Chennai',
+  description: 'A.M. Hydraulics & Tubes — ISO 9001:2015 & ISO 14001:2015 certified manufacturer and authorized distributor of hydraulic and pneumatic components since 1999. Founded by Managing Director Mohammed HB. Authorized stockist for Parker, Polyhose, Yuken, Rexroth (Bosch Group), Boss Hydraulics, Torque, Polyhydron, Enerpac, Festo, Vickers, Dowty. Shop: 148 Angappa Naicken Street, Parrys Corner, Chennai 600001. Factory: 53/26 Amman Koil Street, Ambattur Industrial Estate, Chennai 600058. Serving Tamil Nadu, Karnataka, Andhra Pradesh, Telangana, and across India.',
+  alternates: {
+    canonical: 'https://hydraulicstore.in/about',
+  },
+  openGraph: {
+    title: 'About Us — ISO Certified Since 1999 | A.M. Hydraulics & Tubes Chennai',
+    description: 'ISO 9001:2015 & ISO 14001:2015 certified hydraulic components manufacturer and distributor since 1999. Authorized Parker, Yuken, Rexroth dealer.',
+    url: 'https://hydraulicstore.in/about',
+  },
+};
+
+const aboutPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  '@id': 'https://hydraulicstore.in/about',
+  url: 'https://hydraulicstore.in/about',
+  name: 'About A.M. Hydraulics & Tubes',
+  description: 'Learn about A.M. Hydraulics & Tubes - ISO certified hydraulic components supplier in Chennai since 1999',
+  mainEntity: {
+    '@id': 'https://hydraulicstore.in/#organization',
+  },
+};
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen bg-[#fef5f0]">
+        <>
+            <JsonLd data={[aboutPageSchema, ORGANIZATION_JSON_LD]} />
+            <div className="min-h-screen bg-[#fef5f0]">
             {/* Hero Section */}
             <div className="bg-[#8b5cf6] text-white py-20">
                 <Container>
@@ -232,5 +262,6 @@ export default function AboutPage() {
             {/* Certifications Section */}
             <CertificationsSection />
         </div>
+        </>
     );
 }
