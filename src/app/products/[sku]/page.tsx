@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { createClient } from '@/supabase/client';
+import { supabase } from '@/supabase/client';
 import ProductDetailsClient from './product-details-client';
 import JsonLd from '@/components/seo/JsonLd';
 import { generateProductJsonLd, generateBreadcrumbJsonLd, ORGANIZATION_JSON_LD } from '@/lib/seo/structured-data';
@@ -7,11 +7,10 @@ import { generateProductJsonLd, generateBreadcrumbJsonLd, ORGANIZATION_JSON_LD }
 export const revalidate = 86400; // 24 hours ISR
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ sku: string }>;
 };
 
-async function getProduct(id: string) {
-  const supabase = createClient();
+async function getProductBySku(sku: string) {
   const { data: product } = await supabase
     .from('products')
     .select(`
@@ -33,19 +32,38 @@ async function getProduct(id: string) {
           value,
           master_fields(
             label,
-            unit
+            unit,
+            masters(
+              id,
+              name
+            )
+          )
+        )
+      ),
+      product_variants(
+        id,
+        variant_name,
+        sort_order,
+        product_variant_values(
+          value,
+          master_field:master_fields(
+            id,
+            label,
+            unit,
+            sort_order
           )
         )
       )
     `)
-    .eq('id', id)
+    .eq('sku', sku)
     .single();
 
   return product;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = await getProduct(params.id);
+  const { sku } = await params;
+  const product = await getProductBySku(sku);
 
   if (!product) {
     return {
@@ -57,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Detect brand from product name
   const knownBrands = ['Parker', 'Polyhose', 'Yuken', 'Rexroth', 'Boss', 'Torque', 'Polyhydron', 'Enerpac', 'Festo', 'Vickers', 'Dowty'];
   let detectedBrand = '';
-  
+
   for (const brand of knownBrands) {
     if (product.name.toLowerCase().includes(brand.toLowerCase())) {
       detectedBrand = brand;
@@ -72,7 +90,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } else {
     title = `${product.name} — Buy in Chennai, India`;
   }
-  
+
   if (product.sku) {
     title = `${product.name} ${product.sku} — Buy in Chennai, India`;
   }
@@ -133,8 +151,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   keywords.push('A.M. Hydraulics', 'hydraulicstore.in');
 
   // OG Image
-  const ogImageUrl = product.image_url 
-    ? product.image_url 
+  const ogImageUrl = product.image_url
+    ? product.image_url
     : `/og?title=${encodeURIComponent(product.name)}${detectedBrand ? `&brand=${encodeURIComponent(detectedBrand)}` : ''}${product.category ? `&category=${encodeURIComponent(product.category.name)}` : ''}`;
 
   return {
@@ -142,21 +160,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     keywords,
     alternates: {
-      canonical: `https://hydraulicstore.in/products/${params.id}`,
+      canonical: `https://hydraulicstore.in/products/${sku}`,
     },
     openGraph: {
-      title,
-      description,
-      url: `https://hydraulicstore.in/products/${params.id}`,
-      type: 'website',
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: product.name,
-        },
-      ],
+      url: `https://hydraulicstore.in/products/${sku}`,
     },
     other: {
       'product:brand': detectedBrand || 'A.M. Hydraulics & Tubes',
@@ -168,19 +175,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const supabase = createClient();
   const { data: products } = await supabase
     .from('products')
-    .select('id')
-    .eq('status', 'active');
+    .select('sku')
+    .eq('status', 'active')
+    .not('sku', 'is', null);
 
   return (products || []).map((product) => ({
-    id: product.id,
+    sku: product.sku,
   }));
 }
 
 export default async function ProductDetailsPage({ params }: Props) {
-  const product = await getProduct(params.id);
+  const { sku } = await params;
+  const product = await getProductBySku(sku);
 
   if (!product) {
     return null; // Client component will handle the not found state
@@ -188,13 +196,16 @@ export default async function ProductDetailsPage({ params }: Props) {
 
   // Build breadcrumb
   const breadcrumbItems = [{ name: 'Home', url: 'https://hydraulicstore.in' }];
-  breadcrumbItems.push({ name: 'Products', url: 'https://hydraulicstore.in/products' });
+  breadcrumbItems.push({
+    name: product.name,
+    url: `https://hydraulicstore.in/products/${sku}`,
+  });
 
   // Add category hierarchy to breadcrumb
   if (product.category) {
     const categories: any[] = [];
     let current = product.category;
-    
+
     while (current) {
       categories.unshift(current);
       current = current.parent;
@@ -210,7 +221,7 @@ export default async function ProductDetailsPage({ params }: Props) {
 
   breadcrumbItems.push({
     name: product.name,
-    url: `https://hydraulicstore.in/products/${params.id}`,
+    url: `https://hydraulicstore.in/products/${params.sku}`,
   });
 
   const productJsonLd = generateProductJsonLd(product);

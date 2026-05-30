@@ -109,21 +109,21 @@ function VariantSpecificationsTable({
   };
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden border-2 border-slate-200 rounded-lg">
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-slate-900">
               {columns.map((col) => (
                 <th
                   key={col.id}
-                  className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border border-gray-300"
+                  className="px-5 py-4 text-left text-sm font-bold text-white border-r border-slate-700 last:border-r-0"
                 >
                   {col.label}
                 </th>
               ))}
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 border border-gray-300">
+              <th className="px-5 py-4 text-center text-sm font-bold text-white">
                 Action
               </th>
             </tr>
@@ -132,26 +132,26 @@ function VariantSpecificationsTable({
             {rows.map((row, rowIdx) => (
               <tr
                 key={row.variantId}
-                className={`hover:bg-gray-50 transition-colors ${
-                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                className={`hover:bg-slate-50 transition-colors ${
+                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
                 }`}
               >
                 {columns.map((col) => (
                   <td
                     key={col.id}
-                    className="px-4 py-3 text-sm text-gray-900 border border-gray-300"
+                    className="px-5 py-4 text-sm text-slate-900 border-r border-slate-200 last:border-r-0 font-medium"
                   >
                     {row.data[col.id] || '-'}
                     {col.unit && row.data[col.id] && row.data[col.id] !== '-' && (
-                      <span className="text-gray-600"> {col.unit}</span>
+                      <span className="text-slate-600 font-normal"> {col.unit}</span>
                     )}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-center border border-gray-300">
+                <td className="px-5 py-4 text-center">
                   <Button
                     onClick={() => handleGetQuoteForRow(rowIdx)}
                     size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold"
                   >
                     Get Quote
                   </Button>
@@ -163,15 +163,15 @@ function VariantSpecificationsTable({
       </div>
 
       {/* Mobile View - Cards */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-4 p-4">
         {rows.map((row, rowIdx) => (
           <div
             key={row.variantId}
-            className="border border-gray-200 rounded-lg p-4 bg-white"
+            className="border-2 border-slate-200 rounded-lg p-5 bg-white"
           >
             {row.variantName && (
-              <div className="mb-3 pb-2 border-b border-gray-200">
-                <span className="text-sm font-bold text-gray-900">
+              <div className="mb-4 pb-3 border-b-2 border-slate-200">
+                <span className="text-base font-bold text-slate-900">
                   {row.variantName}
                 </span>
               </div>
@@ -180,27 +180,27 @@ function VariantSpecificationsTable({
               {columns.map((col) => (
                 <div
                   key={col.id}
-                  className="flex justify-between items-start border-b border-gray-100 pb-2 last:border-0"
+                  className="flex justify-between items-start gap-4 py-2"
                 >
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-semibold text-slate-700">
                     {col.label}
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 text-right">
+                  <span className="text-sm font-bold text-slate-900 text-right">
                     {row.data[col.id] || '-'}
                     {col.unit && row.data[col.id] && row.data[col.id] !== '-' && (
-                      <span className="text-gray-600"> {col.unit}</span>
+                      <span className="text-slate-600 font-normal"> {col.unit}</span>
                     )}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-gray-200">
+            <div className="mt-5 pt-4 border-t-2 border-slate-200">
               <Button
                 onClick={() => handleGetQuoteForRow(rowIdx)}
                 size="sm"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold h-11"
               >
-                Get Quote
+                Get Quote for This Variant
               </Button>
             </div>
           </div>
@@ -296,16 +296,16 @@ function LegacySpecificationsTable({
   }
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden border-2 border-slate-200 rounded-lg">
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-slate-900">
               {columns.map((col) => (
                 <th
                   key={col.id}
-                  className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border border-gray-300"
+                  className="px-5 py-4 text-left text-sm font-bold text-white border-r border-slate-700 last:border-r-0"
                 >
                   {col.label}
                 </th>
@@ -316,18 +316,18 @@ function LegacySpecificationsTable({
             {rows.map((row, rowIdx) => (
               <tr
                 key={rowIdx}
-                className={`hover:bg-gray-50 transition-colors ${
-                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                className={`hover:bg-slate-50 transition-colors ${
+                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
                 }`}
               >
                 {columns.map((col) => (
                   <td
                     key={col.id}
-                    className="px-4 py-3 text-sm text-gray-900 border border-gray-300"
+                    className="px-5 py-4 text-sm text-slate-900 border-r border-slate-200 last:border-r-0 font-medium"
                   >
                     {row[col.id]}
                     {col.unit && row[col.id] !== '-' && (
-                      <span className="text-gray-600"> {col.unit}</span>
+                      <span className="text-slate-600 font-normal"> {col.unit}</span>
                     )}
                   </td>
                 ))}
@@ -338,25 +338,25 @@ function LegacySpecificationsTable({
       </div>
 
       {/* Mobile View - Cards */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-4 p-4">
         {rows.map((row, rowIdx) => (
           <div
             key={rowIdx}
-            className="border border-gray-200 rounded-lg p-4 bg-white"
+            className="border-2 border-slate-200 rounded-lg p-5 bg-white"
           >
             <div className="space-y-3">
               {columns.map((col) => (
                 <div
                   key={col.id}
-                  className="flex justify-between items-start border-b border-gray-100 pb-2 last:border-0"
+                  className="flex justify-between items-start gap-4 py-2"
                 >
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-semibold text-slate-700">
                     {col.label}
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 text-right">
+                  <span className="text-sm font-bold text-slate-900 text-right">
                     {row[col.id]}
                     {col.unit && row[col.id] !== '-' && (
-                      <span className="text-gray-600"> {col.unit}</span>
+                      <span className="text-slate-600 font-normal"> {col.unit}</span>
                     )}
                   </span>
                 </div>

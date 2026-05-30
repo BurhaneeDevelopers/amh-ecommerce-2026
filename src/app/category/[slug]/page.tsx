@@ -139,10 +139,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   const supabase = createClient();
+  // Get ALL categories with slugs, not just main categories
   const { data: categories } = await supabase
     .from('categories')
     .select('slug')
-    .eq('is_main', true)
     .not('slug', 'is', null);
 
   if (!categories) return [];

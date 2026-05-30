@@ -121,12 +121,28 @@ class Products_Service {
                             id,
                             label,
                             unit,
+                            sort_order,
                             masters (
                                 id,
                                 name,
                                 icon,
                                 color
                             )
+                        )
+                    )
+                ),
+                product_variants (
+                    id,
+                    variant_name,
+                    sort_order,
+                    product_variant_values (
+                        id,
+                        value,
+                        master_field:master_fields (
+                            id,
+                            label,
+                            unit,
+                            sort_order
                         )
                     )
                 )

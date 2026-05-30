@@ -49,8 +49,8 @@ const ProductTableRow = ({ product, showStock }: { product: ProductWithCategory;
           : null
 
   const handleViewProduct = () => {
-    if (product.id) {
-      router.push(`/products/${product.id}`)
+    if (product.sku) {
+      router.push(`/products/${product.sku}`)
     }
   }
 

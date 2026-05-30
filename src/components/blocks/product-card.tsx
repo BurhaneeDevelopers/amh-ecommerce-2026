@@ -43,8 +43,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const badge: BadgeVariant = status === 'active' ? null : status;
 
   const handleViewProduct = () => {
-    if (id) {
-      router.push(`/products/${id}`);
+    if (sku) {
+      router.push(`/products/${sku}`);
     }
   };
 

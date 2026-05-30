@@ -38,6 +38,8 @@ credentials.txt
 
 # vercel
 .vercel
+.kiro
+.vscode
 
 # typescript
 *.tsbuildinfo

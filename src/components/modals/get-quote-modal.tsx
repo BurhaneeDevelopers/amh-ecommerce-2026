@@ -13,6 +13,7 @@ import { Use_auth } from '@/api/user.service'
 import { Enquiry } from '@/supabase/schema/schema.type'
 import { sendEnquiryEmail } from '@/lib/email'
 import { Formik, Form, Field } from 'formik'
+import Image from 'next/image'
 
 interface GetQuoteModalProps {
     open: boolean
@@ -150,181 +151,211 @@ export default function GetQuoteModal({ open, onOpenChange, product, onSuccess }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0" showCloseButton={false}>
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[#ff6b35]/10 rounded-lg">
-                            <Package className="w-5 h-5 text-[#ff6b35]" />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-semibold text-gray-900">Request Quote</h2>
-                            <p className="text-sm text-gray-500">Get pricing for {productName}</p>
-                        </div>
-                    </div>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 bg-white" showCloseButton={false}>
+                {/* Header - Trust-Building */}
+                <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8">
                     <button
                         onClick={() => onOpenChange(false)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
+                    <div className="flex items-start gap-4">
+                        <div className="p-3 bg-[#ff6b35] rounded-lg flex-shrink-0">
+                            <Package className="w-7 h-7 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold mb-2">Request a Quote</h2>
+                            <p className="text-slate-300 text-base">
+                                Get competitive pricing and availability within 24 hours
+                            </p>
+                            <div className="flex flex-wrap gap-4 mt-4 text-sm">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                    <span>ISO Certified</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                    <span>Genuine Products</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                    <span>Fast Response</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Product Info */}
-                <div className="p-6 bg-gray-50 border-b">
-                    <div className="flex gap-4">
-                        <img
-                            src={productImage ?? placeholderSrc}
-                            alt={productName}
-                            className="w-16 h-16 object-contain rounded-lg border bg-white"
-                            loading="lazy"
-                            width={64}
-                            height={64}
-                        />
-                        <div>
-                            <h3 className="font-medium text-gray-900">{productName}</h3>
+                {/* Product Info - Prominent Display */}
+                <div className="p-6 bg-slate-50 border-b-2 border-slate-200">
+                    <div className="flex gap-5 items-center">
+                        <div className="w-20 h-20 flex-shrink-0 bg-white border-2 border-slate-200 rounded-lg p-2">
+                            <Image
+                                src={productImage ?? placeholderSrc}
+                                alt={productName}
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                                width={80}
+                                height={80}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="font-bold text-slate-900 text-lg mb-1">{productName}</h3>
                             {productSku && (
-                                <p className="text-sm text-gray-500">SKU: {productSku}</p>
+                                <p className="text-sm text-slate-600 font-medium">Model: {productSku}</p>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {/* Form */}
+                {/* Form - Clean & Professional */}
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}
                     onSubmit={handleSubmit}
                 >
                     {() => (
-                        <Form className="p-6 space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Form className="p-8 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <User className="w-4 h-4 inline mr-1" />
-                                        Full Name *
+                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-2">
+                                        <User className="w-4 h-4 text-[#ff6b35]" />
+                                        Full Name <span className="text-red-500">*</span>
                                     </label>
                                     <Field
                                         as={Input}
                                         name="name"
                                         required
                                         placeholder="Enter your full name"
+                                        className="h-11"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Mail className="w-4 h-4 inline mr-1" />
-                                        Email Address *
+                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-2">
+                                        <Mail className="w-4 h-4 text-[#ff6b35]" />
+                                        Email Address <span className="text-red-500">*</span>
                                     </label>
                                     <Field
                                         as={Input}
                                         type="email"
                                         name="email"
                                         required
-                                        placeholder="Enter your email"
+                                        placeholder="your.email@company.com"
+                                        className="h-11"
                                     />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Phone className="w-4 h-4 inline mr-1" />
-                                        Phone Number *
+                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-2">
+                                        <Phone className="w-4 h-4 text-[#ff6b35]" />
+                                        Phone Number <span className="text-red-500">*</span>
                                     </label>
                                     <Field
                                         as={Input}
                                         name="phone"
                                         required
-                                        placeholder="Enter your phone number"
+                                        placeholder="+91 98843 69751"
+                                        className="h-11"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-900 mb-2">
                                         Company Name
                                     </label>
                                     <Field
                                         as={Input}
                                         name="company"
-                                        placeholder="Enter company name (optional)"
+                                        placeholder="Your company name"
+                                        className="h-11"
                                     />
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    City
-                                </label>
-                                <Field
-                                    as={Input}
-                                    name="city"
-                                    placeholder="Enter your city (optional)"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Quantity *
-                                </label>
-                                <Input
-                                    type="number"
-                                    min="1"
-                                    value={quantity === 0 ? '' : quantity}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (value === '') {
-                                            setQuantity(0);
-                                        } else {
-                                            const numValue = parseInt(value);
-                                            if (!isNaN(numValue) && numValue >= 0) {
-                                                setQuantity(numValue);
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-900 mb-2">
+                                        City
+                                    </label>
+                                    <Field
+                                        as={Input}
+                                        name="city"
+                                        placeholder="Chennai"
+                                        className="h-11"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-2">
+                                        Quantity <span className="text-red-500">*</span>
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        value={quantity === 0 ? '' : quantity}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === '') {
+                                                setQuantity(0);
+                                            } else {
+                                                const numValue = parseInt(value);
+                                                if (!isNaN(numValue) && numValue >= 0) {
+                                                    setQuantity(numValue);
+                                                }
                                             }
-                                        }
-                                    }}
-                                    onBlur={() => {
-                                        if (quantity < 1) {
-                                            setQuantity(1);
-                                        }
-                                    }}
-                                    placeholder="Enter quantity needed"
-                                    className={quantity < 1 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}
-                                />
-                                {quantity < 1 && (
-                                    <p className="text-xs text-red-600 mt-1">Quantity must be at least 1</p>
-                                )}
+                                        }}
+                                        onBlur={() => {
+                                            if (quantity < 1) {
+                                                setQuantity(1);
+                                            }
+                                        }}
+                                        placeholder="Enter quantity"
+                                        className={`h-11 ${quantity < 1 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                                    />
+                                    {quantity < 1 && (
+                                        <p className="text-xs text-red-600 mt-1 font-medium">Minimum quantity is 1</p>
+                                    )}
+                                </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    <MessageSquare className="w-4 h-4 inline mr-1" />
-                                    Additional Message
+                                <label className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-2">
+                                    <MessageSquare className="w-4 h-4 text-[#ff6b35]" />
+                                    Additional Requirements
                                 </label>
                                 <Field
                                     as={Textarea}
                                     name="message"
-                                    placeholder="Any specific requirements or questions..."
-                                    rows={3}
+                                    placeholder="Specify any technical requirements, delivery timeline, or questions..."
+                                    rows={4}
+                                    className="resize-none"
                                 />
                             </div>
 
-                            {/* Actions */}
-                            <div className="flex gap-3 pt-4">
+                            {/* Actions - Prominent CTA */}
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t-2 border-slate-200">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     onClick={() => onOpenChange(false)}
-                                    className="flex-1"
+                                    className="flex-1 h-12 border-2 border-slate-300 hover:bg-slate-50 font-bold"
                                     disabled={createEnquiryMutation.isPending}
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="flex-1 bg-gradient-to-r from-[#ff6b35] to-[#8b5cf6] hover:from-[#e55a25] hover:to-[#7c3aed]"
+                                    className="flex-1 h-12 bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold text-base shadow-lg"
                                     disabled={createEnquiryMutation.isPending}
                                 >
-                                    {createEnquiryMutation.isPending ? 'Submitting...' : 'Request Quote'}
+                                    {createEnquiryMutation.isPending ? 'Submitting...' : 'Submit Quote Request'}
                                 </Button>
+                            </div>
+
+                            {/* Trust Footer */}
+                            <div className="text-center pt-4 text-sm text-slate-600">
+                                <p>We&apos;ll respond within 24 hours with pricing and availability</p>
                             </div>
                         </Form>
                     )}

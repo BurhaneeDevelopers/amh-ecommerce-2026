@@ -64,7 +64,7 @@ const SearchResultItem = ({ product, searchQuery, onClose }: { product: Product;
     e.preventDefault();
     e.stopPropagation();
     onClose();
-    window.location.href = `/products/${product.id}`;
+    window.location.href = `/products/${product.sku}`;
   };
 
   return (

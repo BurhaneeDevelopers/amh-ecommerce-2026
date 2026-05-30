@@ -56,7 +56,7 @@ const BestSellerShowcase: React.FC = () => {
                 {bestSellers.map((product, index) => (
                     <li key={product.id} className="group">
                         <Link
-                            href={`/products/${product.id}`}
+                            href={`/products/${product.sku}`}
                             className="flex gap-4 items-center p-3 hover:bg-gray-50 transition-colors duration-200"
                         >
                             <div className="relative flex-shrink-0">
