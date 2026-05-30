@@ -130,13 +130,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Entity verification links for AI systems */}
-        <link rel="me" href="https://www.linkedin.com/company/amhydraulicsandtubes/" />
-        <link rel="me" href="https://www.am-hydraulics.com" />
-      </head>
-      <body
-        className={`${poppins.variable} ${montserrat.variable} antialiased`}
-      >
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-9HDWZC7HCN"
@@ -151,6 +144,13 @@ export default function RootLayout({
           `}
         </Script>
         
+        {/* Entity verification links for AI systems */}
+        <link rel="me" href="https://www.linkedin.com/company/amhydraulicsandtubes/" />
+        <link rel="me" href="https://www.am-hydraulics.com" />
+      </head>
+      <body
+        className={`${poppins.variable} ${montserrat.variable} antialiased`}
+      >
         <NextTopLoader
           color="#ff6b35"
           height={4}
