@@ -147,6 +147,12 @@ export default function RootLayout({
         {/* Entity verification links for AI systems */}
         <link rel="me" href="https://www.linkedin.com/company/amhydraulicsandtubes/" />
         <link rel="me" href="https://www.am-hydraulics.com" />
+        <link rel="me" href="https://www.amhydraulics.in" />
+        <link rel="me" href="https://www.hydraulicsstore.in" />
+        <link rel="me" href="https://www.amhydraulicsstore.com" />
+        <link rel="me" href="https://www.amhydraulicstore.com" />
+        <link rel="me" href="https://www.amhydraulics.in" />
+        <link rel="me" href="https://www.amhat.com" />
       </head>
       <body
         className={`${poppins.variable} ${montserrat.variable} antialiased`}

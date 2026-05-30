@@ -24,21 +24,21 @@ export default function CategoryBox() {
 
     // Organize categories: main categories with their subcategories
     const organizedCategories = useMemo(() => {
-        const mainCategories = allCategories.filter(cat => cat.type === 'main')
+        const mainCategories = allCategories.filter(cat => cat.is_main === true)
         
         return mainCategories.map(mainCat => {
             const subcategories = allCategories
-                .filter(cat => cat.type === 'sub' && cat.parent_id === mainCat.id)
+                .filter(cat => cat.is_main === false && cat.parent_id === mainCat.id)
                 .map(sub => ({
                     id: sub.id || '',
-                    name: sub.category_name,
-                    href: `/category/${sub.id}`
+                    name: sub.name,
+                    href: `/category/${sub.slug || sub.id}`
                 }))
             
             return {
                 id: mainCat.id || '',
-                name: mainCat.category_name,
-                href: `/category/${mainCat.id}`,
+                name: mainCat.name,
+                href: `/category/${mainCat.slug || mainCat.id}`,
                 subcategories: subcategories.length > 0 ? subcategories : undefined
             }
         })

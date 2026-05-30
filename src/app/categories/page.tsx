@@ -43,7 +43,7 @@ export default function CategoriesPage() {
           {categories.map((category) => (
               <Link
               key={category.id}
-              href={`/category/${category.id}`}
+              href={`/category/${category.slug || category.id}`}
               className="group relative bg-white rounded-2xl border-2 border-gray-200 hover:border-primary transition-all duration-300 overflow-hidden hover:shadow-xl"
             >
               {/* Color accent bar */}

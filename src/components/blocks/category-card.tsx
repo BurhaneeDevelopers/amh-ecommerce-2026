@@ -6,22 +6,21 @@ import { ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 
-interface CategoryCardProps extends Category {
-  product_count?: number
-}
+interface CategoryCardProps extends Category {}
 
 export default function CategoryCard({
   id,
+  slug,
   name,
   description,
   color,
   image_url,
-  product_count = 0,
 }: CategoryCardProps) {
   const accent = color || '#f97316'
+  const categorySlug = slug || id; // Fallback to id if slug is not available
 
   return (
-    <Link href={`/category/${id}`}>
+    <Link href={`/category/${categorySlug}`}>
       <Card className="group relative overflow-hidden h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer border-2 hover:border-primary">
         {/* Image Section */}
         <div
@@ -74,24 +73,18 @@ export default function CategoryCard({
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+          <p className="text-sm text-gray-600 mb-4 line-clamp-3">
             {description}
           </p>
 
-          {/* Product Count & CTA */}
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200 group-hover:border-primary/30 transition-colors duration-300">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-primary group-hover:scale-110 transition-transform duration-300">
-                {product_count}
-              </span>
-              <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                {product_count === 1 ? 'Product' : 'Products'}
-              </span>
-            </div>
-
+          {/* CTA */}
+          <div className="flex items-center justify-end mt-auto pt-4 border-t border-gray-200 group-hover:border-primary/30 transition-colors duration-300">
             {/* Arrow Icon with Animation */}
-            <div className="w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary flex items-center justify-center transition-all duration-300 group-hover:shadow-lg">
-              <ArrowRight className="w-5 h-5 text-primary group-hover:text-white transition-all duration-300 group-hover:translate-x-1" />
+            <div className="flex items-center gap-2 text-primary group-hover:gap-3 transition-all duration-300">
+              <span className="text-sm font-medium">View Products</span>
+              <div className="w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary flex items-center justify-center transition-all duration-300 group-hover:shadow-lg">
+                <ArrowRight className="w-5 h-5 text-primary group-hover:text-white transition-all duration-300 group-hover:translate-x-1" />
+              </div>
             </div>
           </div>
         </div>

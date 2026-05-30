@@ -1,147 +1,235 @@
-import { Metadata } from 'next';
-import { createClient } from '@/supabase/client';
-import { Suspense } from 'react';
-import { Container } from '@/components/layout/container';
-import { Skeleton } from '@/components/ui/skeleton';
-import CategoryPageClient from './category-client';
-import JsonLd from '@/components/seo/JsonLd';
-import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from '@/lib/seo/structured-data';
+"use client";
 
-export const revalidate = 86400; // 24 hours ISR
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { Container } from "@/components/layout/container";
+import { useGetProductsByCategory, useGetProductsByCategorySlug } from "@/api/products.service";
+import { useGetCategoryWithNestedSubcategories } from "@/api/category.service";
+import ProductCard from "@/components/blocks/product-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronRight, Home } from "lucide-react";
+import CategorySidebar from "@/components/products/category-sidebar";
+import { useState, useMemo } from "react";
+import Image from "next/image";
 
-type Props = {
-  params: { slug: string };
-};
+export default function CategoryPageClient() {
+  const params = useParams();
+  const categorySlug = params.slug as string;
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
-// Category-specific descriptions for known categories
-const categoryDescriptions: Record<string, string> = {
-  'hydraulic-hoses': 'Buy hydraulic hoses online in India - Parker R1, R2, 4SP, 4SH high-pressure hoses, Teflon hoses, SS bellow hoses, PVC braided hoses, and custom hose assemblies with professional crimping services. Authorized Parker and Polyhose dealer in Chennai. A.M. Hydraulics & Tubes - ISO 9001:2015 certified supplier. Call +91 98843 69751.',
-  'hydraulic-fittings': 'Buy hydraulic fittings online in India - Ermeto/EO carbon steel fittings, JIC, BSP, NPT, SAE fittings, needle valves, check valves, flow control valves, Dowty seals, copper washers, SAE flanges, QRC quick release couplings, and hose end fittings. Authorized supplier in Chennai. Call +91 98843 69751.',
-  'hydraulic-pumps': 'Buy hydraulic pumps online in India - Yuken gear pumps, Polyhydron pumps, Vickers pumps, hand pumps, radial piston pumps, motorized and manual test pumps (40-500 bar, 1-100 LPM), vane pumps. Authorized Yuken and Vickers dealer in Chennai. A.M. Hydraulics & Tubes. Call +91 98843 69751.',
-  'hydraulic-valves': 'Buy hydraulic valves online in India - DC directional control valves, Yuken solenoid valves, Rexroth solenoid valves, pressure relief valves, check valves, flow control valves. Authorized Yuken and Rexroth dealer in Chennai. ISO 9001:2015 certified. Call +91 98843 69751.',
-  'hydraulic-cylinders': 'Buy hydraulic cylinders online in India - Standard and custom hydraulic cylinders for industrial applications. Manufactured and supplied by A.M. Hydraulics & Tubes, Chennai. ISO 9001:2015 certified. Call +91 98843 69751 for custom cylinder specifications.',
-  'hydraulic-power-packs': 'Buy hydraulic power packs online in India - Torque AC/DC compact power packs, custom power pack units, power pack tanks. Complete hydraulic power solutions from A.M. Hydraulics & Tubes, Chennai. Call +91 98843 69751.',
-  'pneumatic-products': 'Buy pneumatic components online in India - Festo pneumatic products, push-on fittings, PU tubing and coiled hoses, FRL units, air hose reels, spring balancers, air guns, solenoid and mechanical valves, directional control valves, air cylinders. Authorized Festo dealer in Chennai. Call +91 98843 69751.',
-};
-
-async function getCategory(slug: string) {
-  const supabase = createClient();
-  const { data: category } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('id', slug)
-    .single();
-
-  return category;
-}
-
-async function getCategoryProductCount(slug: string) {
-  const supabase = createClient();
-  const { count } = await supabase
-    .from('products')
-    .select('*', { count: 'exact', head: true })
-    .eq('category_id', slug)
-    .eq('status', 'active');
-
-  return count || 0;
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const category = await getCategory(params.slug);
-
-  if (!category) {
-    return {
-      title: 'Category Not Found',
-      description: 'The requested category could not be found.',
-    };
-  }
-
-  const title = `${category.name} — Buy ${category.name} Online in India | A.M. Hydraulics Chennai`;
+  const { data: category, isLoading: categoryLoading } = useGetCategoryWithNestedSubcategories(categorySlug);
   
-  // Use specific description if available, otherwise generate generic one
-  const description = categoryDescriptions[params.slug] || 
-    `Buy ${category.name} online in India from A.M. Hydraulics & Tubes, Chennai. ISO 9001:2015 certified authorized supplier of hydraulic and pneumatic components. Authorized stockist for Parker, Polyhose, Yuken, Rexroth, Festo. Shop genuine industrial components with manufacturer warranty. Call +91 98843 69751 for bulk orders and technical support.`;
+  // Fetch products based on selected category or main category
+  const categoryIdToFetch = selectedCategoryId || category?.id || "";
+  const { data: allProducts = [], isLoading: productsLoading } = useGetProductsByCategorySlug(categorySlug);
+  const { data: filteredProducts = [], isLoading: filteredLoading } = useGetProductsByCategory(
+    categoryIdToFetch,
+    undefined
+  );
 
-  const keywords = [
-    category.name,
-    `${category.name} Chennai`,
-    `${category.name} India`,
-    `${category.name} supplier`,
-    `${category.name} price`,
-    `buy ${category.name} online India`,
-    'A.M. Hydraulics',
-    'hydraulicstore.in',
-  ];
+  // Determine which products to show
+  const products = useMemo(() => {
+    if (selectedCategoryId === null) {
+      // Show all products from main category and all subcategories
+      return allProducts;
+    }
+    // Show products from selected category and its subcategories
+    return filteredProducts;
+  }, [selectedCategoryId, allProducts, filteredProducts]);
 
-  return {
-    title,
-    description,
-    keywords,
-    alternates: {
-      canonical: `https://hydraulicstore.in/category/${params.slug}`,
-    },
-    openGraph: {
-      title,
-      description,
-      url: `https://hydraulicstore.in/category/${params.slug}`,
-      images: [
-        {
-          url: `/og?title=${encodeURIComponent(category.name)}&category=${encodeURIComponent('Browse Products')}`,
-          width: 1200,
-          height: 630,
-          alt: category.name,
-        },
-      ],
-    },
-  };
-}
+  const isLoading = categoryLoading || (selectedCategoryId === null ? productsLoading : filteredLoading);
 
-export async function generateStaticParams() {
-  const supabase = createClient();
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('id')
-    .eq('is_main', true);
-
-  return (categories || []).map((category) => ({
-    slug: category.id,
-  }));
-}
-
-export default async function CategoryPage({ params }: Props) {
-  const category = await getCategory(params.slug);
-  const productCount = await getCategoryProductCount(params.slug);
-
-  if (!category) {
-    return null;
+  if (isLoading) {
+    return (
+      <Container>
+        <div className="mx-auto py-8">
+          <Skeleton className="h-8 w-64 mb-4" />
+          <Skeleton className="h-6 w-96 mb-12" />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Sidebar Skeleton */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <Skeleton className="h-6 w-32 mb-4" />
+                <div className="space-y-2">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10 w-full" />
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Products Grid Skeleton */}
+            <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Skeleton key={i} className="h-96" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
   }
 
-  const breadcrumbData = generateBreadcrumbJsonLd([
-    { name: 'Home', url: 'https://hydraulicstore.in' },
-    { name: 'Products', url: 'https://hydraulicstore.in/products' },
-    { name: category.name, url: `https://hydraulicstore.in/category/${params.slug}` },
-  ]);
-
-  const collectionData = generateCollectionPageJsonLd(
-    category.name,
-    category.description || `Browse ${category.name} from A.M. Hydraulics & Tubes`,
-    `https://hydraulicstore.in/category/${params.slug}`,
-    productCount
-  );
+  if (!category) {
+    return (
+      <Container>
+        <div className="text-center py-16">
+          <div className="max-w-md mx-auto">
+            <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <svg
+                className="w-12 h-12 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Category Not Found
+            </h3>
+            <p className="text-gray-500">
+              The category you are looking for does not exist.
+            </p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <>
-      <JsonLd data={[breadcrumbData, collectionData]} />
-      <Suspense fallback={
-        <Container>
-          <div className="mx-auto space-y-4 py-8">
-            <Skeleton className="h-12 w-64" />
-            <Skeleton className="h-6 w-96" />
+      {/* Category Banner */}
+      {category.image_url && (
+        <div className="w-full h-52 md:h-64 lg:h-124 relative overflow-hidden">
+          <Image
+            src={category.image_url}
+            alt={category.name}
+            width={1000}
+            height={1000}
+            className="w-full h-full object-cover object-[center_20%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent flex items-end">
+            <Container>
+              <div className="pb-2 md:pb-8">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 font-montserrat">
+                  {category.name}
+                </h1>
+                {category.description && (
+                  <p className="text-lg text-white/90 max-w-xl line-clamp-1 hidden lg:flex">
+                    {category.description}
+                  </p>
+                )}
+              </div>
+            </Container>
           </div>
-        </Container>
-      }>
-        <CategoryPageClient />
-      </Suspense>
+        </div>
+      )}
+
+      <Container>
+        <div className="mx-auto py-8 space-y-8">
+          {/* Breadcrumb Navigation */}
+          <nav className="flex items-center space-x-2 text-sm">
+          <Link 
+            href="/" 
+            className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <Home className="w-4 h-4 mr-1" />
+            Home
+          </Link>
+          
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          
+          <Link 
+            href="/products" 
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            Products
+          </Link>
+          
+          <ChevronRight className="w-4 h-4 text-gray-400" />
+          
+          <span className="text-gray-900 font-medium">
+            {category.name}
+          </span>
+        </nav>
+
+        {/* Category Header - Only show if no banner image */}
+        {!category.image_url && (
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              {category.name}
+            </h1>
+            {category.description && (
+              <p className="text-lg text-gray-600 max-w-3xl">
+                {category.description}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Main Content: Sidebar + Products Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <CategorySidebar
+              mainCategory={category}
+              selectedCategoryId={selectedCategoryId}
+              onCategorySelect={setSelectedCategoryId}
+            />
+          </div>
+
+          {/* Products Grid */}
+          <div className="lg:col-span-3">
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">
+                {products.length} {products.length === 1 ? 'product' : 'products'} found
+              </p>
+            </div>
+
+            {products.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="max-w-md mx-auto">
+                  <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-12 h-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No products available
+                  </h3>
+                  <p className="text-gray-500">
+                    Products in this category will appear here once they are added.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Container>
     </>
   );
 }

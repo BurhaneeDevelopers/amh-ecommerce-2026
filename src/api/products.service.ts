@@ -81,6 +81,17 @@ export const useGetProductsByCategory = (categoryId: string, limit?: number) => 
     });
 };
 
+export const useGetProductsByCategorySlug = (categorySlug: string, limit?: number) => {
+    return useQuery<Product[], Error>({
+        queryKey: ['products_by_category_slug', categorySlug, limit],
+        queryFn: async () => (await products_service.getProductsByCategorySlug(categorySlug, limit)) ?? [],
+        enabled: !!categorySlug,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
 export const useGetProductsByDirectCategory = (categoryId: string, limit?: number) => {
     return useQuery<Product[], Error>({
         queryKey: ['products_by_direct_category', categoryId, limit],

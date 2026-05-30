@@ -1,11 +1,11 @@
 "use client";
 import { Container } from "@/components/layout/container";
-import { useGetAllCategoriesWithProductCount } from "@/api/category.service";
+import { useGetMainCategories } from "@/api/category.service";
 import CategoryCard from "@/components/blocks/category-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductsPageClient() {
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategoriesWithProductCount();
+  const { data: categories = [], isLoading: categoriesLoading } = useGetMainCategories();
 
   if (categoriesLoading) {
     return (

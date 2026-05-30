@@ -179,6 +179,7 @@ class Products_Service {
                 category:categories (
                     id,
                     name,
+                    slug,
                     description,
                     color,
                     icon
@@ -214,6 +215,23 @@ class Products_Service {
 
         if (error) throw error;
         return data;
+    }
+
+    async getProductsByCategorySlug(categorySlug: string, limit?: number): Promise<Product[] | null> {
+        // First, get the category by slug
+        const { data: category, error: categoryError } = await supabase
+            .from('categories')
+            .select('id')
+            .eq('slug', categorySlug)
+            .single();
+
+        if (categoryError || !category) {
+            console.error('Error fetching category by slug:', categoryError);
+            return [];
+        }
+
+        // Then get products using the category ID
+        return this.getProductsByCategory(category.id, limit);
     }
 
     async getProductsByDirectCategory(categoryId: string, limit?: number): Promise<Product[] | null> {

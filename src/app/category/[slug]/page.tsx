@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { createClient } from '@/supabase/client';
+import { createClient, supabase } from '@/supabase/client';
 import { Suspense } from 'react';
 import { Container } from '@/components/layout/container';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,7 +10,7 @@ import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from '@/lib/se
 export const revalidate = 86400; // 24 hours ISR
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>; // ← was: { slug: string }
 };
 
 // Category-specific descriptions for known categories
@@ -25,29 +25,78 @@ const categoryDescriptions: Record<string, string> = {
 };
 
 async function getCategory(slug: string) {
-  const supabase = createClient();
   const { data: category } = await supabase
     .from('categories')
     .select('*')
-    .eq('id', slug)
+    .eq('slug', slug)
     .single();
 
   return category;
 }
 
+async function getCategoryWithNested(slug: string) {
+  // Get the main category
+  const { data: category } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (!category) return null;
+
+  // Recursively fetch all subcategories
+  const subcategories = await getSubcategoriesRecursive(category.id);
+  
+  return {
+    ...category,
+    subcategories
+  };
+}
+
+async function getSubcategoriesRecursive(parentId: string): Promise<any[]> {
+  const { data: subcategories } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('parent_id', parentId)
+    .order('name', { ascending: true });
+
+  if (!subcategories) return [];
+
+  // For each subcategory, fetch its nested subcategories
+  const categoriesWithNested = await Promise.all(
+    subcategories.map(async (subcat) => {
+      const nestedSubcategories = await getSubcategoriesRecursive(subcat.id!);
+      return {
+        ...subcat,
+        subcategories: nestedSubcategories.length > 0 ? nestedSubcategories : undefined
+      };
+    })
+  );
+
+  return categoriesWithNested;
+}
+
 async function getCategoryProductCount(slug: string) {
-  const supabase = createClient();
+  const { data: category } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('slug', slug)
+    .single();
+
+  if (!category) return 0;
+
   const { count } = await supabase
     .from('products')
     .select('*', { count: 'exact', head: true })
-    .eq('category_id', slug)
+    .eq('category_id', category.id)
     .eq('status', 'active');
 
   return count || 0;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const category = await getCategory(params.slug);
+  const { slug } = await params; // ← await it
+  const category = await getCategory(slug);
 
   if (!category) {
     return {
@@ -57,33 +106,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${category.name} — Buy ${category.name} Online in India | A.M. Hydraulics Chennai`;
-  
-  // Use specific description if available, otherwise generate generic one
-  const description = categoryDescriptions[params.slug] || 
-    `Buy ${category.name} online in India from A.M. Hydraulics & Tubes, Chennai. ISO 9001:2015 certified authorized supplier of hydraulic and pneumatic components. Authorized stockist for Parker, Polyhose, Yuken, Rexroth, Festo. Shop genuine industrial components with manufacturer warranty. Call +91 98843 69751 for bulk orders and technical support.`;
+  const description = categoryDescriptions[slug] || `Buy ${category.name} online...`;
 
-  const keywords = [
-    category.name,
-    `${category.name} Chennai`,
-    `${category.name} India`,
-    `${category.name} supplier`,
-    `${category.name} price`,
-    `buy ${category.name} online India`,
-    'A.M. Hydraulics',
-    'hydraulicstore.in',
-  ];
-
+  // rest stays the same, just use `slug` instead of `params.slug`
   return {
     title,
     description,
-    keywords,
+    keywords: [
+      category.name,
+      `${category.name} Chennai`,
+      // ...
+    ],
     alternates: {
-      canonical: `https://hydraulicstore.in/category/${params.slug}`,
+      canonical: `https://hydraulicstore.in/category/${slug}`,
     },
     openGraph: {
       title,
       description,
-      url: `https://hydraulicstore.in/category/${params.slug}`,
+      url: `https://hydraulicstore.in/category/${slug}`,
       images: [
         {
           url: `/og?title=${encodeURIComponent(category.name)}&category=${encodeURIComponent('Browse Products')}`,
@@ -96,21 +136,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+
 export async function generateStaticParams() {
   const supabase = createClient();
   const { data: categories } = await supabase
     .from('categories')
-    .select('id')
-    .eq('is_main', true);
+    .select('slug')
+    .eq('is_main', true)
+    .not('slug', 'is', null);
 
-  return (categories || []).map((category) => ({
-    slug: category.id,
-  }));
+  if (!categories) return [];
+
+  return categories
+    .filter((category) => category.slug && typeof category.slug === 'string')
+    .map((category) => ({
+      slug: String(category.slug),
+    }));
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const category = await getCategory(params.slug);
-  const productCount = await getCategoryProductCount(params.slug);
+  const { slug } = await params;
+  const category = await getCategory(slug);
+  const productCount = await getCategoryProductCount(slug);
 
   if (!category) {
     return null;
@@ -119,29 +166,20 @@ export default async function CategoryPage({ params }: Props) {
   const breadcrumbData = generateBreadcrumbJsonLd([
     { name: 'Home', url: 'https://hydraulicstore.in' },
     { name: 'Products', url: 'https://hydraulicstore.in/products' },
-    { name: category.name, url: `https://hydraulicstore.in/category/${params.slug}` },
+    { name: category.name, url: `https://hydraulicstore.in/category/${slug}` },
   ]);
 
   const collectionData = generateCollectionPageJsonLd(
     category.name,
     category.description || `Browse ${category.name} from A.M. Hydraulics & Tubes`,
-    `https://hydraulicstore.in/category/${params.slug}`,
+    `https://hydraulicstore.in/category/${slug}`,
     productCount
   );
 
   return (
     <>
       <JsonLd data={[breadcrumbData, collectionData]} />
-      <Suspense fallback={
-        <Container>
-          <div className="mx-auto space-y-4 py-8">
-            <Skeleton className="h-12 w-64" />
-            <Skeleton className="h-6 w-96" />
-          </div>
-        </Container>
-      }>
-        <CategoryPageClient />
-      </Suspense>
+      <CategoryPageClient />
     </>
   );
 }

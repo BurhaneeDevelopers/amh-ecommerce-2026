@@ -130,6 +130,69 @@ class Categories_Service {
         return data;
     }
 
+    async getSingleCategoryBySlug(slug: string | null): Promise<Category | null> {
+        if (!slug) return null;
+
+        const { data, error } = await supabase.from(this.table)
+            .select(`
+                *,
+                parent:categories!parent_id(*),
+                subcategories:categories!parent_id(*)
+            `)
+            .eq("slug", slug)
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getCategoryWithNestedSubcategories(slug: string): Promise<Category | null> {
+        // Get the main category
+        const { data: category, error } = await supabase
+            .from(this.table)
+            .select('*')
+            .eq('slug', slug)
+            .single();
+
+        if (error || !category) {
+            console.error('Error fetching category:', error);
+            return null;
+        }
+
+        // Recursively fetch all subcategories
+        const subcategories = await this.getSubcategoriesRecursive(category.id);
+        
+        return {
+            ...category,
+            subcategories
+        };
+    }
+
+    private async getSubcategoriesRecursive(parentId: string): Promise<Category[]> {
+        const { data: subcategories, error } = await supabase
+            .from(this.table)
+            .select('*')
+            .eq('parent_id', parentId)
+            .order('name', { ascending: true });
+
+        if (error || !subcategories) {
+            return [];
+        }
+
+        // For each subcategory, fetch its nested subcategories
+        const categoriesWithNested = await Promise.all(
+            subcategories.map(async (subcat) => {
+                const nestedSubcategories = await this.getSubcategoriesRecursive(subcat.id!);
+                return {
+                    ...subcat,
+                    subcategories: nestedSubcategories.length > 0 ? nestedSubcategories : undefined
+                };
+            })
+        );
+
+        return categoriesWithNested;
+    }
+
     async getCategoryWithSubcategories(id: string): Promise<Category | null> {
         const { data, error } = await supabase.from(this.table)
             .select(`
