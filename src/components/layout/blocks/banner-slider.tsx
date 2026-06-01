@@ -86,7 +86,7 @@ const BannerSlider: React.FC = () => {
     <div className="relative w-full bg-orange-50 py-8">
       <div className="w-full px-4 lg:px-6">
         {/* Main slider container - 16:9 aspect ratio, full width */}
-        <div className="relative w-full aspect-[16/9] overflow-hidden group bg-gradient-to-r from-orange-50 to-orange-100 rounded-3xl">
+        <div className="relative w-full aspect-[16/6] overflow-hidden group bg-gradient-to-r from-orange-50 to-orange-100 rounded-3xl">
           {/* Render all slides but only show current one */}
           {slides.map((slide, slideIndex) => (
             <motion.div
@@ -121,7 +121,7 @@ const BannerSlider: React.FC = () => {
                   src={slide.src}
                   alt={slide.alt}
                   priority={slideIndex === 0}
-                  className="w-full h-full object-cover select-none pointer-events-none rounded-2xl"
+                  className="w-full h-full object-cover object-top select-none pointer-events-none rounded-2xl"
                 />
               </div>
 
