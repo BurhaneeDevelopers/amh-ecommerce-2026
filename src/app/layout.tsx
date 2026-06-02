@@ -8,37 +8,27 @@ import Script from 'next/script';
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900']
+  weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap', // Prevent FOIT (Flash of Invisible Text)
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900']
+  weight: ["100", '200', '300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hydraulicstore.in'),
   title: {
-    default: 'A.M. Hydraulics & Tubes — Hydraulic Hoses, Fittings, Pumps, Valves | Chennai, India',
-    template: '%s | A.M. Hydraulics & Tubes Chennai',
+    default: 'Hydraulic Components Supplier Chennai | AM Hydraulics',
+    template: '%s | AM Hydraulics',
   },
-  description: 'A.M. Hydraulics & Tubes — ISO 9001:2015 & ISO 14001:2015 certified manufacturer and authorized distributor of hydraulic hoses, fittings, pumps, valves, cylinders, and pneumatic components in Chennai, India. Authorized stockist for Parker, Polyhose, Yuken, Rexroth, Boss Hydraulics, Torque, Enerpac, Festo, Vickers since 1999. Call +91 98843 69751.',
-  keywords: [
-    // Product categories with location
-    'hydraulic hoses Chennai', 'hydraulic fittings Chennai', 'hydraulic pumps Chennai', 'hydraulic valves Chennai',
-    'hydraulic cylinders Chennai', 'hydraulic power packs Chennai', 'pneumatic components Chennai',
-    'hydraulic hoses India', 'hydraulic fittings India', 'hydraulic pumps India', 'hydraulic valves India',
-    'industrial hoses Chennai', 'Parker hoses Chennai', 'Yuken valves Chennai', 'Rexroth components Chennai',
-    // Brand dealers
-    'Parker dealer Chennai', 'Polyhose dealer Chennai', 'Yuken dealer Chennai', 'Rexroth dealer Chennai',
-    'Enerpac dealer Chennai', 'Festo dealer Chennai', 'Vickers dealer Chennai',
-    // Business names
-    'A.M. Hydraulics & Tubes', 'AM Hydraulics Chennai', 'AMHAT', 'A.M. Hydraulics Tubes',
-    'hydraulicstore.in', 'am-hydraulics.com',
-    // Services
-    'hydraulic hose crimping Chennai', 'custom hose assembly Chennai', 'hydraulic equipment supplier Chennai',
-    'hydraulic components supplier India', 'pneumatic fittings supplier Chennai',
-  ],
+  description: 'ISO certified authorized distributor of Parker, Yuken, Rexroth hydraulic hoses, fittings, pumps since 1999. Call for bulk pricing in Tamil Nadu.',
   authors: [{ name: 'A.M. Hydraulics & Tubes' }],
   creator: 'A.M. Hydraulics & Tubes',
   publisher: 'A.M. Hydraulics & Tubes',
@@ -52,8 +42,8 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: 'https://hydraulicstore.in',
     siteName: 'A.M. Hydraulics & Tubes',
-    title: 'A.M. Hydraulics & Tubes — Hydraulic Hoses, Fittings, Pumps, Valves | Chennai, India',
-    description: 'ISO certified manufacturer and authorized distributor of hydraulic and pneumatic components in Chennai. Authorized stockist for Parker, Yuken, Rexroth, Festo since 1999.',
+    title: 'Hydraulic Components Supplier Chennai — Authorized Distributor',
+    description: 'Authorized Parker, Yuken, Rexroth dealer supplying hydraulic hoses, fittings, pumps, valves in Chennai. ISO 9001:2015 certified since 1999.',
     images: [
       {
         url: '/og-default.jpg',
@@ -65,8 +55,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'A.M. Hydraulics & Tubes — Hydraulic Components Supplier Chennai',
-    description: 'ISO certified supplier of hydraulic hoses, fittings, pumps, valves. Authorized Parker, Yuken, Rexroth dealer.',
+    title: 'Hydraulic Components Supplier Chennai — Authorized Distributor',
+    description: 'Authorized Parker, Yuken, Rexroth dealer supplying hydraulic hoses, fittings, pumps, valves in Chennai. ISO 9001:2015 certified since 1999.',
     images: ['/og-default.jpg'],
   },
   robots: {
@@ -102,9 +92,9 @@ export const metadata: Metadata = {
     'geo.position': '13.0934057;80.2546441',
     'ICBM': '13.0934057, 80.2546441',
     // Dublin Core metadata
-    'DC.title': 'A.M. Hydraulics & Tubes — Hydraulic Components Supplier Chennai',
+    'DC.title': 'Hydraulic Components Supplier Chennai | AM Hydraulics',
     'DC.subject': 'Hydraulic Hoses, Hydraulic Fittings, Hydraulic Pumps, Hydraulic Valves, Pneumatic Components',
-    'DC.description': 'ISO certified manufacturer and authorized distributor of hydraulic and pneumatic components in Chennai, India since 1999',
+    'DC.description': 'ISO certified authorized distributor of Parker, Yuken, Rexroth hydraulic hoses, fittings, pumps since 1999 in Chennai',
     'DC.creator': 'A.M. Hydraulics & Tubes',
     'DC.publisher': 'A.M. Hydraulics & Tubes',
     'DC.language': 'en-IN',
@@ -130,17 +120,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics */}
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        
+        {/* Google Analytics - Deferred for better performance */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-9HDWZC7HCN"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-9HDWZC7HCN');
+            gtag('config', 'G-9HDWZC7HCN', {
+              page_path: window.location.pathname,
+            });
           `}
         </Script>
         
@@ -156,6 +152,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${poppins.variable} ${montserrat.variable} antialiased`}
+        suppressHydrationWarning
       >
         <NextTopLoader
           color="#ff6b35"

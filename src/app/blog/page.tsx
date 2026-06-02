@@ -4,15 +4,29 @@ import { Container } from '@/components/layout/container';
 import BlogListingClient from './blog-client';
 
 export const metadata: Metadata = {
-  title: 'Blog — Hydraulic & Pneumatic Industry Knowledge | A.M. Hydraulics Chennai',
-  description: 'Read expert articles, guides, and industry insights about hydraulic hoses, fittings, pumps, valves, and pneumatic components. Technical knowledge from A.M. Hydraulics & Tubes, ISO 9001:2015 certified hydraulic components supplier in Chennai, India.',
+  title: 'Hydraulic & Pneumatic Industry Insights',
+  description: 'Expert guides on hydraulic hoses, fittings, pumps for engineers and buyers. Technical insights from ISO certified supplier in Chennai.',
   alternates: {
     canonical: 'https://hydraulicstore.in/blog',
   },
   openGraph: {
-    title: 'Blog — Hydraulic & Pneumatic Industry Knowledge',
-    description: 'Expert articles and guides about hydraulic and pneumatic components from A.M. Hydraulics & Tubes.',
+    title: 'Hydraulic Industry Insights — Technical Guides for Engineers',
+    description: 'Technical articles about hydraulic components, maintenance tips, and industry best practices. Written by authorized Parker, Yuken, Rexroth dealer in Chennai.',
     url: 'https://hydraulicstore.in/blog',
+    images: [
+      {
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Hydraulic Industry Blog - A.M. Hydraulics & Tubes',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Hydraulic Industry Insights — Technical Guides for Engineers',
+    description: 'Technical articles about hydraulic components, maintenance tips, and industry best practices. Written by authorized Parker, Yuken, Rexroth dealer in Chennai.',
+    images: ['/og-default.jpg'],
   },
 };
 

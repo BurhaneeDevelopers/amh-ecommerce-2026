@@ -8,15 +8,29 @@ import type { Metadata } from "next";
 import { createClient } from "@/supabase/client";
 
 export const metadata: Metadata = {
-  title: 'Buy Hydraulic & Pneumatic Components Online India — All Products',
-  description: 'Browse and buy hydraulic hoses, fittings, pumps, valves, cylinders, power packs, and pneumatic components online in India. A.M. Hydraulics & Tubes is an ISO 9001:2015 certified authorized stockist for Parker, Polyhose, Yuken, Rexroth, Boss Hydraulics, Torque, Enerpac, Festo, Vickers in Chennai. Shop genuine industrial components with manufacturer warranty. Call +91 98843 69751 for bulk orders and custom assemblies.',
+  title: 'Hydraulic & Pneumatic Products Chennai',
+  description: 'Browse hydraulic hoses, fittings, pumps, valves from authorized Parker, Yuken, Rexroth dealer. ISO certified stock in Chennai. Same-day availability.',
   alternates: {
     canonical: 'https://hydraulicstore.in/products',
   },
   openGraph: {
-    title: 'Buy Hydraulic & Pneumatic Components Online India — All Products',
-    description: 'Browse hydraulic hoses, fittings, pumps, valves, and pneumatic components. Authorized Parker, Yuken, Rexroth dealer in Chennai.',
+    title: 'Hydraulic & Pneumatic Products — Authorized Stock in Chennai',
+    description: 'Shop Parker hoses, Yuken pumps, Rexroth valves from authorized ISO certified dealer in Chennai. Genuine industrial components with manufacturer warranty.',
     url: 'https://hydraulicstore.in/products',
+    images: [
+      {
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Hydraulic & Pneumatic Products - A.M. Hydraulics & Tubes Chennai',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Hydraulic & Pneumatic Products — Authorized Stock in Chennai',
+    description: 'Shop Parker hoses, Yuken pumps, Rexroth valves from authorized ISO certified dealer in Chennai. Genuine industrial components with manufacturer warranty.',
+    images: ['/og-default.jpg'],
   },
 };
 

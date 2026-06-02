@@ -8,15 +8,29 @@ import { ORGANIZATION_JSON_LD } from "@/lib/seo/structured-data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'About Us — ISO Certified Since 1999 | A.M. Hydraulics & Tubes Chennai',
-  description: 'A.M. Hydraulics & Tubes — ISO 9001:2015 & ISO 14001:2015 certified manufacturer and authorized distributor of hydraulic and pneumatic components since 1999. Founded by Managing Director Mohammed HB. Authorized stockist for Parker, Polyhose, Yuken, Rexroth (Bosch Group), Boss Hydraulics, Torque, Polyhydron, Enerpac, Festo, Vickers, Dowty. Shop: 148 Angappa Naicken Street, Parrys Corner, Chennai 600001. Factory: 53/26 Amman Koil Street, Ambattur Industrial Estate, Chennai 600058. Serving Tamil Nadu, Karnataka, Andhra Pradesh, Telangana, and across India.',
+  title: 'Hydraulic Distributor Chennai Since 1999',
+  description: 'ISO 9001:2015 certified authorized Parker, Yuken, Rexroth dealer since 1999. Factory in Ambattur, shop in Parrys Corner. Serving Tamil Nadu industries.',
   alternates: {
     canonical: 'https://hydraulicstore.in/about',
   },
   openGraph: {
-    title: 'About Us — ISO Certified Since 1999 | A.M. Hydraulics & Tubes Chennai',
-    description: 'ISO 9001:2015 & ISO 14001:2015 certified hydraulic components manufacturer and distributor since 1999. Authorized Parker, Yuken, Rexroth dealer.',
+    title: 'About AM Hydraulics — ISO Certified Distributor Since 1999',
+    description: 'ISO certified authorized dealer for Parker, Yuken, Rexroth hydraulic components. Operating from Parrys Corner and Ambattur Industrial Estate since 1999.',
     url: 'https://hydraulicstore.in/about',
+    images: [
+      {
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'About A.M. Hydraulics & Tubes - ISO Certified Since 1999',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About AM Hydraulics — ISO Certified Distributor Since 1999',
+    description: 'ISO certified authorized dealer for Parker, Yuken, Rexroth hydraulic components. Operating from Parrys Corner and Ambattur Industrial Estate since 1999.',
+    images: ['/og-default.jpg'],
   },
 };
 

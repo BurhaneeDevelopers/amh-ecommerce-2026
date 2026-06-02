@@ -13,15 +13,26 @@ type Props = {
   params: Promise<{ slug: string }>; // ← was: { slug: string }
 };
 
-// Category-specific descriptions for known categories
+// Category-specific descriptions for known categories (max 155 characters)
 const categoryDescriptions: Record<string, string> = {
-  'hydraulic-hoses': 'Buy hydraulic hoses online in India - Parker R1, R2, 4SP, 4SH high-pressure hoses, Teflon hoses, SS bellow hoses, PVC braided hoses, and custom hose assemblies with professional crimping services. Authorized Parker and Polyhose dealer in Chennai. A.M. Hydraulics & Tubes - ISO 9001:2015 certified supplier. Call +91 98843 69751.',
-  'hydraulic-fittings': 'Buy hydraulic fittings online in India - Ermeto/EO carbon steel fittings, JIC, BSP, NPT, SAE fittings, needle valves, check valves, flow control valves, Dowty seals, copper washers, SAE flanges, QRC quick release couplings, and hose end fittings. Authorized supplier in Chennai. Call +91 98843 69751.',
-  'hydraulic-pumps': 'Buy hydraulic pumps online in India - Yuken gear pumps, Polyhydron pumps, Vickers pumps, hand pumps, radial piston pumps, motorized and manual test pumps (40-500 bar, 1-100 LPM), vane pumps. Authorized Yuken and Vickers dealer in Chennai. A.M. Hydraulics & Tubes. Call +91 98843 69751.',
-  'hydraulic-valves': 'Buy hydraulic valves online in India - DC directional control valves, Yuken solenoid valves, Rexroth solenoid valves, pressure relief valves, check valves, flow control valves. Authorized Yuken and Rexroth dealer in Chennai. ISO 9001:2015 certified. Call +91 98843 69751.',
-  'hydraulic-cylinders': 'Buy hydraulic cylinders online in India - Standard and custom hydraulic cylinders for industrial applications. Manufactured and supplied by A.M. Hydraulics & Tubes, Chennai. ISO 9001:2015 certified. Call +91 98843 69751 for custom cylinder specifications.',
-  'hydraulic-power-packs': 'Buy hydraulic power packs online in India - Torque AC/DC compact power packs, custom power pack units, power pack tanks. Complete hydraulic power solutions from A.M. Hydraulics & Tubes, Chennai. Call +91 98843 69751.',
-  'pneumatic-products': 'Buy pneumatic components online in India - Festo pneumatic products, push-on fittings, PU tubing and coiled hoses, FRL units, air hose reels, spring balancers, air guns, solenoid and mechanical valves, directional control valves, air cylinders. Authorized Festo dealer in Chennai. Call +91 98843 69751.',
+  'hydraulic-hoses': 'Authorized Parker R1, R2, 4SP, 4SH hoses in Chennai. Polyhose dealer with custom crimping service. ISO certified stock. Call for bulk pricing.',
+  'hydraulic-fittings': 'JIC, BSP, NPT, SAE hydraulic fittings in Chennai. Ermeto carbon steel fittings, Dowty seals. Authorized stockist since 1999. Same-day availability.',
+  'hydraulic-pumps': 'Authorized Yuken, Polyhydron, Vickers pumps in Chennai. Gear pumps, test pumps 40-500 bar. ISO certified dealer. Call for technical specs.',
+  'hydraulic-valves': 'Yuken, Rexroth solenoid valves in Chennai. Directional control, pressure relief, check valves. Authorized dealer with ISO certification.',
+  'hydraulic-cylinders': 'Standard and custom hydraulic cylinders in Chennai. Manufactured at Ambattur facility. ISO 9001:2015 certified. Custom specs available.',
+  'hydraulic-power-packs': 'Torque AC/DC power packs in Chennai. Custom hydraulic power units manufactured at Ambattur. ISO certified. Call for custom requirements.',
+  'pneumatic-products': 'Authorized Festo dealer in Chennai. Pneumatic fittings, FRL units, solenoid valves, air cylinders. ISO certified stock with same-day delivery.',
+};
+
+// Category-specific titles (max 60 characters)
+const categoryTitles: Record<string, string> = {
+  'hydraulic-hoses': 'Hydraulic Hoses Chennai | Parker Authorized Dealer',
+  'hydraulic-fittings': 'Hydraulic Fittings Chennai | JIC BSP NPT SAE Stock',
+  'hydraulic-pumps': 'Hydraulic Pumps Chennai | Yuken Authorized Dealer',
+  'hydraulic-valves': 'Hydraulic Valves Chennai | Yuken Rexroth Dealer',
+  'hydraulic-cylinders': 'Hydraulic Cylinders Chennai | Custom Manufacturing',
+  'hydraulic-power-packs': 'Hydraulic Power Packs Chennai | Torque Dealer',
+  'pneumatic-products': 'Pneumatic Components Chennai | Festo Dealer',
 };
 
 async function getCategory(slug: string) {
@@ -53,7 +64,7 @@ async function getCategoryWithNested(slug: string) {
   };
 }
 
-async function getSubcategoriesRecursive(parentId: string): Promise<any[]> {
+async function getSubcategoriesRecursive(parentId: string): Promise<Array<{ id: string; name: string; slug?: string; subcategories?: Array<{ id: string; name: string }> }>> {
   const { data: subcategories } = await supabase
     .from('categories')
     .select('*')
@@ -64,8 +75,8 @@ async function getSubcategoriesRecursive(parentId: string): Promise<any[]> {
 
   // For each subcategory, fetch its nested subcategories
   const categoriesWithNested = await Promise.all(
-    subcategories.map(async (subcat) => {
-      const nestedSubcategories = await getSubcategoriesRecursive(subcat.id!);
+    subcategories.map(async (subcat: { id: string; name: string; slug?: string }) => {
+      const nestedSubcategories = await getSubcategoriesRecursive(subcat.id);
       return {
         ...subcat,
         subcategories: nestedSubcategories.length > 0 ? nestedSubcategories : undefined
@@ -95,7 +106,7 @@ async function getCategoryProductCount(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params; // ← await it
+  const { slug } = await params;
   const category = await getCategory(slug);
 
   if (!category) {
@@ -105,33 +116,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${category.name} — Buy ${category.name} Online in India | A.M. Hydraulics Chennai`;
-  const description = categoryDescriptions[slug] || `Buy ${category.name} online...`;
+  const title = categoryTitles[slug] || `${category.name} Supplier Chennai`;
+  const description = categoryDescriptions[slug] || `Authorized dealer for ${category.name} in Chennai. ISO certified stock with same-day availability. Call for bulk pricing in Tamil Nadu.`;
+  
+  const ogTitle = categoryTitles[slug] || `${category.name} — Authorized Dealer in Chennai`;
+  const ogDescription = categoryDescriptions[slug] || `Shop ${category.name} from authorized dealer in Chennai. ISO certified genuine stock with manufacturer warranty.`;
 
-  // rest stays the same, just use `slug` instead of `params.slug`
   return {
     title,
     description,
-    keywords: [
-      category.name,
-      `${category.name} Chennai`,
-      // ...
-    ],
     alternates: {
       canonical: `https://hydraulicstore.in/category/${slug}`,
     },
     openGraph: {
-      title,
-      description,
+      title: ogTitle,
+      description: ogDescription,
       url: `https://hydraulicstore.in/category/${slug}`,
       images: [
         {
           url: `/og?title=${encodeURIComponent(category.name)}&category=${encodeURIComponent('Browse Products')}`,
           width: 1200,
           height: 630,
-          alt: category.name,
+          alt: `${category.name} - A.M. Hydraulics & Tubes Chennai`,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      description: ogDescription,
+      images: [`/og?title=${encodeURIComponent(category.name)}&category=${encodeURIComponent('Browse Products')}`],
     },
   };
 }

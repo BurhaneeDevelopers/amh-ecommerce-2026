@@ -9,15 +9,29 @@ import { ORGANIZATION_JSON_LD } from "@/lib/seo/structured-data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Contact Us — +91 98843 69751 | A.M. Hydraulics & Tubes Chennai',
-  description: 'Contact A.M. Hydraulics & Tubes — Shop: 148, Angappa Naicken Street, Parrys Corner, Near High Court, Chennai – 600001, Tamil Nadu, India. Factory: 53/26, Amman Koil Street, Athipet, Kuppam, Ambattur Industrial Estate, Chennai – 600058. Phone: +91 98843 69751 (Primary), 044 42161198 (Office). WhatsApp: +91 93827 13392. Email: info@amhat.com. ISO 9001:2015 & ISO 14001:2015 certified hydraulic components supplier.',
+  title: 'Contact Hydraulic Supplier Parrys Corner Chennai',
+  description: 'Contact AM Hydraulics at Parrys Corner, Chennai. Call +91 98843 69751 for hydraulic hoses, fittings, pumps. ISO certified dealer since 1999.',
   alternates: {
     canonical: 'https://hydraulicstore.in/contact',
   },
   openGraph: {
-    title: 'Contact Us — +91 98843 69751 | A.M. Hydraulics & Tubes Chennai',
-    description: 'Get in touch with A.M. Hydraulics & Tubes. Shop in Parrys Corner, Factory in Ambattur. Call +91 98843 69751.',
+    title: 'Contact AM Hydraulics — Parrys Corner Chennai +91 98843 69751',
+    description: 'Reach us at Parrys Corner showroom or Ambattur factory. Call +91 98843 69751 for hydraulic components. ISO certified authorized dealer in Chennai.',
     url: 'https://hydraulicstore.in/contact',
+    images: [
+      {
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Contact A.M. Hydraulics & Tubes Chennai',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact AM Hydraulics — Parrys Corner Chennai +91 98843 69751',
+    description: 'Reach us at Parrys Corner showroom or Ambattur factory. Call +91 98843 69751 for hydraulic components. ISO certified authorized dealer in Chennai.',
+    images: ['/og-default.jpg'],
   },
 };
 
