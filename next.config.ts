@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    unoptimized: false, // Enable optimization
+    loader: 'default',
   },
   // Remove X-Powered-By header for security
   poweredByHeader: false,
@@ -34,6 +39,10 @@ const nextConfig: NextConfig = {
   compress: true,
   // Optimize production builds
   productionBrowserSourceMaps: false,
+  swcMinify: true, // Use SWC for faster minification
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production', // Remove console.logs in production
+  },
   // Improve caching
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
@@ -43,6 +52,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    turbo: {
+      loaders: {},
+    },
   },
   // Add security and SEO headers
   async headers() {

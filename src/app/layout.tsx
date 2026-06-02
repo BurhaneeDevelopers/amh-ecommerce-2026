@@ -12,6 +12,7 @@ const poppins = Poppins({
   display: 'swap', // Prevent FOIT (Flash of Invisible Text)
   preload: true,
   fallback: ['system-ui', 'arial'],
+  adjustFontFallback: true, // Reduce CLS from font loading
 });
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -20,6 +21,7 @@ const montserrat = Montserrat({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'arial'],
+  adjustFontFallback: true, // Reduce CLS from font loading
 });
 
 export const metadata: Metadata = {
@@ -123,6 +125,9 @@ export default function RootLayout({
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        
+        {/* Preload critical assets */}
+        <link rel="preload" href="/banners/banner.png" as="image" type="image/png" fetchpriority="high" />
         
         {/* Google Analytics - Deferred for better performance */}
         <Script

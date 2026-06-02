@@ -15,8 +15,17 @@ const CategoriesSection = () => {
         return (
             <Container className='!px-0'>
                 <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30 rounded-2xl p-8 border border-slate-200/60">
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    {/* Loading skeleton with proper dimensions to prevent CLS */}
+                    <div className="space-y-6">
+                        <div className="h-20 bg-gray-200 animate-pulse rounded-2xl" />
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 min-h-[400px]">
+                            {[...Array(12)].map((_, i) => (
+                                <div key={i} className="space-y-3">
+                                    <div className="aspect-square bg-gray-200 animate-pulse rounded-2xl" style={{ minHeight: '150px' }} />
+                                    <div className="h-12 bg-gray-200 animate-pulse rounded-xl" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </Container>
@@ -58,7 +67,7 @@ const CategoriesSection = () => {
             </div>
 
             {/* Modern Categories Grid — Main categories only */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 min-h-[400px]">
                 {categories.map((category, index) => (
                     <motion.div
                         key={category.id}
@@ -75,10 +84,13 @@ const CategoriesSection = () => {
                             className="group block h-full"
                         >
                             <div className="relative bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 h-full flex flex-col border border-gray-200/60 hover:border-primary/60 hover:-translate-y-2">
-                                {/* Image Container */}
+                                {/* Image Container with explicit height to prevent CLS */}
                                 <div
                                     className="relative w-full aspect-square overflow-hidden"
-                                    style={{ backgroundColor: `${category.color || '#f97316'}12` }}
+                                    style={{ 
+                                        backgroundColor: `${category.color || '#f97316'}12`,
+                                        minHeight: '150px' // Prevent layout shift
+                                    }}
                                 >
                                     {category.image_url ? (
                                         /* Real category image if available */
@@ -86,10 +98,11 @@ const CategoriesSection = () => {
                                             <Image
                                                 src={category.image_url}
                                                 alt={category.name}
-                                                width={1000}
-                                                height={1000}
+                                                width={400}
+                                                height={400}
                                                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
-                                                loading="lazy"
+                                                loading={index < 6 ? "eager" : "lazy"}
+                                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
                                             />
                                             {/* Gradient Overlay on hover */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
