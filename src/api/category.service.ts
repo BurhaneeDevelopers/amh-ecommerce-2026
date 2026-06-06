@@ -32,6 +32,16 @@ export const useGetMainCategoriesWithSubcategories = () => {
   });
 };
 
+export const useGetFirstLevelSubcategories = () => {
+  return useQuery<Category[], Error>({
+    queryKey: ["category_list_first_level_subcategories"],
+    queryFn: async () => (await categories_service.getFirstLevelSubcategories()) ?? [],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useGetSubcategoriesByParentId = (parentId: string | null) => {
   return useQuery<Category[], Error>({
     queryKey: ["subcategories_by_parent", parentId],

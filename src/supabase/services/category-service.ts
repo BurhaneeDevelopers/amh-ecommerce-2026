@@ -36,6 +36,31 @@ class Categories_Service {
         return data;
     }
 
+    async getFirstLevelSubcategories(): Promise<Category[] | null> {
+        // Get all categories that have a parent_id (are subcategories)
+        // but whose parent is a main category (is_main = true)
+        const { data: mainCategories, error: mainError } = await supabase
+            .from(this.table)
+            .select('id')
+            .eq('is_main', true);
+
+        if (mainError) throw mainError;
+        if (!mainCategories) return [];
+
+        const mainCategoryIds = mainCategories.map(cat => cat.id);
+
+        const { data, error } = await supabase.from(this.table)
+            .select(`
+                *,
+                parent:categories!parent_id(id, name, slug)
+            `)
+            .in('parent_id', mainCategoryIds)
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    }
+
     async getSubcategoriesByParentId(parentId: string): Promise<Category[] | null> {
         const { data, error } = await supabase.from(this.table)
             .select('*')

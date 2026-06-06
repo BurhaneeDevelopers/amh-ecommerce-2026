@@ -127,7 +127,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         
         {/* Preload critical assets */}
-        <link rel="preload" href="/banners/banner.png" as="image" type="image/png" fetchpriority="high" />
+        <link rel="preload" href="/banners/banner.png" as="image" type="image/png" fetchPriority="high" />
         
         {/* Google Analytics - Deferred for better performance */}
         <Script

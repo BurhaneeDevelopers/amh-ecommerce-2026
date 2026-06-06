@@ -2,6 +2,7 @@ import React from 'react'
 import BannerSlider from '../blocks/banner-slider'
 import LatestProducts from '../blocks/latest-products'
 import CategoriesSection from '../blocks/categories-section'
+import SubcategoriesSection from '../blocks/subcategories-section'
 import FeaturedCategoriesProducts from '../blocks/featured-categories-products'
 import TestimonialsSection from '../blocks/testimonials-section'
 import BlogsSection from '../blocks/blogs-section'
@@ -20,6 +21,7 @@ export default function MainColumn() {
                 {/* Content sections with container */}
                 <LatestProducts />
                 <CategoriesSection />
+                <SubcategoriesSection />
                 <FeaturedCategoriesProducts />
                 <TestimonialsSection />
                 <BlogsSection />
