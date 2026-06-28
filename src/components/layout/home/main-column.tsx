@@ -8,6 +8,7 @@ import TestimonialsSection from '../blocks/testimonials-section'
 import BlogsSection from '../blocks/blogs-section'
 import GoogleReviewsSection from '../blocks/google-reviews-section'
 import LinkedInPostsSection from '../blocks/linkedin-posts-section'
+import HomeSeoIntro from '../blocks/home-seo-intro'
 import { Container } from '../container'
 
 
@@ -16,6 +17,7 @@ export default function MainColumn() {
         <div className="w-full">
             {/* Banner slider with padding */}
             <BannerSlider />
+            <HomeSeoIntro />
             
             <Container >
                 {/* Content sections with container */}

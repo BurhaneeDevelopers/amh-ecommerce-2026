@@ -27,10 +27,10 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL('https://hydraulicstore.in'),
   title: {
-    default: 'Hydraulic Components Supplier Chennai | AM Hydraulics',
-    template: '%s | AM Hydraulics',
+    default: 'Hydraulic Components, Hoses & Fittings Supplier in Chennai',
+    template: '%s',
   },
-  description: 'ISO certified authorized distributor of Parker, Yuken, Rexroth hydraulic hoses, fittings, pumps since 1999. Call for bulk pricing in Tamil Nadu.',
+  description: 'Hydraulic components supplier in Chennai for hoses, fittings, tubes, pumps, valves, and pneumatic products. A.M. Hydraulics & Tubes serves industrial buyers across Tamil Nadu.',
   authors: [{ name: 'A.M. Hydraulics & Tubes' }],
   creator: 'A.M. Hydraulics & Tubes',
   publisher: 'A.M. Hydraulics & Tubes',
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: 'https://hydraulicstore.in',
     siteName: 'A.M. Hydraulics & Tubes',
-    title: 'Hydraulic Components Supplier Chennai — Authorized Distributor',
-    description: 'Authorized Parker, Yuken, Rexroth dealer supplying hydraulic hoses, fittings, pumps, valves in Chennai. ISO 9001:2015 certified since 1999.',
+    title: 'Hydraulic Components, Hoses & Fittings Supplier in Chennai',
+    description: 'Hydraulic hoses, fittings, tubes, pumps, valves, and pneumatic products for industrial buyers in Chennai. A.M. Hydraulics & Tubes supports bulk and urgent requirements.',
     images: [
       {
         url: '/og-default.jpg',
@@ -57,8 +57,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hydraulic Components Supplier Chennai — Authorized Distributor',
-    description: 'Authorized Parker, Yuken, Rexroth dealer supplying hydraulic hoses, fittings, pumps, valves in Chennai. ISO 9001:2015 certified since 1999.',
+    title: 'Hydraulic Components, Hoses & Fittings Supplier in Chennai',
+    description: 'Hydraulic hoses, fittings, tubes, pumps, valves, and pneumatic products for industrial buyers in Chennai. A.M. Hydraulics & Tubes supports bulk and urgent requirements.',
     images: ['/og-default.jpg'],
   },
   robots: {
@@ -94,9 +94,9 @@ export const metadata: Metadata = {
     'geo.position': '13.0934057;80.2546441',
     'ICBM': '13.0934057, 80.2546441',
     // Dublin Core metadata
-    'DC.title': 'Hydraulic Components Supplier Chennai | AM Hydraulics',
-    'DC.subject': 'Hydraulic Hoses, Hydraulic Fittings, Hydraulic Pumps, Hydraulic Valves, Pneumatic Components',
-    'DC.description': 'ISO certified authorized distributor of Parker, Yuken, Rexroth hydraulic hoses, fittings, pumps since 1999 in Chennai',
+    'DC.title': 'Hydraulic Components, Hoses & Fittings Supplier in Chennai',
+    'DC.subject': 'Hydraulic Components, Hydraulic Hoses, Hydraulic Fittings, Hydraulic Tubes, Hydraulic Pumps, Hydraulic Valves, Pneumatic Components, Chennai',
+    'DC.description': 'Hydraulic components supplier in Chennai for hoses, fittings, tubes, pumps, valves, and pneumatic products',
     'DC.creator': 'A.M. Hydraulics & Tubes',
     'DC.publisher': 'A.M. Hydraulics & Tubes',
     'DC.language': 'en-IN',

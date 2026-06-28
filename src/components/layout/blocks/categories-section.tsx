@@ -53,7 +53,7 @@ const CategoriesSection = () => {
                             </H2>
                         </div>
                         <p className="text-sm text-gray-600 max-w-xl">
-                            Discover our comprehensive range of professional tools and equipment
+                            Browse hydraulic hoses, fittings, pumps, valves, tubes, and pneumatic components for industrial applications.
                         </p>
                     </div>
                     <Link

@@ -53,7 +53,7 @@ const SubcategoriesSection = () => {
                             </H2>
                         </div>
                         <p className="text-sm text-gray-600 max-w-xl">
-                            Explore our specialized product lines and trusted brand partnerships
+                            Explore hydraulic product types, compatible fittings, and trusted industrial brands available from our Chennai stock.
                         </p>
                     </div>
                     <Link

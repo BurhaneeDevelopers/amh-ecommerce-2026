@@ -208,7 +208,7 @@ export const WEBSITE_JSON_LD = {
   '@id': `${SITE_URL}/#website`,
   url: SITE_URL,
   name: 'A.M. Hydraulics & Tubes',
-  description: 'Buy hydraulic hoses, fittings, pumps, valves, and pneumatic components online in India',
+  description: 'Hydraulic components supplier in Chennai for hoses, fittings, tubes, pumps, valves, and pneumatic products.',
   publisher: {
     '@id': ORGANIZATION_ID,
   },
@@ -219,6 +219,26 @@ export const WEBSITE_JSON_LD = {
       urlTemplate: `${SITE_URL}/products?q={search_term_string}`,
     },
     'query-input': 'required name=search_term_string',
+  },
+  inLanguage: 'en-IN',
+};
+
+export const HOME_PAGE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${SITE_URL}/#webpage`,
+  url: SITE_URL,
+  name: 'Hydraulic Components, Hoses & Fittings Supplier in Chennai',
+  description: 'Hydraulic components supplier in Chennai for hoses, fittings, tubes, pumps, valves, and pneumatic products. Serving industrial buyers across Tamil Nadu.',
+  isPartOf: {
+    '@id': `${SITE_URL}/#website`,
+  },
+  about: {
+    '@id': ORGANIZATION_ID,
+  },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/og-default.jpg`,
   },
   inLanguage: 'en-IN',
 };

@@ -74,7 +74,7 @@ const CategoryProductsSection = ({ category }: CategoryProductsSectionProps) => 
                 <div>
                     <H2 className="mb-1">{category.name}</H2>
                     <P className="text-gray-500 text-sm">
-                        Explore our range of {category.name.toLowerCase()} products
+                        Explore available {category.name.toLowerCase()} products for hydraulic and industrial applications.
                     </P>
                 </div>
                 <div className="flex gap-2 items-center">
